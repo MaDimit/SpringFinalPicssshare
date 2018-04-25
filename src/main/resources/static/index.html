@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Picsshare</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/blog-home.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="js/postload.js"></script>
+
+</head>
+
+<body onload="loadFriendsFeed()">
+<input id="username" type="hidden" value="24">
+
+<script>
+    function showinfo(){
+         console.log(document.getElementById("username").val());
+    }
+</script>
+
+<!-- Navigation -->
+<div class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <!-- small screens toggler -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- brand/logo -->
+        <a class="navbar-brand" href="#">Picssshare</a>
+        <!-- search -->
+
+        <form autocomplete="off" action="/action_page.php">
+            <div class="autocomplete">
+                <input type="text" placeholder="Search.." id="searchbar">
+            </div>
+        </form>
+        <!-- nav menu -->
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showHome()">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showFriendsFeed()">Friends feed</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showTrending()">Trending</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="profile">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="upload">Upload</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Page Content -->
+<div class="container">
+
+        <!-- Blog Entries Column -->
+        <div class="col-md-12">
+
+            <h1 class="my-4 page-header">Header from json here</h1>
+
+           <div id="newpost"></div>
+        </div>
+    </div>
+
+
+</div>
+<!-- /.container -->
+
+<!-- Footer -->
+<footer class="py-5 bg-dark">
+    <div class="container">
+        <p class="m-0 text-center text-white">Picssshare by <a href="https://github.com/philipkasapov">Philip</a> and <a
+                href="https://github.com/MaDimit">Maxim</a></p>
+    </div>
+    <!-- /.container -->
+</footer>
+
+
+</body>
+
+</html>
