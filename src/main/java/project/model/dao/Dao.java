@@ -10,7 +10,6 @@ import java.sql.Connection;
      @Autowired
     protected DataSource dataSource;
 
-    protected Connection conn;
 
 
 }
