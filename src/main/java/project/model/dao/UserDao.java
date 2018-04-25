@@ -5,24 +5,30 @@ import org.springframework.stereotype.Component;
 import project.controller.managers.LoggingManager;
 import project.model.pojo.User;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import javax.sql.DataSource;
+import javax.xml.crypto.Data;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
 @Component
-public class UserDao extends Dao {
+public class UserDao {
+
+    @Autowired
+    private DataSource dataSource;
 
     private LoggingManager loggingManager;
+
+    public UserDao() throws SQLException {
+    }
 
     //================== User Interface ==================//
 
     //used for search
     public ArrayList<User> getAllUsersByPattern(String pattern) throws SQLException {
+        Connection conn = dataSource.getConnection();
         ArrayList<User> matchingUsers = new ArrayList<>();
         String sql = "SELECT id FROM users WHERE UPPER(username) LIKE UPPER('%"+pattern+"%') ORDER BY username;";
         PreparedStatement stmt = conn.prepareStatement(sql);
@@ -36,6 +42,7 @@ public class UserDao extends Dao {
     }
 
     public User getUserByID(int id) throws SQLException {
+        Connection conn = dataSource.getConnection();
         String sql = "SELECT id, username, password, first_name, last_name, email, profile_picture_url FROM users WHERE users.id = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1,id);
@@ -47,6 +54,7 @@ public class UserDao extends Dao {
     }
 
     public void addSubscription(User subscriber, User subscribedTo) throws SQLException {
+        Connection conn = dataSource.getConnection();
         String sql = "INSERT INTO subscriber_subscribed (subscriber_id, subscribedto_id) VALUES (?,?)";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1, subscriber.getId());
@@ -56,6 +64,7 @@ public class UserDao extends Dao {
     }
 
     public void removeSubscription(User subscriber, User subscribedTo) throws SQLException{
+        Connection conn = dataSource.getConnection();
         String sql = "DELETE FROM subscriber_subscribed WHERE subscriber_id = ? AND subscribedto_id = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1, subscriber.getId());
@@ -65,6 +74,7 @@ public class UserDao extends Dao {
     }
 
     public void deleteUser(User user) throws SQLException {
+        Connection conn = dataSource.getConnection();
         String sql = "DELETE FROM users WHERE id = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1,user.getId());
@@ -73,6 +83,7 @@ public class UserDao extends Dao {
     }
 
     public HashSet<String> getAllSubscriptions() throws SQLException{
+        Connection conn = dataSource.getConnection();
         HashSet<String> subscriptions = new HashSet<>();
         String sql = "SELECT subscriber_id, subscribedto_id FROM subscriber_subscribed";
         PreparedStatement stmt = conn.prepareStatement(sql);
@@ -86,6 +97,7 @@ public class UserDao extends Dao {
     // username and id should not be modified
     public void executeProfileUpdate(User u, String password, String first_name, String last_name, String email, String profilePicURL)
             throws SQLException, LoggingManager.RegistrationException {
+        Connection conn = dataSource.getConnection();
         // TODO Exctract notnull validation to UserManager
         // Store in collection not null values, because the user could choose to change
         // different number of
@@ -152,6 +164,7 @@ public class UserDao extends Dao {
     //================== Logging and Registration ==================//
 
     public boolean checkIfUsernameIsTaken(String username) throws SQLException {
+        Connection conn = dataSource.getConnection();
         String sql = "SELECT users.username FROM users WHERE users.username = ?";
         PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1,username);
@@ -161,6 +174,7 @@ public class UserDao extends Dao {
     }
 
     public boolean checkIfEmailIsTaken(String email) throws SQLException {
+        Connection conn = dataSource.getConnection();
         String sql = "SELECT users.username FROM users WHERE users.email = ?";
         PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1,email);
@@ -170,6 +184,7 @@ public class UserDao extends Dao {
     }
 
     public User login(String username) throws SQLException{
+        Connection conn = dataSource.getConnection();
         String sql = "SELECT id, username, password,first_name,last_name,email,profile_picture_url FROM users WHERE username = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setString(1,username);
@@ -184,7 +199,7 @@ public class UserDao extends Dao {
 
 
     public void registerUser(User user) throws SQLException {
-
+        Connection conn = dataSource.getConnection();
         // Inserting into DB
         String sql = "INSERT INTO users (username, password, email) VALUES (?,?,?)";
         PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);

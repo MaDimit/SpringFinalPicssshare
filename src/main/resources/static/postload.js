@@ -11,11 +11,11 @@ function loadPosts(feed) {
 function loadFriendsFeed() {
     var username = $('#username').val(); //should be removed, user is taken from session. for now used for testing purpose.
     $.ajax({
-        url: "friendsfeed",
-        data: {username: username}
+        url: "/feed/friends",
+        data: {uid: username}
     }).then(function (data) {
         console.log(data);
-        insertPosts(JSON.parse(data));
+        insertPosts(data);
     });
 }
 
@@ -44,14 +44,14 @@ function loadTrendingFeed() {
 function insertPosts(json) {
     for (var i = 0; i < json.length; i++) {
         var post = json[i];
-        var postPoster = post.postPoster;
-        var postComments = post.postComments;
-        var postPicture = post.postPicutreUrl;
-        var postTags = post.postTags;
-        var postDate = post.postDate;
-        var postID = post.postId;
-        var postLikes = post.postLikes;
-        var postDislikes = post.postDislikes;
+        var postPoster = post.poster;
+        var postComments = post.comments;
+        var postPicture = post.url;
+        var postTags = post.tags;
+        var postDate = post.date;
+        var postID = post.id;
+        var postLikes = post.likes;
+        var postDislikes = post.dislikes;
         insertNewPost(post, postPoster, postComments, postPicture, postTags, postDate, postID, postLikes, postDislikes);
     }
 }
@@ -136,10 +136,10 @@ function insertModal(post) {
 }
 
 function insertNewComment(comment) {
-    var commentID = comment.commentId;
-    var commentContent = comment.commentContent;
-    var commentDate = comment.commentDate;
-    var commentPoster = comment.commentPoster.username;
+    var commentID = comment.id;
+    var commentContent = comment.content;
+    var commentDate = comment.date;
+    var commentPoster = comment.user.username;
 
 
     var newChild = "<div id=\"comment" + commentID + "\" class=\"row\">\n" +

@@ -119,9 +119,10 @@
             var password = $('#loginpass').val();
             $.ajax({
                 type: "POST",
-                url: "login",
+                url: "/login",
                 data: {username: username, password: password},
                 success: function (data) {
+                    console.log(data);
                     if (data === "wrongUsername") {
                         $('#loginalert').html('').append("Wrong username!").show();
                     }
@@ -129,7 +130,7 @@
                         $('#loginalert').html('').append("Wrong password").show();
                     }
                     if (data === "success") {
-                        $(location).attr('href', "/user");
+                        $(location).attr('href', "/index.html");
                     }
                 }
             });

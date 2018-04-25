@@ -6,26 +6,33 @@ import org.springframework.stereotype.Component;
 import project.model.pojo.Post;
 import project.model.pojo.User;
 
+import javax.sql.DataSource;
+import javax.xml.crypto.Data;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 @Component
-public class PostDao extends Dao {
+public class PostDao {
 
     @Autowired
     private CommentDao commentDao;
     @Autowired
     private UserDao userDao;
 
-    private static final int TRENDING_DAYS = 1;
+    @Autowired
+    private DataSource dataSource;
+
+
+    private final int TRENDING_DAYS = 1;
 
     //================== Posts Interface ==================//
 
     //------------------ post manipulations ------------------//
 
     public void addPost(Post post) throws SQLException {
+        Connection conn = dataSource.getConnection();
         String sql = "INSERT INTO posts (date, poster_id, url) VALUES (?,?,?)";
         PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stmt.setObject(1, Timestamp.valueOf(post.getDate()));
@@ -45,6 +52,7 @@ public class PostDao extends Dao {
     }
 
     public Post getPost(int id) throws SQLException {
+        Connection conn = dataSource.getConnection();
         String sql = "SELECT id, date, poster_id, url FROM posts WHERE id = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1, id);
@@ -55,6 +63,7 @@ public class PostDao extends Dao {
     }
 
     public void deletePost(int id) throws SQLException {
+        Connection conn = dataSource.getConnection();
         //delete from db
         String sql = "DELETE FROM posts WHERE id=(?)";
         PreparedStatement stmt = conn.prepareStatement(sql);
@@ -98,6 +107,7 @@ public class PostDao extends Dao {
     }
 
     private HashSet<String> getAllLikesDislikes(int status) throws SQLException{
+        Connection conn = dataSource.getConnection();
         HashSet<String> users = new HashSet<>();
         String sql = "SELECT liker_id, likedpost_id FROM liker_post WHERE status = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
@@ -111,11 +121,12 @@ public class PostDao extends Dao {
 
     //------------------ feed creation ------------------//
 
-    public List<Post> getUserFeed(User user) throws SQLException{
+    public List<Post> getUserFeed(int userID) throws SQLException{
+        Connection conn = dataSource.getConnection();
         List<Post> posts = new ArrayList<>();
         String sql = "SELECT id, date, poster_id, url FROM posts WHERE poster_id = ? ORDER BY date";
         PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1,user.getId());
+        stmt.setInt(1,userID);
         ResultSet rs = stmt.executeQuery();
         while (rs.next()){
             posts.add(createPost(rs));
@@ -124,13 +135,14 @@ public class PostDao extends Dao {
         return posts;
     }
 
-    public List<Post> getFriendsFeed(User user) throws SQLException{
+    public List<Post> getFriendsFeed(int userID) throws SQLException{
+        Connection conn = dataSource.getConnection();
         List<Post> posts = new ArrayList<>();
         String sql = "SELECT id, date, poster_id, url FROM posts p\n" +
                 "JOIN subscriber_subscribed s ON  s.subscriber_id = ?\n" +
                 "WHERE poster_id = subscribedto_id ORDER BY date";
         PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1,user.getId());
+        stmt.setInt(1,userID);
         ResultSet rs = stmt.executeQuery();
         while (rs.next()){
             posts.add(createPost(rs));
@@ -140,6 +152,7 @@ public class PostDao extends Dao {
     }
 
     public List<Post> getTrendingFeed()throws SQLException{
+        Connection conn = dataSource.getConnection();
         List<Post> posts = new ArrayList<>();
         String sql = "SELECT id, date, poster_id, url FROM posts WHERE date >= NOW() - INTERVAL ? DAY;";
         PreparedStatement stmt = conn.prepareStatement(sql);
@@ -155,6 +168,7 @@ public class PostDao extends Dao {
     //================== Post likes/dislikes ==================//
 
     private int addLikeDislike(Post post, User user, int status) throws SQLException {
+        Connection conn = dataSource.getConnection();
         //Inserting or updating liker_post table
         String sql = "INSERT INTO liker_post (liker_id, likedpost_id, status) VALUES (?, ?, ?)\n" +
                 "  ON DUPLICATE KEY UPDATE status = ?;";
@@ -191,6 +205,7 @@ public class PostDao extends Dao {
 
     //get all the tags related to this post
     private List<String> getAllTagsForPost(Post post) throws SQLException {
+        Connection conn = dataSource.getConnection();
         List<String> tags = new ArrayList<>();
 
         //Fetching tags from DB
@@ -220,6 +235,7 @@ public class PostDao extends Dao {
     }
 
     private ArrayList<User> getLikersDislikers(int postID, int status) throws SQLException {
+        Connection conn = dataSource.getConnection();
         ArrayList<User> users = new ArrayList<>();
         //Fetching likers from DB
         String sql = "SELECT users.id FROM users\n" +
@@ -240,6 +256,7 @@ public class PostDao extends Dao {
 
     //hashset used for putting unique posts only in result collection
     public HashSet<Post> getPostsByTags(ArrayList<String> tags) throws SQLException {
+        Connection conn = dataSource.getConnection();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < tags.size(); i++) {
             sb.append("UPPER('%"+tags.get(i)+"%') ");

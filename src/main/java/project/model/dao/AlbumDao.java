@@ -6,22 +6,25 @@ import org.springframework.stereotype.Component;
 import project.model.pojo.Album;
 import project.model.pojo.Post;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import javax.sql.DataSource;
+import javax.xml.crypto.Data;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class AlbumDao extends Dao {
+public class AlbumDao {
 
     @Autowired
     private UserDao userDao;
     @Autowired
     private PostDao postDao;
+    @Autowired
+    private DataSource dataSource;
+
 
     public  void addPostInAlbumInDB(int postID, int albumID) throws SQLException {
+        Connection conn = dataSource.getConnection();
         String sql = "INSERT INTO albums_has_posts (album_id, post_id) VALUES (?,?)";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1,albumID);
@@ -31,6 +34,7 @@ public class AlbumDao extends Dao {
     }
 
     public  void removePostFromAlbumInDB(int postID, int albumID) throws SQLException {
+        Connection conn = dataSource.getConnection();
         String sql = "DELETE FROM albums_has_posts WHERE album_id = ? AND post_id=?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1,albumID);
@@ -41,6 +45,7 @@ public class AlbumDao extends Dao {
 
 
     public void addAlbumInDB(Album album) throws SQLException {
+        Connection conn = dataSource.getConnection();
         String sql = "INSERT INTO albums (name, belonger_id) VALUES (?,?)";
         PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1,album.getName());
@@ -59,6 +64,7 @@ public class AlbumDao extends Dao {
     }
 
     public  void deleteAlbum(int albumID) throws SQLException {
+        Connection conn = dataSource.getConnection();
         String sql = "DELETE FROM albums WHERE id=?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1,albumID);
@@ -67,6 +73,7 @@ public class AlbumDao extends Dao {
     }
 
     public List<Album> getAllAlbumsForUser(int userID) throws SQLException {
+        Connection conn = dataSource.getConnection();
         List<Album> albums = new ArrayList<>();
         String sql = "SELECT id, name, belonger_id FROM albums WHERE belonger_id=?";
         PreparedStatement stmt = conn.prepareStatement(sql);
@@ -91,6 +98,7 @@ public class AlbumDao extends Dao {
     }
 
     private ArrayList<Integer> getAllPostsForAlbum(int albumID) throws SQLException {
+        Connection conn = dataSource.getConnection();
         ArrayList<Integer> postsID = new ArrayList<>();
         String query = "SELECT post_id FROM albums_has_posts WHERE album_id=?";
         PreparedStatement statement = conn.prepareStatement(query);

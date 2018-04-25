@@ -1,5 +1,7 @@
 package project.model.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +9,7 @@ import java.util.List;
 public class Comment implements Comparable<Comment> {
 
     private int id;
+    @JsonIgnore
     private Post post;
     private User user;
     private LocalDateTime date;

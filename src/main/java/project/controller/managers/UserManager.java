@@ -17,27 +17,15 @@ public class UserManager {
         }
     }
 
-    private HashSet<String> cashedSubscriptions;
-
     @Autowired
     private UserDao userDao;
 
-    private UserManager() {
-//        try {
-//            this.cashedSubscriptions = userDao.getAllSubscriptions();
-//        }catch (SQLException e){
-//            e.printStackTrace();
-//        }
-    }
 
     public boolean subscribe(User subscriber, User subscribedTo)throws  UserManagerException{
         validatesubscribtion(subscriber,subscribedTo);
-        if(cashedSubscriptions.contains(subscriber.getId() + "" + subscribedTo.getId())){
-            return false;
-        }
+
         try {
             userDao.addSubscription(subscriber, subscribedTo);
-            cashedSubscriptions.add(subscriber.getId() + "" + subscribedTo.getId());
         }catch (SQLException e){
             throw new UserManagerException("Problem during subscription.");
         }
@@ -46,12 +34,9 @@ public class UserManager {
 
     public boolean removeSubscription(User subscriber, User subscribedTo) throws UserManagerException{
         validatesubscribtion(subscriber,subscribedTo);
-        if(!cashedSubscriptions.contains(subscriber.getId() + "" + subscribedTo.getId())){
-            return false;
-        }
+
         try {
             userDao.removeSubscription(subscriber, subscribedTo);
-            cashedSubscriptions.remove(subscriber.getId() + "" + subscribedTo.getId());
         }catch (SQLException e){
             throw new UserManagerException("Problem during unsubscribing");
         }

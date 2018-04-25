@@ -19,19 +19,8 @@ public class PostManager {
     }
     @Autowired
     private PostDao postDao;
-    private HashSet<String> cachedlikes;
-    private HashSet<String> cachedDislikes;
 
 
-
-    private PostManager() {
-//        try{
-//            this.cachedlikes = postDao.getAllLikers();
-//            this.cachedDislikes = postDao.getAllDislikers();
-//        }catch (SQLException e){
-//            e.printStackTrace();
-//        }
-    }
 
     //================= Post manipulation =================//
     public void addPost(Post post)throws PostException{
@@ -64,15 +53,9 @@ public class PostManager {
 
     public boolean likePost(Post post, User user) throws PostException{
         String likerPost = user.getId() + "" + post.getId();
-        if(cachedlikes.contains(likerPost)){
-            return false;
-        }
+
         try{
             postDao.addLike(post, user);
-            cachedlikes.add(likerPost);
-            if(cachedDislikes.contains(likerPost)){
-                cachedDislikes.remove(likerPost);
-            }
         }catch (SQLException e){
             throw new PostException("Problem during like adding");
         }
@@ -81,15 +64,8 @@ public class PostManager {
 
     public boolean dislikePost(Post post, User user) throws PostException{
         String likerPost = user.getId() + "" + post.getId();
-        if(cachedDislikes.contains(likerPost)){
-            return false;
-        }
         try{
             postDao.addDislike(post, user);
-            cachedDislikes.add(likerPost);
-            if(cachedlikes.contains(likerPost)){
-                cachedlikes.remove(likerPost);
-            }
         }catch (SQLException e){
             throw new PostException("Problem during dislike adding");
         }
@@ -98,22 +74,22 @@ public class PostManager {
 
     //================= Feed =================//
 
-    public List<Post> getUserFeed(User user) throws PostException{
+    public List<Post> getUserFeed(int userID) throws PostException{
         try {
-            List<Post> posts = postDao.getUserFeed(user);
+            List<Post> posts = postDao.getUserFeed(userID);
             return posts;
         }catch (SQLException e){
             throw new PostException("Problem during user feed creation");
         }
     }
 
-    public List<Post> getFriendsFeed(User user) throws PostException{
-        try {
-            List<Post> posts = postDao.getFriendsFeed(user);
+    public List<Post> getFriendsFeed(int userID) throws PostException, SQLException{
+//        try {
+            List<Post> posts = postDao.getFriendsFeed(userID);
             return posts;
-        }catch (SQLException e){
-            throw new PostException("Problem during friends feed creation");
-        }
+//        }catch (SQLException e){
+//            throw new PostException("Problem during friends feed creation");
+//        }
     }
 
     public List<Post> getTrendingFeed() throws PostException{
