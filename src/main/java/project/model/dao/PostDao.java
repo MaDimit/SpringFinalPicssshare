@@ -32,44 +32,50 @@ public class PostDao {
     //------------------ post manipulations ------------------//
 
     public void addPost(Post post) throws SQLException {
-        Connection conn = dataSource.getConnection();
-        String sql = "INSERT INTO posts (date, poster_id, url) VALUES (?,?,?)";
-        PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        stmt.setObject(1, Timestamp.valueOf(post.getDate()));
-        stmt.setInt(2, post.getPoster().getId());
-        stmt.setString(3, post.getUrl());
-        stmt.executeUpdate();
 
-        ResultSet generatedKeys = stmt.getGeneratedKeys();
-        int id;
-        if (generatedKeys.next()) {
-            id = generatedKeys.getInt(1);
-            post.setId(id);
-        } else {
-            throw new SQLException("Creating post failed, no ID obtained.");
+        try(Connection conn = dataSource.getConnection()) {
+            String sql = "INSERT INTO posts (date, poster_id, url) VALUES (?,?,?)";
+            PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt.setObject(1, Timestamp.valueOf(post.getDate()));
+            stmt.setInt(2, post.getPoster().getId());
+            stmt.setString(3, post.getUrl());
+            stmt.executeUpdate();
+
+            ResultSet generatedKeys = stmt.getGeneratedKeys();
+            int id;
+            if (generatedKeys.next()) {
+                id = generatedKeys.getInt(1);
+                post.setId(id);
+            } else {
+                throw new SQLException("Creating post failed, no ID obtained.");
+            }
+            stmt.close();
         }
-        stmt.close();
     }
 
     public Post getPost(int id) throws SQLException {
-        Connection conn = dataSource.getConnection();
-        String sql = "SELECT id, date, poster_id, url FROM posts WHERE id = ?";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1, id);
-        ResultSet rs = stmt.executeQuery();
-        Post post = rs.next() ? createPost(rs) : null;
-        stmt.close();
-        return post;
+
+        try(Connection conn = dataSource.getConnection()) {
+            String sql = "SELECT id, date, poster_id, url FROM posts WHERE id = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            Post post = rs.next() ? createPost(rs) : null;
+            stmt.close();
+            return post;
+        }
     }
 
     public void deletePost(int id) throws SQLException {
-        Connection conn = dataSource.getConnection();
-        //delete from db
-        String sql = "DELETE FROM posts WHERE id=(?)";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1, id);
-        stmt.executeUpdate();
-        stmt.close();
+
+        try(Connection conn = dataSource.getConnection()) {
+            //delete from db
+            String sql = "DELETE FROM posts WHERE id=(?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+            stmt.close();
+        }
     }
 
     //------------------ liking/disliking ------------------//
@@ -107,82 +113,92 @@ public class PostDao {
     }
 
     private HashSet<String> getAllLikesDislikes(int status) throws SQLException{
-        Connection conn = dataSource.getConnection();
-        HashSet<String> users = new HashSet<>();
-        String sql = "SELECT liker_id, likedpost_id FROM liker_post WHERE status = ?";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1, status);
-        ResultSet rs = stmt.executeQuery();
-        while (rs.next()){
-            users.add(rs.getInt("liker_id") + "" + rs.getInt("likedpost_id"));
+
+        try(Connection conn = dataSource.getConnection()) {
+            HashSet<String> users = new HashSet<>();
+            String sql = "SELECT liker_id, likedpost_id FROM liker_post WHERE status = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, status);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                users.add(rs.getInt("liker_id") + "" + rs.getInt("likedpost_id"));
+            }
+            return users;
         }
-        return users;
     }
 
     //------------------ feed creation ------------------//
 
     public List<Post> getUserFeed(int userID) throws SQLException{
-        Connection conn = dataSource.getConnection();
-        List<Post> posts = new ArrayList<>();
-        String sql = "SELECT id, date, poster_id, url FROM posts WHERE poster_id = ? ORDER BY date";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1,userID);
-        ResultSet rs = stmt.executeQuery();
-        while (rs.next()){
-            posts.add(createPost(rs));
+
+        try(Connection conn = dataSource.getConnection()) {
+            List<Post> posts = new ArrayList<>();
+            String sql = "SELECT id, date, poster_id, url FROM posts WHERE poster_id = ? ORDER BY date";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userID);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                posts.add(createPost(rs));
+            }
+            stmt.close();
+            return posts;
         }
-        stmt.close();
-        return posts;
     }
 
     public List<Post> getFriendsFeed(int userID) throws SQLException{
-        Connection conn = dataSource.getConnection();
-        List<Post> posts = new ArrayList<>();
-        String sql = "SELECT id, date, poster_id, url FROM posts p\n" +
-                "JOIN subscriber_subscribed s ON  s.subscriber_id = ?\n" +
-                "WHERE poster_id = subscribedto_id ORDER BY date";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1,userID);
-        ResultSet rs = stmt.executeQuery();
-        while (rs.next()){
-            posts.add(createPost(rs));
+
+        try(Connection conn = dataSource.getConnection()) {
+            List<Post> posts = new ArrayList<>();
+            String sql = "SELECT id, date, poster_id, url FROM posts p\n" +
+                    "JOIN subscriber_subscribed s ON  s.subscriber_id = ?\n" +
+                    "WHERE poster_id = subscribedto_id ORDER BY date";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userID);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                posts.add(createPost(rs));
+            }
+            stmt.close();
+            return posts;
         }
-        stmt.close();
-        return posts;
     }
 
     public List<Post> getTrendingFeed()throws SQLException{
-        Connection conn = dataSource.getConnection();
-        List<Post> posts = new ArrayList<>();
-        String sql = "SELECT id, date, poster_id, url FROM posts WHERE date >= NOW() - INTERVAL ? DAY;";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1, TRENDING_DAYS);
-        ResultSet rs = stmt.executeQuery();
-        while(rs.next()){
-            posts.add(createPost(rs));
+
+        try(Connection conn = dataSource.getConnection()) {
+            List<Post> posts = new ArrayList<>();
+            String sql = "SELECT id, date, poster_id, url FROM posts WHERE date >= NOW() - INTERVAL ? DAY;";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, TRENDING_DAYS);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                posts.add(createPost(rs));
+            }
+            stmt.close();
+            return posts;
         }
-        stmt.close();
-        return posts;
     }
 
     //================== Post likes/dislikes ==================//
 
     private int addLikeDislike(Post post, User user, int status) throws SQLException {
-        Connection conn = dataSource.getConnection();
-        //Inserting or updating liker_post table
-        String sql = "INSERT INTO liker_post (liker_id, likedpost_id, status) VALUES (?, ?, ?)\n" +
-                "  ON DUPLICATE KEY UPDATE status = ?;";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1, user.getId());
-        stmt.setInt(2, post.getId());
-        stmt.setInt(3, status);
-        stmt.setInt(4, status);
-        //Update, row already existed with a status - 1 row affected
-        //Insert, newly created row - 1 row affected
-        //Update, status changed to opposite - 2 rows affected
-        int affectedRows = stmt.executeUpdate();
-        stmt.close();
-        return affectedRows;
+
+        try(Connection conn = dataSource.getConnection()) {
+            //Inserting or updating liker_post table
+            String sql = "INSERT INTO liker_post (liker_id, likedpost_id, status) VALUES (?, ?, ?)\n" +
+                    "  ON DUPLICATE KEY UPDATE status = ?;";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, user.getId());
+            stmt.setInt(2, post.getId());
+            stmt.setInt(3, status);
+            stmt.setInt(4, status);
+            //Update, row already existed with a status - 1 row affected
+            //Insert, newly created row - 1 row affected
+            //Update, status changed to opposite - 2 rows affected
+            int affectedRows = stmt.executeUpdate();
+            stmt.close();
+            return affectedRows;
+        }
 
     }
 
@@ -205,25 +221,27 @@ public class PostDao {
 
     //get all the tags related to this post
     private List<String> getAllTagsForPost(Post post) throws SQLException {
-        Connection conn = dataSource.getConnection();
-        List<String> tags = new ArrayList<>();
 
-        //Fetching tags from DB
-        String sql = "SELECT tags.tag_name FROM tags \n" +
-                "                JOIN post_tag ON post_tag.tag_id=tags.id\n" +
-                "                \n" +
-                "                JOIN posts ON post_tag.post_id=posts.id\n" +
-                "                WHERE posts.id = ? \n" +
-                "                ORDER BY tags.tag_name;";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1, post.getId());
-        ResultSet rs = stmt.executeQuery();
-        while (rs.next()) {
-            String tag = rs.getString("tag_name");
-            tags.add(tag);
+        try(Connection conn = dataSource.getConnection()) {
+            List<String> tags = new ArrayList<>();
+
+            //Fetching tags from DB
+            String sql = "SELECT tags.tag_name FROM tags \n" +
+                    "                JOIN post_tag ON post_tag.tag_id=tags.id\n" +
+                    "                \n" +
+                    "                JOIN posts ON post_tag.post_id=posts.id\n" +
+                    "                WHERE posts.id = ? \n" +
+                    "                ORDER BY tags.tag_name;";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, post.getId());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String tag = rs.getString("tag_name");
+                tags.add(tag);
+            }
+            stmt.close();
+            return tags;
         }
-        stmt.close();
-        return tags;
     }
 
     private ArrayList<User> getPostLikers(Post post) throws SQLException {
@@ -235,45 +253,49 @@ public class PostDao {
     }
 
     private ArrayList<User> getLikersDislikers(int postID, int status) throws SQLException {
-        Connection conn = dataSource.getConnection();
-        ArrayList<User> users = new ArrayList<>();
-        //Fetching likers from DB
-        String sql = "SELECT users.id FROM users\n" +
-                "JOIN liker_post ON liker_post.liker_id=users.id\n" +
-                "JOIN posts ON liker_post.likedpost_id=posts.id\n" +
-                "WHERE posts.id= ? AND status = ?;";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1, postID);
-        stmt.setInt(2, status);
-        ResultSet rs = stmt.executeQuery();
-        while (rs.next()) {
-            int likerId = rs.getInt(1);
-            users.add(userDao.getUserByID(likerId));
+
+        try(Connection conn = dataSource.getConnection()) {
+            ArrayList<User> users = new ArrayList<>();
+            //Fetching likers from DB
+            String sql = "SELECT users.id FROM users\n" +
+                    "JOIN liker_post ON liker_post.liker_id=users.id\n" +
+                    "JOIN posts ON liker_post.likedpost_id=posts.id\n" +
+                    "WHERE posts.id= ? AND status = ?;";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, postID);
+            stmt.setInt(2, status);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int likerId = rs.getInt(1);
+                users.add(userDao.getUserByID(likerId));
+            }
+            stmt.close();
+            return users;
         }
-        stmt.close();
-        return users;
     }
 
     //hashset used for putting unique posts only in result collection
     public HashSet<Post> getPostsByTags(ArrayList<String> tags) throws SQLException {
-        Connection conn = dataSource.getConnection();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < tags.size(); i++) {
-            sb.append("UPPER('%"+tags.get(i)+"%') ");
-            if(i!=tags.size()-1){
-                sb.append("OR tag_name LIKE ");
+
+        try(Connection conn = dataSource.getConnection()) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < tags.size(); i++) {
+                sb.append("UPPER('%" + tags.get(i) + "%') ");
+                if (i != tags.size() - 1) {
+                    sb.append("OR tag_name LIKE ");
+                }
             }
+            HashSet<Post> matchingPosts = new HashSet<>();
+            String sql = "SELECT post_id FROM post_tag WHERE tag_id IN ( SELECT id FROM tags WHERE UPPER(tag_name)" +
+                    " LIKE " + sb.toString() + ");";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet resultSet = stmt.executeQuery();
+            while (resultSet.next()) {
+                int postID = resultSet.getInt("post_id");
+                matchingPosts.add(getPost(postID));
+            }
+            return matchingPosts;
         }
-        HashSet<Post> matchingPosts = new HashSet<>();
-        String sql = "SELECT post_id FROM post_tag WHERE tag_id IN ( SELECT id FROM tags WHERE UPPER(tag_name)" +
-                " LIKE "+sb.toString()+");";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        ResultSet resultSet = stmt.executeQuery();
-        while(resultSet.next()) {
-            int postID = resultSet.getInt("post_id");
-            matchingPosts.add(getPost(postID));
-        }
-        return matchingPosts;
     }
 
 }

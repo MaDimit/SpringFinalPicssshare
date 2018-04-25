@@ -32,8 +32,8 @@ public class Application extends WebMvcAutoConfiguration {
         return DataSourceBuilder
                 .create()
                 .username("root")
-                .password("")
-                .url("jdbc:mysql://127.0.0.1:30249/picssshare?autoReconnect=true&useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC")
+                .password("root")
+                .url("jdbc:mysql://127.0.0.1:3306/picssshare?autoReconnect=true&useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC")
                 .driverClassName("com.mysql.cj.jdbc.Driver")
                 .build();
     }
