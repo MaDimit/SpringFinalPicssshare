@@ -54,6 +54,7 @@ function insertPosts(json) {
         var postDislikes = post.dislikes;
         insertNewPost(post, postPoster, postComments, postPicture, postTags, postDate, postID, postLikes, postDislikes);
     }
+
 }
 
 function insertNewPost(post, postPoster, postComments, postPicture, postTags, postDate, postID, postLikes, postDislikes) {
@@ -117,13 +118,12 @@ function insertNewPost(post, postPoster, postComments, postPicture, postTags, po
 }
 
 function addComment(lastCommentID, commentSectionID, postID){
-
     console.log(lastCommentID);
     console.log(commentSectionID.id);
     console.log(postID);
     console.log($('#username').val());
     var posterID = $('#username').val();
-    var commentContextValue = (document.getElementById("commentContext"+postID+"").value).toString();
+    var commentContextValue = String(document.getElementById("commentContext"+postID+"").value);
     console.log(commentContextValue);
 
     $.ajax({
@@ -134,16 +134,15 @@ function addComment(lastCommentID, commentSectionID, postID){
                 commentText:commentContextValue}
     }).then(function (data) {
 
+        console.log(data);
+        var newcommentdiv = insertNewComment(data);
+        if(lastCommentID != undefined) {
+            $(newcommentdiv).insertAfter("#comment" + lastCommentID + "");
+        }
+        else{
+            $(newcommentdiv).insertAfter("#" + commentSectionID.id + "");
+        }
     });
-    // var commentPosterID = 2;
-    // var newcomment = {id:99,content:"ASDASDASD", date:"19.09"};
-    // var newcommentdiv = insertNewComment(newcomment);
-    // if(lastCommentID != undefined) {
-    //     $(newcommentdiv).insertAfter("#comment" + lastCommentID + "");
-    // }
-    // else{
-    //     $(newcommentdiv).insertAfter("#" + commentSectionID.id + "");
-    // }
 
 }
 
@@ -175,6 +174,10 @@ function insertModal(post) {
     return "<div></div>";
 }
 
+function deleteComment(divCommentID){
+
+}
+
 function insertNewComment(comment) {
     var commentID = comment.id;
     var commentContent = comment.content;
@@ -190,7 +193,7 @@ function insertNewComment(comment) {
         "                        <div class=\"col-sm-8\">\n" +
         "                            <h4><a href=\"#\">" + commentPoster + "</a>\n" +
         "                                <small>" + commentDate + "</small>\n" +
-        "                            </h4>\n" +
+        "                            </h4><a href="#" onclick="deleteComment(commentID)">X</a>\n" +
         "                            <p>" + commentContent + "</p>\n" +
         "                            <br>\n" +
         "                        </div>\n" +

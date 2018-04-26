@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Comment implements Comparable<Comment> {
+public class Comment{
 
     private int id;
     @JsonIgnore
@@ -87,13 +87,6 @@ public class Comment implements Comparable<Comment> {
         return likers.size();
     }
 
-
-
-
-    @Override
-    public int compareTo(Comment comment) {
-        return this.date.compareTo(comment.date) > 0 ? -1 : 1;
-    }
 
     @Override
     public String toString() {
