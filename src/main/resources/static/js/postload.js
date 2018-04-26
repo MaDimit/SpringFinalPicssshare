@@ -58,6 +58,7 @@ function insertPosts(json) {
 
 function insertNewPost(post, postPoster, postComments, postPicture, postTags, postDate, postID, postLikes, postDislikes) {
     var postPosterUsername = postPoster.username;
+
     var parent = document.getElementById('newpost');
     //adding image
     var newChild = "<div id =\"post\"" + postID + " class=\"card\">" +
@@ -69,8 +70,8 @@ function insertNewPost(post, postPoster, postComments, postPicture, postTags, po
         "        <div class=\"card-body\">";
 
     //adding tags
-    for (tag in postTags) {
-        newChild += "<a class=\"label\" href=\"#\">" + tag + "</a>";  //TODO Tag inserting to search
+    for (i = 0; i < postTags.length; i++) {
+        newChild += "<a class=\"label\" href=\"#\">" + postTags[i] + "</a>";  //TODO Tag inserting to search
     }
 
     //likes dislikes
@@ -88,16 +89,24 @@ function insertNewPost(post, postPoster, postComments, postPicture, postTags, po
 
     newChild += insertModal(post);
 
-    newChild += "<p><span class=\"badge\"></span> <b>Comments:</b></p><br>";
+    newChild += "<p id=\"commentsSection" + postID + "\"><span class=\"badge\"></span> <b>Comments:</b></p><br>";
     for (var i = 0; i < postComments.length; i++) {
         newChild += insertNewComment(postComments[i]);
     }
+    if (postComments[postComments.length-1] != undefined) {
+        var lastCommentID = postComments[postComments.length - 1].id;
+    }
+
+    var commentSectionID = "commentsSection"+postID;
+    console.log(commentSectionID);
+
+
 
     newChild += "                     <h4>Leave a Comment:</h4>\n" +
         "                        <div class=\"form-group\">\n" +
-        "                            <textarea id=\"commentContext2\" class=\"form-control\" rows=\"3\" required></textarea>\n" +
+        "                            <textarea id=\"commentContext"+postID+"\" class=\"form-control\" rows=\"3\" required></textarea>\n" +
         "                        </div>\n" +
-        "                        <button onclick=\"addComment()\" class=\"btn btn-success\">Submit</button>\n" +
+        "                        <button onclick=\"addComment("+lastCommentID+", "+commentSectionID+","+postID+" )\" class=\"btn btn-success\">Submit</button>\n" +
         "                    </div>\n" +
         "                    <div class=\"card-footer text-muted\">\n" +
         "                        Posted on " + postDate + " by\n" +
@@ -105,6 +114,37 @@ function insertNewPost(post, postPoster, postComments, postPicture, postTags, po
         "                    </div>\n" +
         "                </div>";
     parent.insertAdjacentHTML('beforeend', newChild);
+}
+
+function addComment(lastCommentID, commentSectionID, postID){
+
+    console.log(lastCommentID);
+    console.log(commentSectionID.id);
+    console.log(postID);
+    console.log($('#username').val());
+    var posterID = $('#username').val();
+    var commentContextValue = (document.getElementById("commentContext"+postID+"").value).toString();
+    console.log(commentContextValue);
+
+    $.ajax({
+        url: "addComment",
+        type: "POST",
+        data:{  posterID: posterID,
+                postID: postID,
+                commentText:commentContextValue}
+    }).then(function (data) {
+
+    });
+    // var commentPosterID = 2;
+    // var newcomment = {id:99,content:"ASDASDASD", date:"19.09"};
+    // var newcommentdiv = insertNewComment(newcomment);
+    // if(lastCommentID != undefined) {
+    //     $(newcommentdiv).insertAfter("#comment" + lastCommentID + "");
+    // }
+    // else{
+    //     $(newcommentdiv).insertAfter("#" + commentSectionID.id + "");
+    // }
+
 }
 
 function insertModal(post) {
