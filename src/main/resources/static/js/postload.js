@@ -174,8 +174,22 @@ function insertModal(post) {
     return "<div></div>";
 }
 
-function deleteComment(divCommentID){
-
+function deleteComment(commentID){
+    $.ajax({
+        url: "deleteComment",
+        type: "POST",
+        data: {
+            commentID: commentID
+        }
+    }).then(function (data) {
+        if(data==='success'){
+            document.getElementById("comment"+commentID).innerHTML="";
+            alert('You have successfully deleted your comment.')
+        }
+        else {
+            alert('Sorry! Problems occured.');
+        }
+    });
 }
 
 function insertNewComment(comment) {
@@ -193,7 +207,7 @@ function insertNewComment(comment) {
         "                        <div class=\"col-sm-8\">\n" +
         "                            <h4><a href=\"#\">" + commentPoster + "</a>\n" +
         "                                <small>" + commentDate + "</small>\n" +
-        "                            </h4><a href="#" onclick="deleteComment(commentID)">X</a>\n" +
+        "                            </h4><button style='float: right;' onclick='deleteComment("+commentID+")'>DELETE</button>\n" +
         "                            <p>" + commentContent + "</p>\n" +
         "                            <br>\n" +
         "                        </div>\n" +
