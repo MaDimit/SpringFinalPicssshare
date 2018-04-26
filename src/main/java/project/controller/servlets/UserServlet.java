@@ -10,6 +10,7 @@ import project.model.pojo.User;
 import javax.servlet.http.HttpSession;
 
 @RestController
+@RequestMapping(value = "/user")
 public class UserServlet {
 
     @Autowired
