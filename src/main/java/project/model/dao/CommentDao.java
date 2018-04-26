@@ -103,7 +103,7 @@ public class CommentDao {
         try(Connection conn = dataSource.getConnection()) {
             ArrayList<Comment> comments = new ArrayList<>();
             //Fetching users from DB
-            String sql = "SELECT id, poster_id, date, content, post_id FROM comments WHERE post_id=? ORDER BY date DESC";
+            String sql = "SELECT id, poster_id, date, content, post_id FROM comments WHERE post_id=? ORDER BY date ASC";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, post.getId());
             ResultSet rs = stmt.executeQuery();
