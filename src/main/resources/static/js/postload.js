@@ -1,3 +1,5 @@
+
+
 function loadPosts(feed) {
     if (feed === "friends") {
 
@@ -56,7 +58,6 @@ function insertPosts(json) {
     }
 
 }
-
 function insertNewPost(post, postPoster, postComments, postPicture, postTags, postDate, postID, postLikes, postDislikes) {
     var postPosterUsername = postPoster.username;
 
@@ -72,12 +73,12 @@ function insertNewPost(post, postPoster, postComments, postPicture, postTags, po
 
     //adding tags
     for (i = 0; i < postTags.length; i++) {
-        newChild += "<h5 class=\"label-primary\">" + postTags[i] + "</h5>";  //TODO Tag inserting to search
+        newChild += "<a href='#'><span class=\"label label-primary\">" + postTags[i] + "</span></a> ";  //TODO Tag inserting to search
     }
 
     //likes dislikes
     newChild +=
-        "<div class=\"btn-group\">" +
+        "<br><div class=\"btn-group\">" +
         "            <button class=\"btn btn-success\" onclick=\"like("+postID+")\" ><i\n" +
         "                    class=\"fa fa-thumbs-up\"></i>\n" +
         "                <div id=\"post"+postID+"likes\" style=\"display: inline\">" + postLikes + "</div>\n" +

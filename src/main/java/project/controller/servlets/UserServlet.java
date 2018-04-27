@@ -10,6 +10,7 @@ import project.model.dao.PostDao;
 import project.model.dao.UserDao;
 import project.model.pojo.User;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @RestController
@@ -27,21 +28,44 @@ public class UserServlet {
     private UserManager userManager;
 
     @ResponseBody
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public String register(@RequestParam String username,
+                           @RequestParam String password1,
+                           @RequestParam String password2,
+                           @RequestParam String email,
+                           HttpSession session) {
+        String message = "success";
+        try {
+            if(!password1.equals(password2)){
+                message = "passNotMatch";
+                return message;
+            }else {
+                User user = loggingManager.register(username, password1, email);
+                session.setAttribute("user", user);
+            }
+
+        } catch (Exception e) {
+            message = e.getMessage();
+        }
+        return message;
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String login(@RequestParam String username, @RequestParam String password, HttpSession session){
+    public String login(@RequestParam String username, @RequestParam String password, HttpServletRequest request) {
         String message = "success";
         try {
             User user = loggingManager.login(username, password);
-            session.setAttribute("user", user);
+            request.getSession().setAttribute("user", user);
         } catch (Exception e) {
-    message = e.getMessage();
-}
+            message = e.getMessage();
+        }
         return message;
-                }
+    }
 
     @ResponseBody
     @RequestMapping(value = "/addLike", method = RequestMethod.POST)
-    public String addLike(@RequestParam int likerID, @RequestParam int postID){
+    public String addLike(@RequestParam int likerID, @RequestParam int postID) {
         String message = "";
         try {
             message = postManager.likePost(postDao.getPost(postID), userDao.getUserByID(likerID));
@@ -53,7 +77,7 @@ public class UserServlet {
 
     @ResponseBody
     @RequestMapping(value = "/addDislike", method = RequestMethod.POST)
-    public String addDislike(@RequestParam int dislikerID, @RequestParam int postID){
+    public String addDislike(@RequestParam int dislikerID, @RequestParam int postID) {
         String message = "";
         try {
             message = postManager.dislikePost(postDao.getPost(postID), userDao.getUserByID(dislikerID));
