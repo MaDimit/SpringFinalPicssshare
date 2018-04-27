@@ -6,7 +6,6 @@ import project.controller.managers.LoggingManager;
 import project.model.pojo.User;
 
 import javax.sql.DataSource;
-import javax.xml.crypto.Data;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -107,7 +106,7 @@ public class UserDao {
 
 
     // username and id should not be modified
-    public void executeProfileUpdate(User u, String password, String first_name, String last_name, String email, String profilePicURL)
+    public void executeProfileUpdate(User u, String password, String first_name, String last_name, String email)
             throws SQLException, LoggingManager.RegistrationException {
 
         try (Connection conn = dataSource.getConnection()) {
@@ -160,8 +159,8 @@ public class UserDao {
                 System.out.println("EMAIL SET");
             }
 
-            notNullValues.put("profile_picture_url", profilePicURL);
-            u.setProfilePicUrl(profilePicURL);
+//            notNullValues.put("profile_picture_url", profilePicURL);
+//            u.setProfilePicUrl(profilePicURL);
 
             System.out.println("PIC SET");
 
@@ -186,6 +185,17 @@ public class UserDao {
             System.out.println(sql);
             stmt.executeUpdate();
             System.out.println("EXECUTED");
+            stmt.close();
+        }
+    }
+
+    public void changeProfilePic(int userID, String url) throws SQLException{
+        try (Connection conn = dataSource.getConnection()) {
+            String sql = "UPDATE users SET profile_picture_url = ? WHERE id = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, url);
+            stmt.setInt(2, userID);
+            stmt.executeUpdate();
             stmt.close();
         }
     }
