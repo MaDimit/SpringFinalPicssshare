@@ -8,10 +8,12 @@
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="js/postload.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/blog-home.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/scripts.js"></script>
     <title>Title</title>
 </head>
 <body onload="loadUserData()">
@@ -22,10 +24,13 @@
         <!-- left column -->
         <div class="col-md-3">
             <div class="text-center">
-                <img id='profilePic' src="//placehold.it/100" class="avatar img-circle" alt="avatar">
+                <img id='avatar' src="" class="avatar img-circle img-responsive" alt="avatar">
                 <h6>Upload a different photo...</h6>
 
-                <input type="file" class="form-control">
+                <form method="POST" enctype="multipart/form-data" id="fileUploadForm" class="form-control">
+                    <input type="file" name="file" accept="image/*" required>
+                    <input type="submit" value="Submit" id="btnSubmit"/>
+                </form>
             </div>
         </div>
 
@@ -102,15 +107,15 @@
 
     function loadUserData(){
         $.ajax({
-            url: "user/getUserData",
-            type: "POST",
+            url: "user/getCurrent",
+            type: "POST"
         }).then(function (data) {
             document.getElementById('username').value = data.username;
-            document.getElementById('oldPassword').value = data.password;
             document.getElementById('firstName').value = data.firstName;
             document.getElementById('lastName').value = data.lastName;
             document.getElementById('email').value = data.email;
-
+           
+            $('#avatar').attr("src", addImage("avatar", data.profilePicUrl));
         });
 
     }
@@ -123,7 +128,6 @@
         var firstName = document.getElementById('firstName').value;
         var lastName = document.getElementById('lastName').value;
         var email = document.getElementById('email').value;
-        var profilePicURL = document.getElementById('profilePic').src;
 
         $.ajax({
             url: "user/editUserData",
@@ -136,7 +140,7 @@
                     firstName: firstName,
                     lastName: lastName,
                     email: email,
-                    profilePicURL: profilePicURL},
+                }
         }).then(function (data) {
             if(data==='success'){
                 alert('Successfully edited information.');
@@ -146,6 +150,54 @@
             }
 
         });
+    }
+
+
+    $(document).ready(function () {
+
+        $("#btnSubmit").click(function (event) {
+
+            //stop submit the form, we will post it manually.
+            event.preventDefault();
+
+            fire_ajax_submit();
+
+        });
+
+    });
+
+    function fire_ajax_submit() {
+
+        // Get form
+        var form = $('#fileUploadForm')[0];
+
+        var data = new FormData(form);
+
+        $("#btnSubmit").prop("disabled", true);
+
+        $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: "/img/uploadProfilePic",
+            data: data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 600000,
+            success: function (data) {
+                console.log("SUCCESS : ", data);
+                console.log(typeof data);
+                $("#avatar").attr("src", getImageSrc(data));
+                $("#btnSubmit").prop("disabled", false);
+
+            },
+            error: function (e) {
+                console.log("ERROR : ", e);
+                $("#btnSubmit").prop("disabled", false);
+
+            }
+        });
+
     }
 </script>
 </body>

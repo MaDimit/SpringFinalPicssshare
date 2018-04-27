@@ -262,10 +262,6 @@ body {font-family: Arial, Helvetica, sans-serif;}
   }
 }
 
-.container{
-  margin-top: 48px;
-}
-
 .autocomplete {
   /*the container must be positioned relative:*/
   position: relative;
@@ -315,4 +311,20 @@ input[type=text]:focus {
   /*when navigating through the items using the arrow keys:*/
   background-color: DodgerBlue !important;
   color: #ffffff;
+}
+
+#avatar {
+
+
+
+    width: 150px;
+    height: 150px;
+
+
+    background-size: cover;
+
+
+    background-position: top center;
+
+    border-radius: 50%;
 }
