@@ -99,7 +99,7 @@ public class LoggingManager {
         java.util.regex.Matcher m = p.matcher(email);
 
         if (userDao.checkIfEmailIsTaken(email)) {
-            throw new RegistrationException("emailExists");
+            throw new RegistrationException("Email is already taken.");
         }
 
         return m.matches();
