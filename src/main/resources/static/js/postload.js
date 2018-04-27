@@ -9,10 +9,8 @@ function loadPosts(feed) {
 }
 
 function loadFriendsFeed() {
-    var username = $('#username').val(); //should be removed, user is taken from session. for now used for testing purpose.
     $.ajax({
-        url: "/feed/friends",
-        data: {uid: username}
+        url: "/feed/friends"
     }).then(function (data) {
         console.log(data);
         insertPosts(data);
@@ -120,13 +118,11 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
 }
 
 function dislike(postID){
-    var dislikerID = $('#username').val();
-    console.log(dislikerID);
     console.log(postID);
     $.ajax({
-        url: "addDislike",
+        url: "user/addDislike",
         type: "POST",
-        data:{  dislikerID: dislikerID,
+        data:{
             postID: postID
         }
     }).then(function (data) {
@@ -151,13 +147,11 @@ function dislike(postID){
 }
 
 function like(postID){
-    var likerID = $('#username').val();
-    console.log(likerID);
     console.log(postID);
     $.ajax({
-        url: "addLike",
+        url: "user/addLike",
         type: "POST",
-        data:{  likerID: likerID,
+        data:{
             postID: postID
         }
     }).then(function (data) {

@@ -6,7 +6,9 @@ import project.controller.managers.CommentManager;
 import project.model.dao.PostDao;
 import project.model.dao.UserDao;
 import project.model.pojo.Comment;
+import project.model.pojo.User;
 
+import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 
 @RestController
@@ -23,10 +25,11 @@ public class CommentsController {
 
     @ResponseBody
     @RequestMapping(value = "/addComment", method = RequestMethod.POST)
-    public Comment addComment(@RequestParam int posterID, @RequestParam int postID, @RequestParam String commentText){
+    public Comment addComment(@RequestParam int postID, @RequestParam String commentText, HttpSession session){
         Comment comment=null;
+        User user = (User)session.getAttribute("user");
         try {
-            comment = new Comment(postDao.getPost(postID), userDao.getUserByID(posterID), commentText);
+            comment = new Comment(postDao.getPost(postID), user, commentText);
             commentManager.addComment(comment);
 
 

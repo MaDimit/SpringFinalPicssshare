@@ -71,14 +71,8 @@ public class UserController {
 
     @ResponseBody
     @RequestMapping(value = "/getUserData", method = RequestMethod.POST)
-    public User getUserData(@RequestParam int userID) {
-        User user = null;
-        try {
-            user = userDao.getUserByID(userID);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return user;
+    public User getUserData(HttpSession session) {
+        return (User)session.getAttribute("user");
     }
 
 
@@ -120,10 +114,11 @@ public class UserController {
 
     @ResponseBody
     @RequestMapping(value = "/addLike", method = RequestMethod.POST)
-    public String addLike(@RequestParam int likerID, @RequestParam int postID) {
+    public String addLike(@RequestParam int postID, HttpSession session) {
         String message = "";
+        User user = (User)session.getAttribute("user");
         try {
-            message = postManager.likePost(postDao.getPost(postID), userDao.getUserByID(likerID));
+            message = postManager.likePost(postDao.getPost(postID), user);
         } catch (Exception e) {
             message = e.getMessage();
         }
@@ -132,10 +127,11 @@ public class UserController {
 
     @ResponseBody
     @RequestMapping(value = "/addDislike", method = RequestMethod.POST)
-    public String addDislike(@RequestParam int dislikerID, @RequestParam int postID) {
+    public String addDislike(@RequestParam int postID, HttpSession session) {
         String message = "";
+        User user = (User)session.getAttribute("user");
         try {
-            message = postManager.dislikePost(postDao.getPost(postID), userDao.getUserByID(dislikerID));
+            message = postManager.dislikePost(postDao.getPost(postID),user);
         } catch (Exception e) {
             message = e.getMessage();
         }

@@ -103,7 +103,7 @@
     function loadUserData(){
         var userID = 2;
         $.ajax({
-            url: "getUserData",
+            url: "user/getUserData",
             type: "POST",
             data: {userID: userID},
         }).then(function (data) {
@@ -129,7 +129,7 @@
         var profilePicURL = document.getElementById('profilePic').src;
 
         $.ajax({
-            url: "editUserData",
+            url: "user/editUserData",
             type: "POST",
             data: { userID: userID,
                     username: username,
