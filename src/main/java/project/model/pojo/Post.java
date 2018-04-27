@@ -36,20 +36,24 @@ public class Post implements Comparable<Post> {
         this.dislikers = new ArrayList<>();
     }
 
-    public void addLiker(User liker) {
+    public int addLiker(User liker) {
         if(!likers.contains(liker)) {
             this.likers.add(liker);
+            return 1;
         }
+        return 0;
     }
 
     public void removeLiker(User user) {
         likers.remove(user);
     }
 
-    public void addDisliker(User disliker) {
+    public int addDisliker(User disliker) {
         if(!dislikers.contains(disliker)) {
             this.dislikers.add(disliker);
+            return 1;
         }
+        return 0;
     }
 
     public void removeDisliker(User user) {

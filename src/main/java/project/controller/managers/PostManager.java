@@ -51,25 +51,24 @@ public class PostManager {
 
     //================= liking/disliking =================//
 
-    public boolean likePost(Post post, User user) throws PostException{
+    public String likePost(Post post, User user) throws PostException{
         String likerPost = user.getId() + "" + post.getId();
 
         try{
-            postDao.addLike(post, user);
+            //get message to see what happened
+            return postDao.addLike(post, user);
         }catch (SQLException e){
             throw new PostException("Problem during like adding");
         }
-        return true;
     }
 
-    public boolean dislikePost(Post post, User user) throws PostException{
+    public String dislikePost(Post post, User user) throws PostException{
         String likerPost = user.getId() + "" + post.getId();
         try{
-            postDao.addDislike(post, user);
+            return postDao.addDislike(post, user);
         }catch (SQLException e){
             throw new PostException("Problem during dislike adding");
         }
-        return true;
     }
 
     //================= Feed =================//

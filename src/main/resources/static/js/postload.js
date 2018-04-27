@@ -72,19 +72,19 @@ function insertNewPost(post, postPoster, postComments, postPicture, postTags, po
 
     //adding tags
     for (i = 0; i < postTags.length; i++) {
-        newChild += "<a class=\"label\" href=\"#\">" + postTags[i] + "</a>";  //TODO Tag inserting to search
+        newChild += "<h5 class=\"label-primary\">" + postTags[i] + "</h5>";  //TODO Tag inserting to search
     }
 
     //likes dislikes
     newChild +=
         "<div class=\"btn-group\">" +
-        "            <button class=\"btn btn-success\" onclick=\"like()\" onmouseover=\"showLikers()\"><i\n" +
+        "            <button class=\"btn btn-success\" onclick=\"like("+postID+")\" ><i\n" +
         "                    class=\"fa fa-thumbs-up\"></i>\n" +
-        "                <div id=\"likes-quantity\" style=\"display: inline\">" + postLikes + "</div>\n" +
+        "                <div id=\"post"+postID+"likes\" style=\"display: inline\">" + postLikes + "</div>\n" +
         "            </button>\n" +
-        "            <button class=\"btn btn-danger\" onclick=\"dislike()\" onmouseover=\"showDislikers()\"><i\n" +
+        "            <button class=\"btn btn-danger\" onclick=\"dislike("+postID+")\" ><i\n" +
         "                    class=\"fa fa-thumbs-down\"></i>\n" +
-        "                <div id=\"dislikes-quantity\" style=\"display: inline\">" + postDislikes + "</div>\n" +
+        "                <div id=\"post"+postID+"dislikes\" style=\"display: inline\">" + postDislikes + "</div>\n" +
         "            </button>\n" +
         "        </div>";
 
@@ -115,6 +115,74 @@ function insertNewPost(post, postPoster, postComments, postPicture, postTags, po
         "                    </div>\n" +
         "                </div>";
     parent.insertAdjacentHTML('beforeend', newChild);
+}
+
+function dislike(postID){
+    var dislikerID = $('#username').val();
+    console.log(dislikerID);
+    console.log(postID);
+    $.ajax({
+        url: "addDislike",
+        type: "POST",
+        data:{  dislikerID: dislikerID,
+            postID: postID
+        }
+    }).then(function (data) {
+        if(data==='success'){
+            alert('Successfully disliked post');
+            var oldValue = parseInt(document.getElementById("post"+postID+"dislikes").innerHTML);
+            var newValue = Number(oldValue) + Number(1);
+            document.getElementById("post"+postID+"dislikes").innerHTML=String(newValue);
+        }
+        if(data==='removedLikeAddDislike'){
+            var oldDislikeValue = parseInt(document.getElementById("post"+postID+"dislikes").innerHTML);
+            var newDislikeValue = Number(oldDislikeValue) + Number(1);
+            var oldLikeValue = parseInt(document.getElementById("post"+postID+"likes").innerHTML);
+            var newLikeValue = Number(oldLikeValue) - Number(1);
+            document.getElementById("post"+postID+"dislikes").innerHTML=String(newDislikeValue);
+            document.getElementById("post"+postID+"likes").innerHTML=String(newLikeValue);
+        }
+        if(data==='You have already disliked this post.'){
+            alert('You have already disliked this post.');
+        }
+    });
+}
+
+function like(postID){
+    var likerID = $('#username').val();
+    console.log(likerID);
+    console.log(postID);
+    $.ajax({
+        url: "addLike",
+        type: "POST",
+        data:{  likerID: likerID,
+            postID: postID
+        }
+    }).then(function (data) {
+        if(data==='success'){
+            alert('Successfully liked post');
+            var oldValue = parseInt(document.getElementById("post"+postID+"likes").innerHTML);
+            var newValue = Number(oldValue) + Number(1);
+            document.getElementById("post"+postID+"likes").innerHTML=String(newValue);
+        }
+        if(data==='removedDislikeAddLike'){
+            var oldDislikeValue = parseInt(document.getElementById("post"+postID+"dislikes").innerHTML);
+            var newDislikeValue = Number(oldDislikeValue) - Number(1);
+            var oldLikeValue = parseInt(document.getElementById("post"+postID+"likes").innerHTML);
+            var newLikeValue = Number(oldLikeValue) + Number(1);
+            console.log(oldDislikeValue);
+            console.log(newDislikeValue);
+            console.log(oldLikeValue);
+            console.log(newLikeValue);
+
+            document.getElementById("post"+postID+"dislikes").innerHTML=String(newDislikeValue);
+            document.getElementById("post"+postID+"likes").innerHTML=String(newLikeValue);
+        }
+        if(data==='You have already liked this post.'){
+            alert('You have already liked this post.');
+        }
+    });
+
 }
 
 function addComment(lastCommentID, commentSectionID, postID){
