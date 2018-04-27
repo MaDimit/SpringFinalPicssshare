@@ -7,7 +7,6 @@ import project.model.pojo.Post;
 import project.model.pojo.User;
 
 import javax.sql.DataSource;
-import javax.xml.crypto.Data;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -143,7 +142,7 @@ public class PostDao {
 
         try(Connection conn = dataSource.getConnection()) {
             List<Post> posts = new ArrayList<>();
-            String sql = "SELECT id, date, poster_id, url FROM posts WHERE poster_id = ? ORDER BY date";
+            String sql = "SELECT id, date, poster_id, url FROM posts WHERE poster_id = ? ORDER BY date DESC";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userID);
             ResultSet rs = stmt.executeQuery();
@@ -161,7 +160,7 @@ public class PostDao {
             List<Post> posts = new ArrayList<>();
             String sql = "SELECT id, date, poster_id, url FROM posts p\n" +
                     "JOIN subscriber_subscribed s ON  s.subscriber_id = ?\n" +
-                    "WHERE poster_id = subscribedto_id ORDER BY date";
+                    "WHERE poster_id = subscribedto_id ORDER BY date DESC";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userID);
             ResultSet rs = stmt.executeQuery();

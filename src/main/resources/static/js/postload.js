@@ -1,14 +1,6 @@
-function loadPosts(feed) {
-    if (feed === "friends") {
-
-    } else if (feed === "user") {
-
-    } else if (feed === "trending") {
-
-    }
-}
-
 function loadFriendsFeed() {
+    $("#newpost").html("");
+    $(".page-header").html("Friends Feed");
     $.ajax({
         url: "/feed/friends"
     }).then(function (data) {
@@ -17,24 +9,26 @@ function loadFriendsFeed() {
     });
 }
 
-function loadUserPosts() {
-    var username = $('#username').val(); //should be removed, user is taken from session. for now used for testing purpose.
+function loadUserPosts(id) {
+    $("#newpost").html("");
+    $(".page-header").html("User Posts");
     $.ajax({
-        url: "userfeed",
-        data: {username: username},
+        url: "feed/user",
+        data: {id : id},
     }).then(function (data) {
         console.log(data);
-        insertPosts(JSON.parse(data));
+        insertPosts(data);
     });
 }
 
 function loadTrendingFeed() {
-    var username = $('#username').val(); //should be removed, user is taken from session. for now used for testing purpose.
+    $("#newpost").html("");
+    $(".page-header").html("Trending Feed");
     $.ajax({
-        url: "trendingfeed"
+        url: "feed/trending"
     }).then(function (data) {
         console.log(data);
-        insertPosts(JSON.parse(data));
+        insertPosts(data);
     });
 }
 
@@ -61,7 +55,7 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
     var parent = document.getElementById('newpost');
     var imageID = "image" + postID;
     //adding image
-    var newChild = "<div id =\"post\"" + postID + " class=\"card\">" +
+    var newChild = "<div id =\"post" + postID + "\" class=\"card\">" +
         "    <!-- post picture -->" +
         "    <div class=\"fill\">" +
         "    <img class=\"card-img-top\" id="+imageID+" src=\"\" alt=\"Image\">" +
@@ -127,7 +121,7 @@ function dislike(postID){
         }
     }).then(function (data) {
         if(data==='success'){
-            alert('Successfully disliked post');
+            // alert('Successfully disliked post');
             var oldValue = parseInt(document.getElementById("post"+postID+"dislikes").innerHTML);
             var newValue = Number(oldValue) + Number(1);
             document.getElementById("post"+postID+"dislikes").innerHTML=String(newValue);
@@ -141,7 +135,7 @@ function dislike(postID){
             document.getElementById("post"+postID+"likes").innerHTML=String(newLikeValue);
         }
         if(data==='You have already disliked this post.'){
-            alert('You have already disliked this post.');
+            // alert('You have already disliked this post.');
         }
     });
 }
@@ -156,7 +150,7 @@ function like(postID){
         }
     }).then(function (data) {
         if(data==='success'){
-            alert('Successfully liked post');
+            // alert('Successfully liked post');
             var oldValue = parseInt(document.getElementById("post"+postID+"likes").innerHTML);
             var newValue = Number(oldValue) + Number(1);
             document.getElementById("post"+postID+"likes").innerHTML=String(newValue);
@@ -175,7 +169,7 @@ function like(postID){
             document.getElementById("post"+postID+"likes").innerHTML=String(newLikeValue);
         }
         if(data==='You have already liked this post.'){
-            alert('You have already liked this post.');
+            // alert('You have already liked this post.');
         }
     });
 
@@ -193,7 +187,7 @@ function addComment(lastCommentID, commentSectionID, postID){
     $.ajax({
         url: "addComment",
         type: "POST",
-        data:{  posterID: posterID,
+        data:{
                 postID: postID,
                 commentText:commentContextValue}
     }).then(function (data) {
@@ -206,8 +200,9 @@ function addComment(lastCommentID, commentSectionID, postID){
         else{
             $(newcommentdiv).insertAfter("#" + commentSectionID.id + "");
         }
-    });
 
+    });
+    document.getElementById("commentContext"+postID+"").value = "";
 }
 
 function insertModal(post) {
@@ -260,7 +255,7 @@ function insertNewComment(comment) {
     var commentID = comment.id;
     var commentContent = comment.content;
     var commentDate = comment.date;
-    var commentPoster = comment.user.username;
+    var commentPoster = comment.user;
 
 
     var newChild = "<div id=\"comment" + commentID + "\" class=\"row\">\n" +
@@ -269,7 +264,7 @@ function insertNewComment(comment) {
         "                                 class=\"img-circle\" height=\"65\" width=\"65\" alt=\"Avatar\">\n" +
         "                        </div>\n" +
         "                        <div class=\"col-sm-8\">\n" +
-        "                            <h4><a href=\"#\">" + commentPoster + "</a>\n" +
+        "                            <h4><a href=\"#\">" + commentPoster.username + "</a>\n" +
         "                                <small>" + commentDate + "</small>\n" +
         "                            </h4><button style='float: right;' onclick='deleteComment("+commentID+")'>DELETE</button>\n" +
         "                            <p>" + commentContent + "</p>\n" +
