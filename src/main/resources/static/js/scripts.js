@@ -20,3 +20,19 @@ function addImage(imageID, postUrl) {
         $("#" +imageID).attr("src", getImageSrc(data));
     })
 }
+
+function getUserInfo(id){
+    $.ajax({
+        url:"/user/get",
+        data:id
+    }).then(function (data) {
+        return {
+            id : data.id,
+            username : data.username,
+            firstname : data.firstName,
+            lastname : data.lastName,
+            email : data.email,
+            profilePicUrl : data.profilePicURL
+        };
+    });
+}

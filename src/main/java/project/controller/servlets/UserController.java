@@ -1,17 +1,16 @@
 package project.controller.servlets;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import project.controller.managers.LoggingManager;
 import project.controller.managers.PostManager;
 import project.controller.managers.UserManager;
 import project.model.dao.PostDao;
-import project.model.dao.UserDao;
 import project.model.pojo.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.sql.SQLException;
 
 @RestController
 @RequestMapping(value = "/user")
@@ -21,8 +20,6 @@ public class UserController {
     private LoggingManager loggingManager;
     @Autowired
     PostManager postManager;
-    @Autowired
-    UserDao userDao;
     @Autowired
     PostDao postDao;
     @Autowired
@@ -39,7 +36,6 @@ public class UserController {
                                @RequestParam String firstName,
                                @RequestParam String lastName,
                                @RequestParam String email,
-                               @RequestParam String profilePicURL,
                                HttpSession session) {
         String message = "success";
         System.out.println(username);
@@ -50,14 +46,14 @@ public class UserController {
                 //if there is new password entered
                 if (newPassword != "" && !newPassword.isEmpty() && newPassword != null) {
                     if (newPassword.equals(confirmPassword)) {
-                        userManager.updateProfileInfo(user, newPassword, firstName, lastName, email, profilePicURL);
+                        userManager.updateProfileInfo(user, newPassword, firstName, lastName, email);
 
                     } else {
                         message = "New passwords don't match.";
                     }
                     //use the old password
                 } else {
-                    userManager.updateProfileInfo(user, oldPassword, firstName, lastName, email, profilePicURL);
+                    userManager.updateProfileInfo(user, oldPassword, firstName, lastName, email);
                 }
 
             } else {
@@ -71,9 +67,20 @@ public class UserController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/getUserData", method = RequestMethod.POST)
+    @RequestMapping(value = "/getCurrent", method = RequestMethod.POST)
     public User getUserData(HttpSession session) {
         return (User)session.getAttribute("user");
+    }
+
+    @GetMapping(value = "/get")
+    public User getUser(@RequestParam("id") int userID){
+        User user = null;
+        try {
+            user = userManager.getUserByID(userID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
     }
 
 

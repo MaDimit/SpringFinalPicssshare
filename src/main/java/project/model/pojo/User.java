@@ -1,8 +1,7 @@
 package project.model.pojo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Objects;
 
 public class User {
@@ -10,6 +9,7 @@ public class User {
     // User data
     private int id;
     private String username;
+    @JsonIgnore
     private String password;
     private String firstName;
     private String lastName;
