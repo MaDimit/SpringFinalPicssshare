@@ -136,22 +136,25 @@
             });
         });
 
-        $('#registerbtn').on('click', function () {
-            var username = $('#registername').val();
-            var password1 = $('#password1').val();
-            var password2 = $('#password2').val();
-            var email = $('#email').val();
-            var json = {username : username, password1 : password1, password2 : password2, email : email};
-            console.log(username + " " + password1 + " " + password2 + " " + email),
+    });
+
+
+    $('#registerbtn').on('click', function () {
+        var username = $('#registername').val();
+        var password1 = $('#password1').val();
+        var password2 = $('#password2').val();
+        var email = $('#email').val();
+       // var json = {username : username, password1 : password1, password2 : password2, email : email};
+        console.log(username + " " + password1 + " " + password2 + " " + email),
             $.ajax({
                 type: "POST",
                 url : "register",
-                data : JSON.stringify(json),
+                data : {username: username, password1: password1, password2:password2, email:email},
                 success: function (data) {
                     var msg;
                     if (data === "success") {
-                        $(location).attr('href', "/user");
-                        return;
+                        $(location).attr('href', "/index.html");
+
                     }
                     else if (data === "passNotMatch") {
                         msg = "Password doesn't match";
@@ -182,7 +185,6 @@
                     alert(e);
                 }
             })
-        })
     });
 
 </script>

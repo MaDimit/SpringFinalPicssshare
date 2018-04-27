@@ -80,27 +80,37 @@ public class PostDao {
 
     //------------------ liking/disliking ------------------//
 
-    public void addLike(Post post, User user) throws SQLException {
+    public String addLike(Post post, User user) throws SQLException {
         synchronized (post) {
             int affectedRows = addLikeDislike(post, user, 1);
             if (affectedRows == 1) {
-                post.addLiker(user);
+                return post.addLiker(user) == 1 ? "success" : "You have already liked this post.";
+
             } else if (affectedRows == 2) {
-                post.addLiker(user);
-                post.removeDisliker(user);
+                if(post.addLiker(user)==1) {
+                    post.removeDisliker(user);
+                    return "removedDislikeAddLike";
+                }
+                else return "You have already liked this post.";
             }
+            return "null";
         }
     }
 
-    public void addDislike(Post post, User user) throws SQLException {
+    public String addDislike(Post post, User user) throws SQLException {
         synchronized (post) {
             int affectedRows = addLikeDislike(post, user, -1);
             if (affectedRows == 1) {
-                post.addDisliker(user);
+                return post.addDisliker(user) == 1 ? "success" : "You have already disliked this post.";
+
             } else if (affectedRows == 2) {
-                post.addDisliker(user);
-                post.removeLiker(user);
+                if(post.addDisliker(user)==1) {
+                    post.removeLiker(user);
+                    return "removedLikeAddDislike";
+                }
+                else return "You have already disliked this post.";
             }
+            return "null";
         }
     }
 

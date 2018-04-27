@@ -63,7 +63,7 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
     var parent = document.getElementById('newpost');
     var imageID = "image" + postID;
     //adding image
-    var newChild = "<div id =\"post\"" + imageID + " class=\"card\">" +
+    var newChild = "<div id =\"post\"" + postID + " class=\"card\">" +
         "    <!-- post picture -->" +
         "    <div class=\"fill\">" +
         "    <img class=\"card-img-top\" id="+imageID+" src=\"\" alt=\"Image\">" +
@@ -73,19 +73,19 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
 
     //adding tags
     for (i = 0; i < postTags.length; i++) {
-        newChild += "<a class=\"label\" href=\"#\">" + postTags[i] + "</a>";  //TODO Tag inserting to search
+        newChild += "<a href='#'><span class=\"label label-primary\">" + postTags[i] + "</span></a> ";  //TODO Tag inserting to search
     }
 
     //likes dislikes
     newChild +=
-        "<div class=\"btn-group\">" +
-        "            <button class=\"btn btn-success\" onclick=\"like()\" onmouseover=\"showLikers()\"><i\n" +
+        "<br><div class=\"btn-group\">" +
+        "            <button class=\"btn btn-success\" onclick=\"like("+postID+")\" ><i\n" +
         "                    class=\"fa fa-thumbs-up\"></i>\n" +
-        "                <div id=\"likes-quantity\" style=\"display: inline\">" + postLikes + "</div>\n" +
+        "                <div id=\"post"+postID+"likes\" style=\"display: inline\">" + postLikes + "</div>\n" +
         "            </button>\n" +
-        "            <button class=\"btn btn-danger\" onclick=\"dislike()\" onmouseover=\"showDislikers()\"><i\n" +
+        "            <button class=\"btn btn-danger\" onclick=\"dislike("+postID+")\" ><i\n" +
         "                    class=\"fa fa-thumbs-down\"></i>\n" +
-        "                <div id=\"dislikes-quantity\" style=\"display: inline\">" + postDislikes + "</div>\n" +
+        "                <div id=\"post"+postID+"dislikes\" style=\"display: inline\">" + postDislikes + "</div>\n" +
         "            </button>\n" +
         "        </div>";
 
@@ -117,6 +117,74 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
         "                </div>";
     parent.insertAdjacentHTML('beforeend', newChild);
     addImage(imageID, postUrl);
+}
+
+function dislike(postID){
+    var dislikerID = $('#username').val();
+    console.log(dislikerID);
+    console.log(postID);
+    $.ajax({
+        url: "addDislike",
+        type: "POST",
+        data:{  dislikerID: dislikerID,
+            postID: postID
+        }
+    }).then(function (data) {
+        if(data==='success'){
+            alert('Successfully disliked post');
+            var oldValue = parseInt(document.getElementById("post"+postID+"dislikes").innerHTML);
+            var newValue = Number(oldValue) + Number(1);
+            document.getElementById("post"+postID+"dislikes").innerHTML=String(newValue);
+        }
+        if(data==='removedLikeAddDislike'){
+            var oldDislikeValue = parseInt(document.getElementById("post"+postID+"dislikes").innerHTML);
+            var newDislikeValue = Number(oldDislikeValue) + Number(1);
+            var oldLikeValue = parseInt(document.getElementById("post"+postID+"likes").innerHTML);
+            var newLikeValue = Number(oldLikeValue) - Number(1);
+            document.getElementById("post"+postID+"dislikes").innerHTML=String(newDislikeValue);
+            document.getElementById("post"+postID+"likes").innerHTML=String(newLikeValue);
+        }
+        if(data==='You have already disliked this post.'){
+            alert('You have already disliked this post.');
+        }
+    });
+}
+
+function like(postID){
+    var likerID = $('#username').val();
+    console.log(likerID);
+    console.log(postID);
+    $.ajax({
+        url: "addLike",
+        type: "POST",
+        data:{  likerID: likerID,
+            postID: postID
+        }
+    }).then(function (data) {
+        if(data==='success'){
+            alert('Successfully liked post');
+            var oldValue = parseInt(document.getElementById("post"+postID+"likes").innerHTML);
+            var newValue = Number(oldValue) + Number(1);
+            document.getElementById("post"+postID+"likes").innerHTML=String(newValue);
+        }
+        if(data==='removedDislikeAddLike'){
+            var oldDislikeValue = parseInt(document.getElementById("post"+postID+"dislikes").innerHTML);
+            var newDislikeValue = Number(oldDislikeValue) - Number(1);
+            var oldLikeValue = parseInt(document.getElementById("post"+postID+"likes").innerHTML);
+            var newLikeValue = Number(oldLikeValue) + Number(1);
+            console.log(oldDislikeValue);
+            console.log(newDislikeValue);
+            console.log(oldLikeValue);
+            console.log(newLikeValue);
+
+            document.getElementById("post"+postID+"dislikes").innerHTML=String(newDislikeValue);
+            document.getElementById("post"+postID+"likes").innerHTML=String(newLikeValue);
+        }
+        if(data==='You have already liked this post.'){
+            alert('You have already liked this post.');
+        }
+    });
+
 }
 
 function addComment(lastCommentID, commentSectionID, postID){
@@ -176,8 +244,22 @@ function insertModal(post) {
     return "<div></div>";
 }
 
-function deleteComment(divCommentID){
-
+function deleteComment(commentID){
+    $.ajax({
+        url: "deleteComment",
+        type: "POST",
+        data: {
+            commentID: commentID
+        }
+    }).then(function (data) {
+        if(data==='success'){
+            document.getElementById("comment"+commentID).innerHTML="";
+            alert('You have successfully deleted your comment.')
+        }
+        else {
+            alert('Sorry! Problems occured.');
+        }
+    });
 }
 
 function insertNewComment(comment) {
@@ -195,7 +277,7 @@ function insertNewComment(comment) {
         "                        <div class=\"col-sm-8\">\n" +
         "                            <h4><a href=\"#\">" + commentPoster + "</a>\n" +
         "                                <small>" + commentDate + "</small>\n" +
-        "                            </h4><a href=\"#\" onclick=\"deleteComment(commentID)\">X</a>\n" +
+        "                            </h4><button style='float: right;' onclick='deleteComment("+commentID+")'>DELETE</button>\n" +
         "                            <p>" + commentContent + "</p>\n" +
         "                            <br>\n" +
         "                        </div>\n" +

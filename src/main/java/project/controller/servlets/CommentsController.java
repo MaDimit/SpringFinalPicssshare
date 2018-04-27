@@ -19,6 +19,8 @@ public class CommentsController {
     @Autowired
     UserDao userDao;
 
+
+
     @ResponseBody
     @RequestMapping(value = "/addComment", method = RequestMethod.POST)
     public Comment addComment(@RequestParam int posterID, @RequestParam int postID, @RequestParam String commentText){
@@ -33,6 +35,20 @@ public class CommentsController {
         }
 
         return comment;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/deleteComment", method = RequestMethod.POST)
+    public String deleteComment(@RequestParam int commentID){
+
+        String message = "success";
+        try {
+            commentManager.deleteComment(commentID);
+
+        } catch (SQLException e) {
+            message=e.getMessage();
+        }
+        return message;
     }
 
 
