@@ -101,11 +101,9 @@
 <script>
 
     function loadUserData(){
-        var userID = 2;
         $.ajax({
             url: "user/getUserData",
             type: "POST",
-            data: {userID: userID},
         }).then(function (data) {
             document.getElementById('username').value = data.username;
             document.getElementById('oldPassword').value = data.password;
@@ -118,7 +116,6 @@
     }
 
     function editUserData(){
-        var userID = 2;
         var username = document.getElementById('username').value;
         var oldPassword = document.getElementById('oldPassword').value;
         var newPassword = document.getElementById('newPassword').value;
@@ -131,7 +128,7 @@
         $.ajax({
             url: "user/editUserData",
             type: "POST",
-            data: { userID: userID,
+            data: {
                     username: username,
                     oldPassword: oldPassword,
                     newPassword: newPassword,

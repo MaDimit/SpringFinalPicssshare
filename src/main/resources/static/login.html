@@ -148,7 +148,7 @@
         console.log(username + " " + password1 + " " + password2 + " " + email),
             $.ajax({
                 type: "POST",
-                url : "register",
+                url : "user/register",
                 data : {username: username, password1: password1, password2:password2, email:email},
                 success: function (data) {
                     var msg;

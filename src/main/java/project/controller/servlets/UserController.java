@@ -31,7 +31,7 @@ public class UserController {
     @ResponseBody
     @RequestMapping(value = "/editUserData", method = RequestMethod.POST)
 
-    public String editUserData(@RequestParam int userID,
+    public String editUserData(
                                @RequestParam String username,
                                @RequestParam String oldPassword,
                                @RequestParam String newPassword,
@@ -39,12 +39,13 @@ public class UserController {
                                @RequestParam String firstName,
                                @RequestParam String lastName,
                                @RequestParam String email,
-                               @RequestParam String profilePicURL) {
+                               @RequestParam String profilePicURL,
+                               HttpSession session) {
         String message = "success";
         System.out.println(username);
 
         try {
-            User user = userDao.getUserByID(userID);
+            User user = (User) session.getAttribute("user");
             if (oldPassword.equals(user.getPassword())) {
                 //if there is new password entered
                 if (newPassword != "" && !newPassword.isEmpty() && newPassword != null) {
