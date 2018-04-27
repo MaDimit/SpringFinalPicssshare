@@ -12,6 +12,11 @@ import java.util.List;
 @Component
 public class PostManager {
 
+    private static final int LIKES_MODIFIER = 2;
+    private static final int DISLIKES_MODIFIER = 1;
+    private static final int COMMENT_MODIFIER = 5;
+
+
     public static class PostException extends Exception{
         public PostException(String msg) {
             super(msg);
@@ -83,18 +88,26 @@ public class PostManager {
     }
 
     public List<Post> getFriendsFeed(int userID) throws PostException, SQLException{
-//        try {
+        try {
             List<Post> posts = postDao.getFriendsFeed(userID);
             return posts;
-//        }catch (SQLException e){
-//            throw new PostException("Problem during friends feed creation");
-//        }
+        }catch (SQLException e){
+            throw new PostException("Problem during friends feed creation");
+        }
     }
 
     public List<Post> getTrendingFeed() throws PostException{
         try {
             List<Post> posts = postDao.getTrendingFeed();
-            posts.sort((p1, p2)->p1.getLikes() + p1.getDislikes() > p2.getLikes() + p2.getDislikes() ? -1 : 1);
+            posts.sort((p1, p2)->{
+                return p1.getLikes() * LIKES_MODIFIER
+                        + p1.getDislikes() * DISLIKES_MODIFIER
+                        + p1.getComments().size() * COMMENT_MODIFIER
+                        > p2.getLikes() * LIKES_MODIFIER
+                        + p2.getDislikes() * DISLIKES_MODIFIER
+                        + p2.getComments().size() * COMMENT_MODIFIER
+                        ? -1 : 1;
+            });
             return posts;
         }catch (SQLException e){
             throw new PostException("Problem during trending feed creation");
