@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping(value = "/user")
-public class UserServlet {
+public class UserController {
 
     @Autowired
     private LoggingManager loggingManager;

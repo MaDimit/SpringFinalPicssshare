@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/feed")
-public class FeedServlet {
+public class FeedController {
 
     @Autowired
     PostManager postManager;

@@ -1,30 +1,22 @@
-// Get the modal
-var modal = document.getElementById('myModal');
-
-// Get the button that opens the modal
-var btn = document.getElementById("myBtn");
-
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
-
-//When the user clicks the button, open the modal
-// btn.onclick = function () {
-//     modal.style.display = "block";
-// }
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function () {
-    modal.style.display = "none";
+function getImageSrc(data) {
+    return "data:"+imageMime(data)+";base64," + data;
 }
 
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function (event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
+function imageMime(data){
+    if(data.charAt(0)=='/'){
+        return "image/jpeg";
+    }else if(data.charAt(0)=='R'){
+        return "image/gif";
+    }else if(data.charAt(0)=='i'){
+        return "image/png";
     }
 }
 
-function buttonSwap(image) {
-    var sb = document.getElementById('submit');
-    sb.src = "images/" + image;
+function addImage(imageID, postUrl) {
+    $.ajax({
+        url:"/img/get",
+        data: {url : postUrl}
+    }).then(function (data) {
+        $("#" +imageID).attr("src", getImageSrc(data));
+    })
 }

@@ -119,7 +119,7 @@
             var password = $('#loginpass').val();
             $.ajax({
                 type: "POST",
-                url: "/login",
+                url: "user/login",
                 data: {username: username, password: password},
                 success: function (data) {
                     console.log(data);

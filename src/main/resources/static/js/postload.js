@@ -46,26 +46,27 @@ function insertPosts(json) {
         var post = json[i];
         var postPoster = post.poster;
         var postComments = post.comments;
-        var postPicture = post.url;
+        var postUrl = post.url;
         var postTags = post.tags;
         var postDate = post.date;
         var postID = post.id;
         var postLikes = post.likes;
         var postDislikes = post.dislikes;
-        insertNewPost(post, postPoster, postComments, postPicture, postTags, postDate, postID, postLikes, postDislikes);
+        insertNewPost(post, postPoster, postComments, postUrl, postTags, postDate, postID, postLikes, postDislikes);
     }
 
 }
 
-function insertNewPost(post, postPoster, postComments, postPicture, postTags, postDate, postID, postLikes, postDislikes) {
+function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDate, postID, postLikes, postDislikes) {
     var postPosterUsername = postPoster.username;
 
     var parent = document.getElementById('newpost');
+    var imageID = "image" + postID;
     //adding image
-    var newChild = "<div id =\"post\"" + postID + " class=\"card\">" +
+    var newChild = "<div id =\"post\"" + imageID + " class=\"card\">" +
         "    <!-- post picture -->" +
         "    <div class=\"fill\">" +
-        "    <img class=\"card-img-top\" src=" + postPicture + " alt=\"Image\">" +
+        "    <img class=\"card-img-top\" id="+imageID+" src=\"\" alt=\"Image\">" +
         "    </div>" +
         "        <!-- post body -->" +
         "        <div class=\"card-body\">";
@@ -115,6 +116,7 @@ function insertNewPost(post, postPoster, postComments, postPicture, postTags, po
         "                    </div>\n" +
         "                </div>";
     parent.insertAdjacentHTML('beforeend', newChild);
+    addImage(imageID, postUrl);
 }
 
 function addComment(lastCommentID, commentSectionID, postID){
@@ -193,7 +195,7 @@ function insertNewComment(comment) {
         "                        <div class=\"col-sm-8\">\n" +
         "                            <h4><a href=\"#\">" + commentPoster + "</a>\n" +
         "                                <small>" + commentDate + "</small>\n" +
-        "                            </h4><a href="#" onclick="deleteComment(commentID)">X</a>\n" +
+        "                            </h4><a href=\"#\" onclick=\"deleteComment(commentID)\">X</a>\n" +
         "                            <p>" + commentContent + "</p>\n" +
         "                            <br>\n" +
         "                        </div>\n" +
