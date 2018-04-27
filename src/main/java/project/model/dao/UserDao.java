@@ -18,7 +18,7 @@ public class UserDao {
 
     @Autowired
     private DataSource dataSource;
-
+    @Autowired
     private LoggingManager loggingManager;
 
     public UserDao() throws SQLException {
@@ -28,7 +28,7 @@ public class UserDao {
 
     //used for search
     public ArrayList<User> getAllUsersByPattern(String pattern) throws SQLException {
-        try(Connection conn = dataSource.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             ArrayList<User> matchingUsers = new ArrayList<>();
             String sql = "SELECT id FROM users WHERE UPPER(username) LIKE UPPER('%" + pattern + "%') ORDER BY username;";
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -44,7 +44,7 @@ public class UserDao {
 
     public User getUserByID(int id) throws SQLException {
 
-        try(Connection conn = dataSource.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             String sql = "SELECT id, username, password, first_name, last_name, email, profile_picture_url FROM users WHERE users.id = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, id);
@@ -58,7 +58,7 @@ public class UserDao {
 
     public void addSubscription(User subscriber, User subscribedTo) throws SQLException {
 
-        try(Connection conn = dataSource.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             String sql = "INSERT INTO subscriber_subscribed (subscriber_id, subscribedto_id) VALUES (?,?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, subscriber.getId());
@@ -68,9 +68,9 @@ public class UserDao {
         }
     }
 
-    public void removeSubscription(User subscriber, User subscribedTo) throws SQLException{
+    public void removeSubscription(User subscriber, User subscribedTo) throws SQLException {
 
-        try(Connection conn = dataSource.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             String sql = "DELETE FROM subscriber_subscribed WHERE subscriber_id = ? AND subscribedto_id = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, subscriber.getId());
@@ -82,7 +82,7 @@ public class UserDao {
 
     public void deleteUser(User user) throws SQLException {
 
-        try(Connection conn = dataSource.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             String sql = "DELETE FROM users WHERE id = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, user.getId());
@@ -91,9 +91,9 @@ public class UserDao {
         }
     }
 
-    public HashSet<String> getAllSubscriptions() throws SQLException{
+    public HashSet<String> getAllSubscriptions() throws SQLException {
 
-        try(Connection conn = dataSource.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             HashSet<String> subscriptions = new HashSet<>();
             String sql = "SELECT subscriber_id, subscribedto_id FROM subscriber_subscribed";
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -105,50 +105,66 @@ public class UserDao {
         }
     }
 
+
     // username and id should not be modified
     public void executeProfileUpdate(User u, String password, String first_name, String last_name, String email, String profilePicURL)
             throws SQLException, LoggingManager.RegistrationException {
 
-        try(Connection conn = dataSource.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
+
             // TODO Exctract notnull validation to UserManager
             // Store in collection not null values, because the user could choose to change
             // different number of
             // information for his profile
 
-            //for each field, check if it has been changed
             HashMap<String, String> notNullValues = new HashMap<>();
 
+            if (loggingManager.validatePassword(password)) {
+                notNullValues.put("password", password);
+                u.setPassword(password);
+            }
+            else throw new LoggingManager.RegistrationException("Invalid format for the new password.");
 
-            if (!password.equalsIgnoreCase(u.getPassword())) {
-                if (loggingManager.validatePassword(password)) {
-                    notNullValues.put("password", password);
-                    u.setPassword(password);
-                }
+            if (loggingManager.validateFirstName(first_name)) {
+                notNullValues.put("first_name", first_name);
+                u.setFirstName(first_name);
+
             }
-            if (!first_name.equalsIgnoreCase(u.getFirstName())) {
-                if (loggingManager.validateFirstName(first_name)) {
-                    notNullValues.put("first_name", first_name);
-                    u.setFirstName(first_name);
-                }
+            else throw new LoggingManager.RegistrationException("Error. Maybe you have used illegal characters for first name?");
+
+
+            if (loggingManager.validateLastName(last_name)) {
+                notNullValues.put("last_name", last_name);
+                u.setLastName(last_name);
+
             }
-            if (!last_name.equalsIgnoreCase(u.getLastName())) {
-                if (loggingManager.validateLastName(last_name)) {
-                    notNullValues.put("last_name", last_name);
-                    u.setLastName(last_name);
-                }
-            }
-            if (!email.equalsIgnoreCase(u.getEmail())) {
-                // check the existing ones and if there is not such an email - set it
+            else throw new LoggingManager.RegistrationException("Error. Maybe you have used illegal characters for last name?");
+
+            // check the existing ones and if there is not such an email - set it
+            if (email.equals(u.getEmail())) {
+                notNullValues.put("email", email);
+            } else {
+                //if email is different
                 if (loggingManager.validateEmailAddress(email)) {
-                    if (checkIfEmailIsTaken(email))
+                    //if new email is not taken
+                    if (!checkIfEmailIsTaken(email)) {
                         notNullValues.put("email", email);
-                    u.setEmail(email);
+                        u.setEmail(email);
+                    }
+                    else throw new LoggingManager.RegistrationException("This email is already taken. Try with other...");
+
                 }
+                else throw new LoggingManager.RegistrationException("Invalid format for the new email address.");
+
+
+                System.out.println("EMAIL SET");
             }
-            if (!profilePicURL.equalsIgnoreCase(u.getProfilePicUrl())) {
-                notNullValues.put("profilePicURL", profilePicURL);
-                u.setProfilePicUrl(profilePicURL);
-            }
+
+            notNullValues.put("profile_picture_url", profilePicURL);
+            u.setProfilePicUrl(profilePicURL);
+
+            System.out.println("PIC SET");
+
 
             StringBuilder sb = new StringBuilder();
             // comma count is used for placing commas between set statements
@@ -165,11 +181,11 @@ public class UserDao {
 
             }
             String sql = "UPDATE users SET " + sb.toString() + " WHERE id = ?";
-            System.out.println(sql);
-
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, u.getId());
+            System.out.println(sql);
             stmt.executeUpdate();
+            System.out.println("EXECUTED");
             stmt.close();
         }
     }
@@ -178,7 +194,7 @@ public class UserDao {
 
     public boolean checkIfUsernameIsTaken(String username) throws SQLException {
 
-        try(Connection conn = dataSource.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             String sql = "SELECT users.username FROM users WHERE users.username = ?";
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, username);
@@ -190,7 +206,7 @@ public class UserDao {
 
     public boolean checkIfEmailIsTaken(String email) throws SQLException {
 
-        try(Connection conn = dataSource.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             String sql = "SELECT users.username FROM users WHERE users.email = ?";
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, email);
@@ -200,9 +216,9 @@ public class UserDao {
         }
     }
 
-    public User login(String username) throws SQLException{
+    public User login(String username) throws SQLException {
 
-        try(Connection conn = dataSource.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             String sql = "SELECT id, username, password,first_name,last_name,email,profile_picture_url FROM users WHERE username = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, username);
@@ -219,7 +235,7 @@ public class UserDao {
 
     public void registerUser(User user) throws SQLException {
 
-        try(Connection conn = dataSource.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             // Inserting into DB
             String sql = "INSERT INTO users (username, password, email) VALUES (?,?,?)";
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -241,7 +257,7 @@ public class UserDao {
 
     //================== User Creation ==================//
 
-    User createUser(ResultSet rs) throws SQLException{
+    User createUser(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
         String username = rs.getString("username");
         String password = rs.getString("password");
@@ -249,7 +265,7 @@ public class UserDao {
         String lastname = rs.getString("last_name");
         String email = rs.getString("email");
         String profilePicUrl = rs.getString("profile_picture_url");
-        return new User (id, username, password, firstname, lastname, email, profilePicUrl);
+        return new User(id, username, password, firstname, lastname, email, profilePicUrl);
     }
 
 }

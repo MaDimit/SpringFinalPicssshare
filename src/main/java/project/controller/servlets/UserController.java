@@ -26,7 +26,61 @@ public class UserController {
     @Autowired
     PostDao postDao;
     @Autowired
-    private UserManager userManager;
+    UserManager userManager;
+
+    @ResponseBody
+    @RequestMapping(value = "/editUserData", method = RequestMethod.POST)
+
+    public String editUserData(@RequestParam int userID,
+                               @RequestParam String username,
+                               @RequestParam String oldPassword,
+                               @RequestParam String newPassword,
+                               @RequestParam String confirmPassword,
+                               @RequestParam String firstName,
+                               @RequestParam String lastName,
+                               @RequestParam String email,
+                               @RequestParam String profilePicURL) {
+        String message = "success";
+        System.out.println(username);
+
+        try {
+            User user = userDao.getUserByID(userID);
+            if (oldPassword.equals(user.getPassword())) {
+                //if there is new password entered
+                if (newPassword != "" && !newPassword.isEmpty() && newPassword != null) {
+                    if (newPassword.equals(confirmPassword)) {
+                        userManager.updateProfileInfo(user, newPassword, firstName, lastName, email, profilePicURL);
+
+                    } else {
+                        message = "New passwords don't match.";
+                    }
+                    //use the old password
+                } else {
+                    userManager.updateProfileInfo(user, oldPassword, firstName, lastName, email, profilePicURL);
+                }
+
+            } else {
+                message = "You have entered wrong origin password.";
+                return message;
+            }
+        } catch (Exception e) {
+            message = e.getMessage();
+        }
+        return message;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/getUserData", method = RequestMethod.POST)
+    public User getUserData(@RequestParam int userID) {
+        User user = null;
+        try {
+            user = userDao.getUserByID(userID);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
 
     @ResponseBody
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -37,10 +91,10 @@ public class UserController {
                            HttpSession session) {
         String message = "success";
         try {
-            if(!password1.equals(password2)){
+            if (!password1.equals(password2)) {
                 message = "passNotMatch";
                 return message;
-            }else {
+            } else {
                 User user = loggingManager.register(username, password1, email);
                 session.setAttribute("user", user);
             }
