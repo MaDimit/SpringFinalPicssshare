@@ -90,11 +90,14 @@ public class AlbumDao {
                 //create album
                 Album a = new Album(userDao.getUserByID(belongerID), albumName, albumID);
                 //fill posts for this album
-                ArrayList<Integer> posts = getAllPostsForAlbum(albumID);
-                for (int i = 0; i < posts.size(); i++) {
-                    Post p = postDao.getPost(posts.get(i));
-                    a.addPost(p);
-                }
+
+                // UNCOMMENT HERE IF YOU WANT TO RECEIVE INFORMATION FOR THE POSTS IN ALBUM NOT JUST THE ALBUM INFO
+
+//                ArrayList<Integer> posts = getAllPostsForAlbum(albumID);
+//                for (int i = 0; i < posts.size(); i++) {
+//                    Post p = postDao.getPost(posts.get(i));
+//                    a.addPost(p);
+//                }
                 //add the ready album to the collections
                 albums.add(a);
             }
@@ -117,11 +120,15 @@ public class AlbumDao {
                 //create album
                 a = new Album(userDao.getUserByID(belongerID), albumName, albumID);
                 //fill posts for this album
-                ArrayList<Integer> posts = getAllPostsForAlbum(albumID);
-                for (int i = 0; i < posts.size(); i++) {
-                    Post p = postDao.getPost(posts.get(i));
-                    a.addPost(p);
-                }
+
+                // UNCOMMENT HERE IF YOU WANT TO RECEIVE INFORMATION FOR THE POSTS IN ALBUM NOT JUST THE ALBUM INFO
+
+
+//                ArrayList<Integer> posts = getAllPostsForAlbum(albumID);
+//                for (int i = 0; i < posts.size(); i++) {
+//                    Post p = postDao.getPost(posts.get(i));
+//                    a.addPost(p);
+//                }
                 //add the ready album to the collections
 
             }
@@ -130,18 +137,20 @@ public class AlbumDao {
 
     }
 
-    private ArrayList<Integer> getAllPostsForAlbum(int albumID) throws SQLException {
+    public ArrayList<Post> getAllPostsForAlbum(int albumID) throws SQLException {
+        ArrayList<Post> posts =null;
         try (Connection conn = dataSource.getConnection()) {
-            ArrayList<Integer> postsID = new ArrayList<>();
+            posts = new ArrayList<>();
             String query = "SELECT post_id FROM albums_has_posts WHERE album_id=?";
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setInt(1, albumID);
             ResultSet results = statement.executeQuery();
             while (results.next()) {
                 int postID = results.getInt(1);
-                postsID.add(postID);
+                posts.add(postDao.getPost(postID));
             }
-            return postsID;
+
         }
+        return posts;
     }
 }

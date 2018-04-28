@@ -9,8 +9,10 @@ import java.util.List;
 public class Album {
 
     private int id;
+    @JsonIgnore
     private User user;
     private String name;
+    @JsonIgnore
     private List<Post> posts;
 
     //newly created Album

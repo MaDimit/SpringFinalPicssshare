@@ -85,13 +85,13 @@ public class FeedController {
     }
 
     @RequestMapping(value = "/album")
-    public Album getAlbumPictures(@RequestParam int albumID)  {
-        Album album = null;
+    public ArrayList<Post> getAlbumPictures(@RequestParam int albumID)  {
+        ArrayList<Post> posts = null;
         try {
-           album = albumManager.getAlbumByID(albumID);
+           posts = albumManager.getAlbumByID(albumID);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return album;
+        return posts;
     }
 }

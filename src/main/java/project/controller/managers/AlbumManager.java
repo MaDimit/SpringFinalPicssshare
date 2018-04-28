@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.model.dao.AlbumDao;
 import project.model.pojo.Album;
+import project.model.pojo.Post;
 import project.model.pojo.User;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -19,8 +21,8 @@ public class AlbumManager {
         return albumDao.getAllAlbumsForUser(userID);
     }
 
-    public Album getAlbumByID(int albumID) throws SQLException {
-        return albumDao.getAlbumByID(albumID);
+    public ArrayList<Post> getAlbumByID(int albumID) throws SQLException {
+        return albumDao.getAllPostsForAlbum(albumID);
     }
 
     public void createAlbum(User u, String name) throws SQLException {

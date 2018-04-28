@@ -1,3 +1,4 @@
+//get friends feed
 function loadFriendsFeed() {
 
     document.getElementById("container").style.display="none";
@@ -6,24 +7,19 @@ function loadFriendsFeed() {
     $.ajax({
         url: "/feed/friends"
     }).then(function (data) {
-        console.log(data);
         insertPosts(data);
-
         document.getElementById('subscribeButton').style.visibility="hidden";
     });
 }
 
-
+//get feed with user-in-session's posts
 function loadUserPosts(id) {
     $("#newpost").html("");
     $.ajax({
         url: "feed/user",
         data: {id : id},
     }).then(function (data) {
-        console.log("USERNAME: "+data.user.username);
         $(".page-header").html(data.user.username +"'s page");
-        console.log("DATA:"+JSON.stringify(data));
-        console.log("OWNER: "+ data.owner);
         if(String(data.owner) ==="false") {
             document.getElementById('subscribeButton').style.visibility = "visible";
             document.getElementById('ownerID').innerHTML = data.user.id;
@@ -33,10 +29,9 @@ function loadUserPosts(id) {
             document.getElementById('subscribeButton').style.visibility = "hidden";
         }
         insertPosts(data.posts);
-
     });
 }
-
+//get trending feed
 function loadTrendingFeed() {
     document.getElementById("container").style.display="none";
     $("#newpost").html("");
@@ -45,7 +40,6 @@ function loadTrendingFeed() {
     $.ajax({
         url: "feed/trending"
     }).then(function (data) {
-        console.log(data);
         insertPosts(data);
         document.getElementById('subscribeButton').style.visibility="hidden";
     });
@@ -67,10 +61,10 @@ function insertPosts(json) {
     }
 
 }
-
+//used for post visualising
 function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDate, postID, postLikes, postDislikes) {
     var postPosterUsername = postPoster.username;
-
+    //the place where the post will be visualized
     var parent = document.getElementById('newpost');
     var imageID = "image" + postID;
     //adding image
@@ -101,7 +95,7 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
         "        </div>";
 
     newChild += insertModal(post);
-
+    //comments
     newChild += "<p id=\"commentsSection" + postID + "\"><span class=\"badge\"></span> <b>Comments:</b></p><br>";
     for (var i = 0; i < postComments.length; i++) {
         newChild += insertNewComment(postComments[i]);
@@ -111,7 +105,6 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
     }
 
     var commentSectionID = "commentsSection"+postID;
-
 
 
     newChild += "                     <h4>Leave a Comment:</h4>\n" +
@@ -126,9 +119,10 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
         "                    </div>\n" +
         "                </div>";
     parent.insertAdjacentHTML('beforeend', newChild);
+    //load post's picture
     addImage(imageID, postUrl);
 }
-
+//function for disliking post
 function dislike(postID){
     $.ajax({
         url: "user/addDislike",
@@ -156,7 +150,7 @@ function dislike(postID){
         }
     });
 }
-
+//function for liking post
 function like(postID){
     $.ajax({
         url: "user/addLike",
@@ -186,15 +180,10 @@ function like(postID){
     });
 
 }
-
+//funcion used to post comment -> put in db -> return result
 function addComment(lastCommentID, commentSectionID, postID){
-    console.log(lastCommentID);
-    console.log(commentSectionID.id);
-    console.log(postID);
-    console.log($('#username').val());
     var posterID = $('#username').val();
     var commentContextValue = String(document.getElementById("commentContext"+postID+"").value);
-    console.log(commentContextValue);
 
     $.ajax({
         url: "addComment",
@@ -203,8 +192,6 @@ function addComment(lastCommentID, commentSectionID, postID){
                 postID: postID,
                 commentText:commentContextValue}
     }).then(function (data) {
-
-        console.log(data);
         var newcommentdiv = insertNewComment(data);
         if(lastCommentID != undefined) {
             $(newcommentdiv).insertAfter("#comment" + lastCommentID + "");
@@ -245,6 +232,7 @@ function insertModal(post) {
     return "<div></div>";
 }
 
+//function for deleting comment
 function deleteComment(commentID){
     $.ajax({
         url: "deleteComment",
@@ -263,6 +251,7 @@ function deleteComment(commentID){
     });
 }
 
+//function used for displaying comments
 function insertNewComment(comment) {
     var commentID = comment.id;
     var commentContent = comment.content;
