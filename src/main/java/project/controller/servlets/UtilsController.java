@@ -20,8 +20,6 @@ public class UtilsController {
     @GetMapping("/search")
     public SearchResult search(@RequestParam("input") String input) throws SQLException {
         SearchResult sr = utilManager.search(input);
-        System.out.println(sr.getTags());
-        System.out.println(sr.getUsers());
         return sr;
     }
 
