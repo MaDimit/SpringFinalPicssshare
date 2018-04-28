@@ -7,10 +7,7 @@ import project.model.pojo.User;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class UserDao {
@@ -104,6 +101,19 @@ public class UserDao {
         }
     }
 
+    public List<String> searchUsers(String input) throws SQLException{
+        try (Connection conn = dataSource.getConnection()){
+            List<String> users = new ArrayList<>();
+            String sql = "SELECT username FROM users WHERE username LIKE ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, input);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                users.add(rs.getString("username"));
+            }
+            return users;
+        }
+    }
 
     // username and id should not be modified
     public void executeProfileUpdate(User u, String password, String first_name, String last_name, String email)
@@ -149,20 +159,14 @@ public class UserDao {
                     if (!checkIfEmailIsTaken(email)) {
                         notNullValues.put("email", email);
                         u.setEmail(email);
-                    }
-                    else throw new LoggingManager.RegistrationException("This email is already taken. Try with other...");
+                    } else
+                        throw new LoggingManager.RegistrationException("This email is already taken. Try with other...");
 
-                }
-                else throw new LoggingManager.RegistrationException("Invalid format for the new email address.");
+                } else throw new LoggingManager.RegistrationException("Invalid format for the new email address.");
 
 
                 System.out.println("EMAIL SET");
             }
-
-//            notNullValues.put("profile_picture_url", profilePicURL);
-//            u.setProfilePicUrl(profilePicURL);
-
-            System.out.println("PIC SET");
 
 
             StringBuilder sb = new StringBuilder();

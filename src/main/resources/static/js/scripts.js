@@ -36,3 +36,19 @@ function getUserInfo(id){
         };
     });
 }
+
+function autoComplete(){
+    var searchbar = $("#searchbar");
+    var input = searchbar.val();
+
+    $.ajax({
+        url:"/util/search",
+        data : {input : input}
+    }).then(function (data) {
+        var users = data.users;
+        var tags = data.tags;
+
+        console.log(users);
+        console.log(tags);
+    })
+}

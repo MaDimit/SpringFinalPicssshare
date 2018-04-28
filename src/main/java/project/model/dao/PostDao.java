@@ -77,6 +77,20 @@ public class PostDao {
         }
     }
 
+    public List<String> searchTags(String input) throws SQLException{
+        try (Connection conn = dataSource.getConnection()){
+            List<String> tags = new ArrayList<>();
+            String sql = "SELECT tag_name FROM tags WHERE tag_name LIKE ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, input );
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                tags.add(rs.getString("tag_name"));
+            }
+            return tags;
+        }
+    }
+
     //------------------ liking/disliking ------------------//
 
     public String addLike(Post post, User user) throws SQLException {
