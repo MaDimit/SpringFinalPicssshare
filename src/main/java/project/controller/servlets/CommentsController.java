@@ -10,6 +10,7 @@ import project.model.pojo.User;
 
 import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 @RestController
 public class CommentsController {
@@ -21,7 +22,42 @@ public class CommentsController {
     @Autowired
     UserDao userDao;
 
+    @ResponseBody
+    @RequestMapping(value = "/getCommentLikes", method = RequestMethod.POST)
+    public ArrayList<User> getCommentLikes(@RequestParam int commentID){
+        ArrayList<User> commentLikers=null;
+        try {
+            commentLikers = (ArrayList<User>) commentManager.getCommentLikers(commentID);
+            System.out.println(commentLikers);
+        } catch (SQLException e) {
 
+        }
+        return commentLikers;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/addCommentLike", method = RequestMethod.POST)
+    public String addCommentLike(@RequestParam int commentID, HttpSession session){
+
+        User user = (User)session.getAttribute("user");
+        String message ="success";
+        try {
+
+            commentManager.likeComment(commentID, user.getId());
+
+
+        } catch (SQLException e) {
+            if(e.getMessage().startsWith("Duplicate ")){
+                message = "You have already liked this comment.";
+                return message;
+            }
+           message = e.getMessage();
+        } catch (Exception e) {
+            message = e.getMessage();
+        }
+
+        return message;
+    }
 
     @ResponseBody
     @RequestMapping(value = "/addComment", method = RequestMethod.POST)

@@ -125,7 +125,7 @@ public class CommentDao {
         return c;
     }
 
-    private  List<User> getCommentLikers(int commentID) throws SQLException {
+    public  List<User> getCommentLikers(int commentID) throws SQLException {
         try(Connection conn = dataSource.getConnection()) {
             List<User> likers = new ArrayList<>();
             String sql = "SELECT id, username, password, first_name, last_name,email, profile_picture_url FROM users\n" +

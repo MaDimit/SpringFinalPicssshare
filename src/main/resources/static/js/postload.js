@@ -92,7 +92,6 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
     }
 
     var commentSectionID = "commentsSection"+postID;
-    console.log(commentSectionID);
 
 
 
@@ -112,7 +111,6 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
 }
 
 function dislike(postID){
-    console.log(postID);
     $.ajax({
         url: "user/addDislike",
         type: "POST",
@@ -141,7 +139,6 @@ function dislike(postID){
 }
 
 function like(postID){
-    console.log(postID);
     $.ajax({
         url: "user/addLike",
         type: "POST",
@@ -160,10 +157,6 @@ function like(postID){
             var newDislikeValue = Number(oldDislikeValue) - Number(1);
             var oldLikeValue = parseInt(document.getElementById("post"+postID+"likes").innerHTML);
             var newLikeValue = Number(oldLikeValue) + Number(1);
-            console.log(oldDislikeValue);
-            console.log(newDislikeValue);
-            console.log(oldLikeValue);
-            console.log(newLikeValue);
 
             document.getElementById("post"+postID+"dislikes").innerHTML=String(newDislikeValue);
             document.getElementById("post"+postID+"likes").innerHTML=String(newLikeValue);
@@ -256,6 +249,7 @@ function insertNewComment(comment) {
     var commentContent = comment.content;
     var commentDate = comment.date;
     var commentPoster = comment.user;
+    var likers = getCommentsLikesCount(commentID);
 
 
     var newChild = "<div id=\"comment" + commentID + "\" class=\"row\">\n" +
@@ -265,11 +259,48 @@ function insertNewComment(comment) {
         "                        </div>\n" +
         "                        <div class=\"col-sm-8\">\n" +
         "                            <h4><a href=\"#\">" + commentPoster.username + "</a>\n" +
-        "                                <small>" + commentDate + "</small>\n" +
-        "                            </h4><button style='float: right;' onclick='deleteComment("+commentID+")'>DELETE</button>\n" +
+        "                                <small>" + commentDate + "</small><small>, Likers: </small><small id=\"comment"+commentID+"likes\"></small>\n" +
+        "                            </h4><button onclick='likeComment("+commentID+")' style='float:right'>LIKE</button><button style='float: right;' onclick='deleteComment("+commentID+")'>DELETE</button>" +
+
         "                            <p>" + commentContent + "</p>\n" +
         "                            <br>\n" +
         "                        </div>\n" +
         "                    </div>";
     return newChild;
+}
+
+function getCommentsLikesCount(commentID){
+    $.ajax({
+        url: "getCommentLikes",
+        type: "POST",
+        data:{
+            commentID: commentID
+        }
+    }).then(function (data) {
+        var likers = data;
+        var numberOfLikers = data.length;
+        document.getElementById("comment"+commentID+"likes").innerText = numberOfLikers;
+    });
+}
+
+function likeComment(commentID){
+    $.ajax({
+        url: "addCommentLike",
+        type: "POST",
+        data:{
+            commentID: commentID
+        }
+    }).then(function (data) {
+        if(data==='success'){
+            alert('Successfully liked comment');
+            var likes = Number(document.getElementById("comment"+commentID+"likes").innerText );
+            document.getElementById("comment"+commentID+"likes").innerText = String(Number(likes+1));
+            // var oldValue = parseInt(document.getElementById("post"+postID+"likes").innerHTML);
+            // var newValue = Number(oldValue) + Number(1);
+            // document.getElementById("post"+postID+"likes").innerHTML=String(newValue);
+        }
+        else {
+            alert(data);
+        }
+    });
 }

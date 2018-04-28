@@ -5,15 +5,22 @@ import org.springframework.stereotype.Component;
 import project.model.dao.CommentDao;
 import project.model.dao.UserDao;
 import project.model.pojo.Comment;
+import project.model.pojo.User;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.List;
+
 @Component
 public class CommentManager {
     @Autowired
     private CommentDao commentDao;
     @Autowired
     private UserDao userDao;
+
+    public List<User> getCommentLikers(int commentID) throws SQLException {
+        return commentDao.getCommentLikers(commentID);
+    }
 
     public void editComment(int oldCommentID, String editContent) throws PostManager.PostException, SQLException {
         Comment comment = commentDao.getCommentByID(oldCommentID);
