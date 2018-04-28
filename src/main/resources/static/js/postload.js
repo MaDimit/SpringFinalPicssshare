@@ -23,6 +23,7 @@ function loadUserPosts(id) {
         console.log("OWNER: "+ data.owner);
         if(String(data.owner) ==="false") {
             document.getElementById('subscribeButton').style.visibility = "visible";
+            document.getElementById('ownerID').innerHTML = data.user.id;
         }
         else if(String(data.owner) ==="true"){
             document.getElementById('subscribeButton').style.visibility = "hidden";
@@ -314,6 +315,23 @@ function likeComment(commentID){
         }
         else {
             alert(data);
+        }
+    });
+}
+
+function subsrcibe(subscribedToID){
+    $.ajax({
+        url: "user/subscribe",
+        type: "POST",
+        data:{
+            subscribedToID: subscribedToID
+        }
+    }).then(function (data) {
+        if(data==='success'){
+            alert('Subscription successfully performed.');
+        }
+        else {
+            alert(data)
         }
     });
 }

@@ -6,6 +6,8 @@ import project.controller.managers.LoggingManager;
 import project.controller.managers.PostManager;
 import project.controller.managers.UserManager;
 import project.model.dao.PostDao;
+import project.model.dao.UserDao;
+import project.model.pojo.Comment;
 import project.model.pojo.User;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +26,9 @@ public class UserController {
     PostDao postDao;
     @Autowired
     UserManager userManager;
+    @Autowired
+    UserDao userDao;
+
 
     @ResponseBody
     @RequestMapping(value = "/editUserData", method = RequestMethod.POST)
@@ -66,6 +71,8 @@ public class UserController {
         return message;
     }
 
+
+
     @ResponseBody
     @RequestMapping(value = "/getCurrent", method = RequestMethod.POST)
     public User getUserData(HttpSession session) {
@@ -81,6 +88,26 @@ public class UserController {
             e.printStackTrace();
         }
         return user;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/subscribe", method = RequestMethod.POST)
+    public String addComment(@RequestParam int subscribedToID, HttpSession session){
+        String message = "success";
+
+        try {
+
+            User subscriber = (User)session.getAttribute("user");
+            User subscribedTo =  userDao.getUserByID(subscribedToID);
+            userManager.subscribe(subscriber,subscribedTo );
+
+        } catch (SQLException e) {
+            message=e.getMessage();
+        } catch (UserManager.UserManagerException e) {
+            message=e.getMessage();
+        }
+
+        return message;
     }
 
 
