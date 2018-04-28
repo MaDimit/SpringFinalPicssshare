@@ -1,4 +1,6 @@
 function loadFriendsFeed() {
+
+    document.getElementById("container").style.display="none";
     $("#newpost").html("");
     $(".page-header").html("Friends Feed");
     $.ajax({
@@ -10,6 +12,7 @@ function loadFriendsFeed() {
         document.getElementById('subscribeButton').style.visibility="hidden";
     });
 }
+
 
 function loadUserPosts(id) {
     $("#newpost").html("");
@@ -26,6 +29,7 @@ function loadUserPosts(id) {
             document.getElementById('ownerID').innerHTML = data.user.id;
         }
         else if(String(data.owner) ==="true"){
+            document.getElementById("container").style.display="none";
             document.getElementById('subscribeButton').style.visibility = "hidden";
         }
         insertPosts(data.posts);
@@ -34,6 +38,7 @@ function loadUserPosts(id) {
 }
 
 function loadTrendingFeed() {
+    document.getElementById("container").style.display="none";
     $("#newpost").html("");
     $(".page-header").html("Trending Feed");
 

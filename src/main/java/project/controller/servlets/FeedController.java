@@ -1,24 +1,31 @@
 package project.controller.servlets;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import project.controller.managers.AlbumManager;
 import project.controller.managers.PostManager;
 import project.controller.managers.UserManager;
 import project.model.dao.UserDao;
+import project.model.pojo.Album;
 import project.model.pojo.Post;
 import project.model.pojo.User;
 import project.model.pojo.UserFeed;
 
 import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/feed")
 public class FeedController {
+
+    @Autowired
+    AlbumManager albumManager;
 
     @Autowired
     PostManager postManager;
@@ -63,5 +70,28 @@ public class FeedController {
         }
         posts = postManager.getUserFeed(user.getId());
         return new UserFeed(user, posts, owner);
+    }
+
+    @RequestMapping(value = "/albums")
+    public ArrayList<Album> getAlbumFeed(HttpSession session)  {
+        ArrayList<Album> albums = null;
+        User currentUser = (User) session.getAttribute("user");
+        try {
+            albums = (ArrayList<Album>) albumManager.getAllAlbumsForUser(currentUser.getId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return albums;
+    }
+
+    @RequestMapping(value = "/album")
+    public Album getAlbumPictures(@RequestParam int albumID)  {
+        Album album = null;
+        try {
+           album = albumManager.getAlbumByID(albumID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return album;
     }
 }

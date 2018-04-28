@@ -19,6 +19,10 @@ public class AlbumManager {
         return albumDao.getAllAlbumsForUser(userID);
     }
 
+    public Album getAlbumByID(int albumID) throws SQLException {
+        return albumDao.getAlbumByID(albumID);
+    }
+
     public void createAlbum(User u, String name) throws SQLException {
         //create album object
         Album album = new Album(u, name);

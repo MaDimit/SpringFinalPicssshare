@@ -23,8 +23,8 @@ public class AlbumDao {
     private DataSource dataSource;
 
 
-    public  void addPostInAlbumInDB(int postID, int albumID) throws SQLException {
-        try(Connection conn = dataSource.getConnection()) {
+    public void addPostInAlbumInDB(int postID, int albumID) throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
             String sql = "INSERT INTO albums_has_posts (album_id, post_id) VALUES (?,?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, albumID);
@@ -34,8 +34,8 @@ public class AlbumDao {
         }
     }
 
-    public  void removePostFromAlbumInDB(int postID, int albumID) throws SQLException {
-        try(Connection conn = dataSource.getConnection()) {
+    public void removePostFromAlbumInDB(int postID, int albumID) throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
             String sql = "DELETE FROM albums_has_posts WHERE album_id = ? AND post_id=?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, albumID);
@@ -47,7 +47,7 @@ public class AlbumDao {
 
 
     public void addAlbumInDB(Album album) throws SQLException {
-        try(Connection conn = dataSource.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             String sql = "INSERT INTO albums (name, belonger_id) VALUES (?,?)";
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, album.getName());
@@ -66,8 +66,8 @@ public class AlbumDao {
         }
     }
 
-    public  void deleteAlbum(int albumID) throws SQLException {
-        try(Connection conn = dataSource.getConnection()) {
+    public void deleteAlbum(int albumID) throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
             String sql = "DELETE FROM albums WHERE id=?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, albumID);
@@ -77,7 +77,7 @@ public class AlbumDao {
     }
 
     public List<Album> getAllAlbumsForUser(int userID) throws SQLException {
-        try(Connection conn = dataSource.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             List<Album> albums = new ArrayList<>();
             String sql = "SELECT id, name, belonger_id FROM albums WHERE belonger_id=?";
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -102,8 +102,36 @@ public class AlbumDao {
         }
     }
 
+    public Album getAlbumByID(int desiredAlbumID) throws SQLException {
+        Album a = null;
+        try (Connection conn = dataSource.getConnection()) {
+
+            String sql = "SELECT id, name, belonger_id FROM albums WHERE id=?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, desiredAlbumID);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int albumID = rs.getInt("id");
+                String albumName = rs.getString("name");
+                int belongerID = rs.getInt("belonger_id");
+                //create album
+                a = new Album(userDao.getUserByID(belongerID), albumName, albumID);
+                //fill posts for this album
+                ArrayList<Integer> posts = getAllPostsForAlbum(albumID);
+                for (int i = 0; i < posts.size(); i++) {
+                    Post p = postDao.getPost(posts.get(i));
+                    a.addPost(p);
+                }
+                //add the ready album to the collections
+
+            }
+        }
+        return a;
+
+    }
+
     private ArrayList<Integer> getAllPostsForAlbum(int albumID) throws SQLException {
-        try(Connection conn = dataSource.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             ArrayList<Integer> postsID = new ArrayList<>();
             String query = "SELECT post_id FROM albums_has_posts WHERE album_id=?";
             PreparedStatement statement = conn.prepareStatement(query);
