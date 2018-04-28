@@ -49,7 +49,14 @@ public class FileController {
     @GetMapping(value = "/get")
     public String getImage(@RequestParam("url") String url) throws IOException{
         String path = UPLOAD_PATH + url;
-        return Base64Utils.encodeToString(IOUtils.toByteArray(new FileInputStream(path)));
+        String defaultPicturePath = UPLOAD_PATH + "default-user.png";
+        File f = new File(path);
+        if(f.exists()){
+            return Base64Utils.encodeToString(IOUtils.toByteArray(new FileInputStream(path)));
+        }
+        else {
+            return Base64Utils.encodeToString(IOUtils.toByteArray(new FileInputStream(defaultPicturePath)));
+        }
     }
 
     @PostMapping("/uploadProfilePic")
