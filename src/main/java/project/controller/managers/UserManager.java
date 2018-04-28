@@ -26,6 +26,9 @@ public class UserManager {
         try {
             userDao.addSubscription(subscriber, subscribedTo);
         }catch (SQLException e){
+            if(e.getMessage().startsWith("Duplicate entry")){
+                throw new UserManagerException("You have already subscribed to this user.");
+            }
             throw new UserManagerException("Problem during subscription.");
         }
         return true;

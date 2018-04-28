@@ -6,29 +6,43 @@ function loadFriendsFeed() {
     }).then(function (data) {
         console.log(data);
         insertPosts(data);
+
+        document.getElementById('subscribeButton').style.visibility="hidden";
     });
 }
 
 function loadUserPosts(id) {
     $("#newpost").html("");
-    $(".page-header").html("User Posts");
     $.ajax({
         url: "feed/user",
         data: {id : id},
     }).then(function (data) {
-        console.log(data);
-        insertPosts(data);
+        console.log("USERNAME: "+data.user.username);
+        $(".page-header").html(data.user.username +"'s page");
+        console.log("DATA:"+JSON.stringify(data));
+        console.log("OWNER: "+ data.owner);
+        if(String(data.owner) ==="false") {
+            document.getElementById('subscribeButton').style.visibility = "visible";
+            document.getElementById('ownerID').innerHTML = data.user.id;
+        }
+        else if(String(data.owner) ==="true"){
+            document.getElementById('subscribeButton').style.visibility = "hidden";
+        }
+        insertPosts(data.posts);
+
     });
 }
 
 function loadTrendingFeed() {
     $("#newpost").html("");
     $(".page-header").html("Trending Feed");
+
     $.ajax({
         url: "feed/trending"
     }).then(function (data) {
         console.log(data);
         insertPosts(data);
+        document.getElementById('subscribeButton').style.visibility="hidden";
     });
 }
 
@@ -103,7 +117,7 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
         "                    </div>\n" +
         "                    <div class=\"card-footer text-muted\">\n" +
         "                        Posted on " + postDate + " by\n" +
-        "                        <a href=\"#\">" + postPosterUsername + "</a>\n" +
+        "                        <a href=\"#\" onclick='loadUserPosts("+postPoster.id+")'>" + postPosterUsername + "</a>\n" +
         "                    </div>\n" +
         "                </div>";
     parent.insertAdjacentHTML('beforeend', newChild);
@@ -301,6 +315,23 @@ function likeComment(commentID){
         }
         else {
             alert(data);
+        }
+    });
+}
+
+function subsrcibe(subscribedToID){
+    $.ajax({
+        url: "user/subscribe",
+        type: "POST",
+        data:{
+            subscribedToID: subscribedToID
+        }
+    }).then(function (data) {
+        if(data==='success'){
+            alert('Subscription successfully performed.');
+        }
+        else {
+            alert(data)
         }
     });
 }

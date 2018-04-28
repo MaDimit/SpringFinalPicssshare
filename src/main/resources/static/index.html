@@ -51,7 +51,7 @@
         </form>
         <!-- nav menu -->
         <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav ml-auto" style="float:right">
                 <li class="nav-item">
                     <a class="nav-link" href="javascript:void(0);" onclick="loadUserPosts()">My Posts</a>
                 </li>
@@ -82,7 +82,8 @@
         <div class="col-md-12" style="margin-top: 60px">
 
             <h1 class="my-4 page-header"></h1>
-
+            <h1 id="ownerID" style="visibility: hidden"></h1>
+            <button id='subscribeButton' style="visibility:hidden" onclick="subsrcibe(Number(document.getElementById('ownerID').innerHTML))">SUBSCRIBE</button>
            <div id="newpost"></div>
         </div>
     </div>
