@@ -4,12 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.controller.managers.LoggingManager;
 import project.model.pojo.SubscriberUserPojo;
-import project.model.pojo.SearchWrapper;
 import project.model.pojo.User;
+import project.model.pojo.wrappers.SearchWrapper;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class UserDao {

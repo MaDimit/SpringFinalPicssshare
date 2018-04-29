@@ -1,4 +1,6 @@
-package project.model.pojo;
+package project.model.pojo.wrappers;
+
+import project.model.pojo.Post;
 
 import java.util.List;
 

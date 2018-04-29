@@ -74,7 +74,7 @@ function showSubscriptions() {
                 "                        </div>\n" +
                 "                        <div class=\"col-sm-8\">\n" +
                 "                      <h4><a href=\"#\" onclick='loadUserPosts("+data[i].id+")'>" + data[i].username + "</a></h4>\n" +
-                "                            <button onclick='unsubscribe("+data[i].id+")'>Unsubscribe</button><br><hr>\n" +
+                "                            <button class='btn btn-primary' onclick='unsubscribe("+data[i].id+")'>Unsubscribe</button><br><hr>\n" +
                 "                        </div>\n" +
                 "                    </div>";
             var imageID = "subscriberPic" + data[i].id;

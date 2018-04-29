@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.model.dao.PostDao;
 import project.model.dao.UserDao;
-import project.model.pojo.SearchWrapper;
+import project.model.pojo.wrappers.SearchWrapper;
 
 import java.sql.SQLException;
 import java.util.List;

@@ -10,6 +10,7 @@ import project.controller.managers.PostManager;
 import project.controller.managers.UserManager;
 import project.model.pojo.Post;
 import project.model.pojo.User;
+import project.model.pojo.wrappers.PostWrapper;
 
 import javax.servlet.http.HttpSession;
 import java.io.File;
@@ -33,7 +34,10 @@ public class FileController {
     private String UPLOAD_PATH;
 
     @PostMapping("upload")
-    public String uploadImage(@RequestParam("file") MultipartFile uploadfile, HttpSession session) throws IOException, PostManager.PostException {
+    public PostWrapper uploadImage(@RequestParam("file") MultipartFile uploadfile, HttpSession session) throws IOException, PostManager.PostException, Exception{
+        if(!checkFileType(uploadfile)){
+            throw new Exception("file type not supported");
+        }
         User user = (User)session.getAttribute("user");
         String postUrl = createUri(user.getUsername());
         String path = UPLOAD_PATH + postUrl;
@@ -41,8 +45,10 @@ public class FileController {
         serverFile.getParentFile().mkdirs();
         Files.copy(uploadfile.getInputStream(),serverFile.toPath());
 
-        postManager.addPost(new Post(user,postUrl));
-        return Base64Utils.encodeToString(IOUtils.toByteArray(new FileInputStream(path)));
+        Post post = new Post(user,postUrl);
+        postManager.addPost(post);
+        String base64Image = Base64Utils.encodeToString(IOUtils.toByteArray(new FileInputStream(path)));
+        return new PostWrapper(post, base64Image);
     }
 
     //Get image by url from post
@@ -60,7 +66,10 @@ public class FileController {
     }
 
     @PostMapping("/uploadProfilePic")
-    public String uploadProfileImage(@RequestParam("file") MultipartFile uploadfile, HttpSession session) throws IOException, SQLException {
+    public String uploadProfileImage(@RequestParam("file") MultipartFile uploadfile, HttpSession session) throws IOException, SQLException, Exception {
+        if(!checkFileType(uploadfile)){
+            throw new Exception("file type not supported");
+        }
         User user = (User)session.getAttribute("user");
         String profilePicUrl = user.getUsername() + File.separator + "avatar";
         String path = UPLOAD_PATH + profilePicUrl;
@@ -76,4 +85,12 @@ public class FileController {
         return username + File.separator + System.currentTimeMillis();
     }
 
+    private boolean checkFileType(MultipartFile file) throws IOException{
+        if(file != null && !file.isEmpty()) {
+            if(file.getContentType().startsWith("image")){
+                return true;
+            }
+        }
+        return false;
+    }
 }

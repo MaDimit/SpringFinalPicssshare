@@ -30,7 +30,7 @@
 
 </head>
 
-<body onload="loadTrendingFeed()">
+<!--<body onload="loadTrendingFeed()">-->
 
 <!-- Navigation -->
 <div class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed-top">
@@ -88,8 +88,8 @@
 
             <h1 class="my-4 page-header"></h1>
             <h1 id="ownerID" style="visibility: hidden"></h1>
-            <button id='subscribeButton' style="display:none" onclick="subsrcibe(Number(document.getElementById('ownerID').innerHTML))">SUBSCRIBE</button>
-            <button id='showSubscriptions' style="display:none" onclick="showSubscriptions()">Show subscriptions</button>
+            <button id='subscribeButton' class="btn btn-primary" style="display:none" onclick="subsrcibe(Number(document.getElementById('ownerID').innerHTML))">SUBSCRIBE</button>
+            <button id='showSubscriptions' class="btn btn-primary" style="display:none" onclick="showSubscriptions()">Show subscriptions</button>
             <div id="newpost"></div>
         </div>
     </div>
@@ -106,7 +106,27 @@
     </div>
     <!-- /.container -->
 </footer>
+<script>
+    $(document).ready(function () {
 
+
+        switch (window.location.hash) {
+            case '#my':
+                loadUserPosts();
+                break;
+            case '#albums' :
+                loadAlbums();
+                break;
+            case '#friends':
+                loadFriendsFeed();
+                break;
+            default:
+                loadTrendingFeed();
+                break;
+        }
+
+    });
+</script>
 </body>
 
 </html>
