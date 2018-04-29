@@ -76,8 +76,12 @@ public class UserManager {
         }
     }
 
-    public User getUserByID(int userID) throws SQLException{
+    public User getUser(int userID) throws SQLException{
         return userDao.getUserByID(userID);
+    }
+
+    public User getUser(String username) throws SQLException{
+        return userDao.getUserByUsername(username);
     }
 
 }

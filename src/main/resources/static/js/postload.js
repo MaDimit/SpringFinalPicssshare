@@ -37,6 +37,30 @@ function loadUserPosts(id) {
         insertPosts(data.posts);
     });
 }
+
+function loadTagFeed(id){
+    $("#newpost").html("");
+    $.ajax({
+        url: "feed/tag",
+        data: {id : id}
+    }).then(function (data) {
+        $(".page-header").html(data.tagname);
+        insertPosts(data.posts);
+    });
+}
+
+function addUserData(data){
+    $(".page-header").html(data.user.username +"'s page");
+    if(data.owner) {
+        document.getElementById('subscribeButton').style.visibility = "visible";
+        document.getElementById('ownerID').innerHTML = data.user.id;
+    }
+    else{
+        document.getElementById("container").style.display="none";
+        document.getElementById('subscribeButton').style.visibility = "hidden";
+    }
+}
+
 //get trending feed
 function loadTrendingFeed() {
     document.getElementById("container").style.display="none";

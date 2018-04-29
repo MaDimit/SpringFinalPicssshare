@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.model.dao.PostDao;
 import project.model.pojo.Post;
+import project.model.pojo.TagFeedWrapper;
 import project.model.pojo.User;
 
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.List;
 @Component
 public class PostManager {
@@ -112,6 +112,12 @@ public class PostManager {
         }catch (SQLException e){
             throw new PostException("Problem during trending feed creation");
         }
+    }
+
+    public TagFeedWrapper getTagFeed(int tagID) throws SQLException{
+        String tagname = postDao.getTagByID(tagID);
+        List<Post> posts = postDao.getPostsByTags(tagname);
+        return new TagFeedWrapper(posts, tagname);
     }
 
     private void validate(Post post, User user) throws PostException{

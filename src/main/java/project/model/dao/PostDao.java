@@ -4,6 +4,7 @@ package project.model.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.model.pojo.Post;
+import project.model.pojo.SearchWrapper;
 import project.model.pojo.User;
 
 import javax.sql.DataSource;
@@ -77,15 +78,15 @@ public class PostDao {
         }
     }
 
-    public List<String> searchTags(String input) throws SQLException{
+    public List<SearchWrapper.SearchedTag> searchTags(String input) throws SQLException{
         try (Connection conn = dataSource.getConnection()){
-            List<String> tags = new ArrayList<>();
-            String sql = "SELECT tag_name FROM tags WHERE tag_name LIKE ?";
+            List<SearchWrapper.SearchedTag> tags = new ArrayList<>();
+            String sql = "SELECT tag_name, id FROM tags WHERE tag_name LIKE ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, input );
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
-                tags.add(rs.getString("tag_name"));
+                tags.add(new SearchWrapper.SearchedTag(rs.getString("tag_name"), rs.getInt("id")));
             }
             return tags;
         }
@@ -297,8 +298,20 @@ public class PostDao {
         }
     }
 
+    public String getTagByID(int tagID)throws SQLException{
+
+        try(Connection conn = dataSource.getConnection()){
+            String sql = "SELECT tag_name FROM tags WHERE id=?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1,tagID);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            return rs.getString("tag_name");
+        }
+    }
+
     //hashset used for putting unique posts only in result collection
-    public HashSet<Post> getPostsByTags(ArrayList<String> tags) throws SQLException {
+    public HashSet<Post> getPostsByTags(List<String> tags) throws SQLException {
 
         try(Connection conn = dataSource.getConnection()) {
             StringBuilder sb = new StringBuilder();
@@ -319,6 +332,12 @@ public class PostDao {
             }
             return matchingPosts;
         }
+    }
+
+    public List<Post> getPostsByTags(String tagname) throws SQLException {
+        List<String> tag = new ArrayList<>();
+        tag.add(tagname);
+        return new ArrayList<Post>(getPostsByTags(tag));
     }
 
 }

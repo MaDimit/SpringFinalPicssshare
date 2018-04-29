@@ -86,7 +86,7 @@ public class UserController {
     public User getUser(@RequestParam("id") int userID){
         User user = null;
         try {
-            user = userManager.getUserByID(userID);
+            user = userManager.getUser(userID);
         } catch (SQLException e) {
             e.printStackTrace();
         }
