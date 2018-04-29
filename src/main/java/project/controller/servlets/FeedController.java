@@ -1,6 +1,5 @@
 package project.controller.servlets;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,10 +9,7 @@ import project.controller.managers.AlbumManager;
 import project.controller.managers.PostManager;
 import project.controller.managers.UserManager;
 import project.model.dao.UserDao;
-import project.model.pojo.Album;
-import project.model.pojo.Post;
-import project.model.pojo.User;
-import project.model.pojo.UserFeed;
+import project.model.pojo.*;
 
 import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
@@ -59,14 +55,16 @@ public class FeedController {
     }
 
     @RequestMapping(value = "/user")
-    public UserFeed getUserFeed(@RequestParam(required = false) Integer id, HttpSession session) throws SQLException, PostManager.PostException {
+    public UserFeed getUserFeed(
+            @RequestParam(value = "id", required = false) Integer id,
+            HttpSession session) throws SQLException, PostManager.PostException {
         User currentUser = (User)session.getAttribute("user");
         boolean owner = true;
         User user = currentUser;
         List<Post> posts;
         if(id != null && id != currentUser.getId()){
             owner = false;
-            user = userManager.getUserByID(id);
+            user = userManager.getUser(id);
         }
         posts = postManager.getUserFeed(user.getId());
         return new UserFeed(user, posts, owner);
@@ -93,5 +91,10 @@ public class FeedController {
             e.printStackTrace();
         }
         return posts;
+    }
+
+    @RequestMapping(value = "/tag")
+    public TagFeedWrapper getTagFeed(@RequestParam("id") int tagID)  throws SQLException {
+        return postManager.getTagFeed(tagID);
     }
 }

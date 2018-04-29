@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.model.dao.PostDao;
 import project.model.dao.UserDao;
-import project.model.pojo.SearchResult;
+import project.model.pojo.SearchWrapper;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -20,10 +20,10 @@ public class UtilManager {
     private final String TAG_TEMPLATE = "#%s%%";
     private final String USER_TEMPLATE = "%s%%";
 
-    public SearchResult search(String input) throws SQLException {
-        List<String> users = userDao.searchUsers(String.format(USER_TEMPLATE,input));
-        List<String> tags = postDao.searchTags(String.format(TAG_TEMPLATE,input));
-        return new SearchResult(users,tags);
+    public SearchWrapper search(String input) throws SQLException {
+        List<SearchWrapper.SearchedUser> users = userDao.searchUsers(String.format(USER_TEMPLATE,input));
+        List<SearchWrapper.SearchedTag> tags = postDao.searchTags(String.format(TAG_TEMPLATE,input));
+        return new SearchWrapper(users,tags);
     }
 
 }

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import project.controller.managers.UtilManager;
-import project.model.pojo.SearchResult;
+import project.model.pojo.SearchWrapper;
 
 import java.sql.SQLException;
 
@@ -18,8 +18,8 @@ public class UtilsController {
     private UtilManager utilManager;
 
     @GetMapping("/search")
-    public SearchResult search(@RequestParam("input") String input) throws SQLException {
-        SearchResult sr = utilManager.search(input);
+    public SearchWrapper search(@RequestParam("input") String input) throws SQLException {
+        SearchWrapper sr = utilManager.search(input);
         return sr;
     }
 

@@ -7,7 +7,6 @@ import project.controller.managers.PostManager;
 import project.controller.managers.UserManager;
 import project.model.dao.PostDao;
 import project.model.dao.UserDao;
-import project.model.pojo.Comment;
 import project.model.pojo.User;
 
 import javax.servlet.http.HttpServletRequest;
@@ -83,7 +82,7 @@ public class UserController {
     public User getUser(@RequestParam("id") int userID){
         User user = null;
         try {
-            user = userManager.getUserByID(userID);
+            user = userManager.getUser(userID);
         } catch (SQLException e) {
             e.printStackTrace();
         }

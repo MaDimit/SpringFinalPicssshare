@@ -3,6 +3,7 @@ package project.model.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.controller.managers.LoggingManager;
+import project.model.pojo.SearchWrapper;
 import project.model.pojo.User;
 
 import javax.sql.DataSource;
@@ -44,6 +45,20 @@ public class UserDao {
             String sql = "SELECT id, username, password, first_name, last_name, email, profile_picture_url FROM users WHERE users.id = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, id);
+            ResultSet resultSet = stmt.executeQuery();
+            if (resultSet.next()) {
+                return createUser(resultSet);
+            }
+            return null;
+        }
+    }
+
+    public User getUserByUsername(String username) throws SQLException {
+
+        try (Connection conn = dataSource.getConnection()) {
+            String sql = "SELECT id, username, password, first_name, last_name, email, profile_picture_url FROM users WHERE username = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, username);
             ResultSet resultSet = stmt.executeQuery();
             if (resultSet.next()) {
                 return createUser(resultSet);
@@ -101,15 +116,15 @@ public class UserDao {
         }
     }
 
-    public List<String> searchUsers(String input) throws SQLException{
+    public List<SearchWrapper.SearchedUser> searchUsers(String input) throws SQLException{
         try (Connection conn = dataSource.getConnection()){
-            List<String> users = new ArrayList<>();
-            String sql = "SELECT username FROM users WHERE username LIKE ?";
+            List<SearchWrapper.SearchedUser> users = new ArrayList<>();
+            String sql = "SELECT username, id FROM users WHERE username LIKE ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, input);
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
-                users.add(rs.getString("username"));
+                users.add(new SearchWrapper.SearchedUser(rs.getString("username"), rs.getInt("id")));
             }
             return users;
         }

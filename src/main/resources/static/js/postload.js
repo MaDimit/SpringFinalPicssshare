@@ -12,25 +12,40 @@ function loadFriendsFeed() {
     });
 }
 
-//get feed with user-in-session's posts
 function loadUserPosts(id) {
     $("#newpost").html("");
     $.ajax({
         url: "feed/user",
-        data: {id : id},
+        data: {id : id}
     }).then(function (data) {
-        $(".page-header").html(data.user.username +"'s page");
-        if(String(data.owner) ==="false") {
-            document.getElementById('subscribeButton').style.visibility = "visible";
-            document.getElementById('ownerID').innerHTML = data.user.id;
-        }
-        else if(String(data.owner) ==="true"){
-            document.getElementById("container").style.display="none";
-            document.getElementById('subscribeButton').style.visibility = "hidden";
-        }
+        addUserData(data);
         insertPosts(data.posts);
     });
 }
+
+function loadTagFeed(id){
+    $("#newpost").html("");
+    $.ajax({
+        url: "feed/tag",
+        data: {id : id}
+    }).then(function (data) {
+        $(".page-header").html(data.tagname);
+        insertPosts(data.posts);
+    });
+}
+
+function addUserData(data){
+    $(".page-header").html(data.user.username +"'s page");
+    if(data.owner) {
+        document.getElementById('subscribeButton').style.visibility = "visible";
+        document.getElementById('ownerID').innerHTML = data.user.id;
+    }
+    else{
+        document.getElementById("container").style.display="none";
+        document.getElementById('subscribeButton').style.visibility = "hidden";
+    }
+}
+
 //get trending feed
 function loadTrendingFeed() {
     document.getElementById("container").style.display="none";
