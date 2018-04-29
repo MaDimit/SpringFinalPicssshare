@@ -8,12 +8,16 @@ function loadFriendsFeed() {
         url: "/feed/friends"
     }).then(function (data) {
         insertPosts(data);
-        document.getElementById('subscribeButton').style.visibility="hidden";
+        document.getElementById('subscribeButton').style.display="none";
+        document.getElementById('showSubscriptions').style.display="none";
     });
 }
 
-//get feed with user-in-session's posts
+//get feed with user's posts
 function loadUserPosts(id) {
+
+    document.getElementById("container").style.display="none";
+
     $("#newpost").html("");
     $.ajax({
         url: "feed/user",
@@ -21,12 +25,14 @@ function loadUserPosts(id) {
     }).then(function (data) {
         $(".page-header").html(data.user.username +"'s page");
         if(String(data.owner) ==="false") {
-            document.getElementById('subscribeButton').style.visibility = "visible";
+            document.getElementById('subscribeButton').style.display = "block";
             document.getElementById('ownerID').innerHTML = data.user.id;
+            document.getElementById('showSubscriptions').style.display="none";
         }
         else if(String(data.owner) ==="true"){
             document.getElementById("container").style.display="none";
-            document.getElementById('subscribeButton').style.visibility = "hidden";
+            document.getElementById('subscribeButton').style.display = "none";
+            document.getElementById('showSubscriptions').style.display="block";
         }
         insertPosts(data.posts);
     });
@@ -41,7 +47,8 @@ function loadTrendingFeed() {
         url: "feed/trending"
     }).then(function (data) {
         insertPosts(data);
-        document.getElementById('subscribeButton').style.visibility="hidden";
+        document.getElementById('subscribeButton').style.display="none";
+        document.getElementById('showSubscriptions').style.display="none";
     });
 }
 

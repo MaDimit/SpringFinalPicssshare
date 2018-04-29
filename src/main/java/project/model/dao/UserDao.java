@@ -3,6 +3,7 @@ package project.model.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.controller.managers.LoggingManager;
+import project.model.pojo.SubscriberUserPojo;
 import project.model.pojo.User;
 
 import javax.sql.DataSource;
@@ -87,15 +88,20 @@ public class UserDao {
         }
     }
 
-    public HashSet<String> getAllSubscriptions() throws SQLException {
+    public ArrayList<SubscriberUserPojo> getAllSubscriptions(int subscriber_id) throws SQLException {
 
         try (Connection conn = dataSource.getConnection()) {
-            HashSet<String> subscriptions = new HashSet<>();
-            String sql = "SELECT subscriber_id, subscribedto_id FROM subscriber_subscribed";
+            ArrayList<SubscriberUserPojo> subscriptions = new ArrayList<>();
+            String sql = "SELECT subscribedto_id FROM subscriber_subscribed WHERE subscriber_id=?";
             PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, subscriber_id);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                subscriptions.add(rs.getInt("subscriber_id") + "" + rs.getInt("subscribedto_id"));
+                int subscribedToID = rs.getInt("subscribedto_id");
+                String subscribedToUsername = getUserByID(subscribedToID).getUsername();
+                String subscriberToProfilePic = getUserByID(subscribedToID).getProfilePicUrl();
+                SubscriberUserPojo user = new SubscriberUserPojo(subscribedToID, subscribedToUsername, subscriberToProfilePic);
+                subscriptions.add(user);
             }
             return subscriptions;
         }

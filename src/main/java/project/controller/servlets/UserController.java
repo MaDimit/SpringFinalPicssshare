@@ -8,11 +8,14 @@ import project.controller.managers.UserManager;
 import project.model.dao.PostDao;
 import project.model.dao.UserDao;
 import project.model.pojo.Comment;
+import project.model.pojo.SubscriberUserPojo;
 import project.model.pojo.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping(value = "/user")
@@ -92,7 +95,7 @@ public class UserController {
 
     @ResponseBody
     @RequestMapping(value = "/subscribe", method = RequestMethod.POST)
-    public String addComment(@RequestParam int subscribedToID, HttpSession session){
+    public String subscribe(@RequestParam int subscribedToID, HttpSession session){
         String message = "success";
 
         try {
@@ -109,6 +112,25 @@ public class UserController {
 
         return message;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/unsubscribe", method = RequestMethod.POST)
+    public String unsubscribe(@RequestParam int subscribedToID, HttpSession session){
+        String message = "success";
+        try {
+            User subscriber = (User)session.getAttribute("user");
+            User subscribedTo =  userDao.getUserByID(subscribedToID);
+            userManager.removeSubscription(subscriber,subscribedTo );
+        } catch (SQLException e) {
+            message=e.getMessage();
+        } catch (UserManager.UserManagerException e) {
+            message=e.getMessage();
+        }
+
+        return message;
+    }
+
+
 
 
     @ResponseBody
@@ -172,5 +194,21 @@ public class UserController {
         }
         return message;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/getSubscriptions", method = RequestMethod.POST)
+    public ArrayList<SubscriberUserPojo> getSubscriptions(HttpSession session) {
+
+        User user = (User)session.getAttribute("user");
+        ArrayList<SubscriberUserPojo> subscriptions=null;
+        try {
+            subscriptions = userManager.getAllSubscriptions(user.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return subscriptions;
+    }
+
+
 
 }

@@ -3,9 +3,12 @@ package project.controller.managers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.model.dao.UserDao;
+import project.model.pojo.SubscriberUserPojo;
 import project.model.pojo.User;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @Component
 public class UserManager {
@@ -32,6 +35,10 @@ public class UserManager {
             throw new UserManagerException("Problem during subscription.");
         }
         return true;
+    }
+
+    public ArrayList<SubscriberUserPojo> getAllSubscriptions(int subscriberID) throws SQLException {
+            return userDao.getAllSubscriptions(subscriberID);
     }
 
     public boolean removeSubscription(User subscriber, User subscribedTo) throws UserManagerException{
