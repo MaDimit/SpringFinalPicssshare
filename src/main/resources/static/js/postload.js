@@ -327,11 +327,11 @@ function insertNewComment(comment) {
 
     var newChild = "<div id=\"comment" + commentID + "\" class=\"row\">\n" +
         "                        <div class=\"col-sm-1 text-center\">\n" +
-        "                            <img id='commentPic"+commentID+"' src=\"\" \n" +
+        "                            <img id='commentPic"+commentID+"' onclick='loadUserPosts("+commentPoster.id+")' src=\"\" \n" +
         "                                 class=\"img-circle\" height=\"65\" width=\"65\" alt=\"Avatar\">\n" +
         "                        </div>\n" +
         "                        <div class=\"col-sm-8\">\n" +
-        "                            <h4><a href=\"#\">" + commentPoster.username + "</a>\n" +
+        "                            <h4><a href=\"#\" onclick='loadUserPosts("+commentPoster.id+")'>" + commentPoster.username + "</a>\n" +
         "                                <small>" + commentDate + "</small><small>, Likers: </small><small id=\"comment"+commentID+"likes\"></small>\n" +
         "                            </h4><button class='btn btn-primary' onclick='likeComment("+commentID+")' style='float:right'>LIKE</button><button class='btn btn-primary' style='float: right;' onclick='deleteComment("+commentID+")'>DELETE</button>" +
 
