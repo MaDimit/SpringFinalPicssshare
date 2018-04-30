@@ -66,23 +66,23 @@
 
 <!-- Page Content -->
 <div class="container">
+    <div id ="uploadedPost" class="card" style="display: none;">
+        <input id="postID" type="hidden" value="">
+        <div class="fill">
+            <img class="card-img-top" id="image" src="">
+        </div>
 
+    </div>
     <br><br><br>
     <form method="POST" enctype="multipart/form-data" id="fileUploadForm">
         <input type="file" name="file" accept="image/*"/><br/><br/>
         <input type="submit" value="Submit" id="btnSubmit"/>
     </form>
 
-    <div id ="uploadedPost" class="card" style="display: none">
-        <input id="postID" type="hidden" value="">
-        <div class="fill">
-            <img class="card-img-top" id="image" src="">
-        </div>
-        <div class="card-body">
-            <div id="tags"></div>
-            Add tags to your image:<input type="text" id="tagsinput">
-            <button class="btn btn-primary" onclick="addTags()">Add tags</button>
-        </div>
+    <div class="card-body">
+        <div id="tags"></div>
+        <input class = "tagForm" type="text" id="tagsinput" placeholder="Add tags to your image: "><br>
+        <br><button class="btn btn-primary" onclick="addTags()">Add tags</button>
     </div>
 
 

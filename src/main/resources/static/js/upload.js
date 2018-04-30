@@ -51,6 +51,9 @@ function fire_ajax_submit() {
 function addTags(){
     var input = $("#tagsinput").val();
     var postID = $("#postID").val();
+    console.log(input);
+    console.log(postID);
+
     $.ajax({
         type:"POST",
         url: "/util/addTag",

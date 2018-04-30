@@ -24,11 +24,14 @@ public class UtilsController {
         return sr;
     }
 
-    @PostMapping("addTag")
+    @ResponseBody
+    @RequestMapping(value = "/addTag", method = RequestMethod.POST)
     public List<String> addTags(@RequestParam String input, @RequestParam int postID) throws Exception{
+        System.out.println("EE");
         if(input.isEmpty()){
             throw new Exception("tags not found");
         }
         return postManager.addTags(input, postID);
+
     }
 }

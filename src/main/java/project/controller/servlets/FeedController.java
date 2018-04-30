@@ -87,6 +87,17 @@ public class FeedController {
         return albums;
     }
 
+    @RequestMapping(value = "/deleteAlbum")
+    public String deleteAlbum(@RequestParam int albumID)  {
+        String message = "success";
+        try {
+            albumManager.deleteAlbum(albumID);
+        } catch (SQLException e) {
+            message =  e.getMessage();
+        }
+        return message;
+    }
+
     @RequestMapping(value = "/albumNames")
     public HashMap<Integer, String> getAlbumsNames(HttpSession session)  {
         HashMap<Integer, String> albumsNames=null;

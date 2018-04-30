@@ -22,6 +22,12 @@
   font-size: 120px;
 }
 
+.tagForm{
+  border: 1px solid #343a40;
+  width: 200px;
+  padding: 20px;
+  font-size: 20px;
+}
 
 .fill {
   display: flex;
@@ -268,6 +274,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
 
 .autocomplete {
   /*the container must be positioned relative:*/
+
   position: relative;
   display: inline-block;
 }

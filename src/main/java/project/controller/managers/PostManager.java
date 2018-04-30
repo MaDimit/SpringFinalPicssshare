@@ -142,6 +142,8 @@ public class PostManager {
         List<String> modifiedTags = new ArrayList<>();
         tags.forEach(s -> modifiedTags.add("#"+s));
         System.out.println(modifiedTags);
+        System.out.println(modifiedTags);
+        System.out.println(postID);
         postDao.addTags(modifiedTags, postID);
         return modifiedTags;
     }
