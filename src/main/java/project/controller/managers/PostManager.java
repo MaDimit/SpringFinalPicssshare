@@ -39,10 +39,9 @@ public class PostManager {
         }
     }
 
-    public void deletePost(Post post) throws PostException{
-        validate(post);
+    public void deletePost(int postID) throws PostException{
         try{
-            postDao.deletePost(post.getId());
+            postDao.deletePost(postID);
         }catch (SQLException e){
             throw new PostException("Problem during removing post from DB");
         }
@@ -137,15 +136,10 @@ public class PostManager {
     }
 
     public List<String> addTags(String input, int postID) throws SQLException{
-        input = input.replaceAll(","," ").replaceAll("/s", " ");
-        List<String> tags = new ArrayList<>(Arrays.asList(input.split(" ")));
+        List<String> tags = new ArrayList<>(Arrays.asList(input.split("\\s*(,|\\s)\\s*")));
         List<String> modifiedTags = new ArrayList<>();
         tags.forEach(s -> modifiedTags.add("#"+s));
-        System.out.println(modifiedTags);
-        System.out.println(modifiedTags);
-        System.out.println(postID);
-        postDao.addTags(modifiedTags, postID);
-        return modifiedTags;
+        return postDao.addTags(modifiedTags, postID);
     }
 
 }

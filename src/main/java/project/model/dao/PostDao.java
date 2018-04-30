@@ -340,10 +340,10 @@ public class PostDao {
         return new ArrayList<Post>(getPostsByTags(tag));
     }
 
-    public void addTags(List<String> tags, int postID) throws SQLException{
+    public List<String> addTags(List<String> tags, int postID) throws SQLException{
+        List<String> addedTags = new ArrayList<>();
         Connection conn = dataSource.getConnection();
         System.out.println(tags);
-        System.out.println("Post id: " + postID);
         try{
             conn.setAutoCommit(false);
             List<Integer> tagsID;
@@ -356,14 +356,21 @@ public class PostDao {
             }
             stmt.executeBatch();
 
-            sql = "INSERT INTO post_tag (post_id, tag_id) VALUES (?, (SELECT id FROM tags WHERE tag_name = ?))";
+            sql = "INSERT IGNORE INTO post_tag (post_id, tag_id) VALUES (?, (SELECT id FROM tags WHERE tag_name = ?))";
             stmt = conn.prepareStatement(sql);
             for(String tag : tags){
                 stmt.setInt(1, postID);
                 stmt.setString(2, tag);
                 stmt.addBatch();
             }
-            stmt.executeBatch();
+
+            int[] result = stmt.executeBatch();
+            for(int i = 0 ; i < result.length ;i++){
+                System.out.println("result i: " + result[i]);
+                if(result[i] == 1){
+                    addedTags.add(tags.get(i));
+                }
+            }
             conn.commit();
         }catch (SQLException e){
             conn.rollback();
@@ -372,6 +379,7 @@ public class PostDao {
             conn.setAutoCommit(true);
             conn.close();
         }
+        return addedTags;
     }
 
 }

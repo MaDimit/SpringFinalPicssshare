@@ -77,7 +77,7 @@ function loadAlbumsNames() {
 
         $.ajax({
             url: "feed/albumNames",
-            type: "POST",
+            type: "POST"
         }).then(function (data) {
             console.log("DATA:" + JSON.stringify(data));
 

@@ -81,6 +81,11 @@ public class FileController {
         return Base64Utils.encodeToString(IOUtils.toByteArray(new FileInputStream(path)));
     }
 
+    @PostMapping("/deleteUploaded")
+    public void deleteUploadedPost(@RequestParam("postID") int postID) throws PostManager.PostException {
+        postManager.deletePost(postID);
+    }
+
     private String createUri(String username){
         return username + File.separator + System.currentTimeMillis();
     }

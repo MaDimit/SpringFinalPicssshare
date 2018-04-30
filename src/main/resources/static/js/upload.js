@@ -7,6 +7,7 @@ $(document).ready(function () {
 
         fire_ajax_submit();
         $("#uploadedPost").css('display','block');
+        $("#fileUploadForm").hide();
     });
 
 });
@@ -53,14 +54,26 @@ function addTags(){
     var postID = $("#postID").val();
     console.log(input);
     console.log(postID);
-
     $.ajax({
         type:"POST",
         url: "/util/addTag",
         data: {input: input, postID : postID}
     }).then(function (data) {
         for(var i = 0; i < data.length ; i++){
-            $("#tags").append("<a href='#' ><span class='label label-primary'>" + data[i] + "</span></a>");
+            $("#tags").append("<a href='#' ><span class='label label-primary'>" + data[i] + "&nbsp;</span></a>");
         }
+        $("#tagsinput").val("");
     });
+}
+
+function cancelPostUpload(){
+    var postID = $("#postID").val();
+
+    $.ajax({
+        type: "POST",
+        url:"img/deleteUploaded",
+        data:{postID : postID}
+    }).then(function (data) {
+        window.location.replace("index.html#my");
+    })
 }
