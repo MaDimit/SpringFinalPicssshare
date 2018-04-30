@@ -159,6 +159,11 @@ public class FeedController {
         return msg;
     }
 
+    @PostMapping("/deleteAlbumPost")
+    public void deleteAlbumPost(@RequestParam int postID, @RequestParam int albumID) throws SQLException {
+        albumManager.removePostFromAlbum(postID, albumID);
+    }
+
     @RequestMapping(value = "/tag")
     public TagFeedWrapper getTagFeed(@RequestParam("id") int tagID)  throws SQLException {
         return postManager.getTagFeed(tagID);

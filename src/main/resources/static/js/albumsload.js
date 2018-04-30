@@ -31,6 +31,7 @@ function addAlbum(albumName){
             alert(data)
         }
     });
+    albums = getAlbumsForPage();
 }
 
 function loadAlbums() {
@@ -70,8 +71,6 @@ function loadAlbums() {
 }
 
 function addToAlbum(albumID, postID){
-    console.log("Album id in add TO album: " + albumID);
-    console.log("Post id in add TO album: " + postID);
     $.ajax({
         url: "feed/addToAlbum",
         type: "POST",
@@ -95,11 +94,10 @@ function getAlbumsForPage(){
             }
         }
     });
-    console.log(albums);
     return albums
 }
 
-
+var currentAlbumID;
 function loadPicturesFromAlbum(albumID, albumName) {
     $("#newpost").html("");
     $.ajax({
@@ -110,10 +108,23 @@ function loadPicturesFromAlbum(albumID, albumName) {
         if(data.length>0){
             $(".page-header").html(albumName);
         }
+        currentAlbumID = albumID;
         document.getElementById("container").style.display = "block";
         insertPosts(data);
-
+        replaceDropdowns();
     });
+}
+
+function replaceDropdowns(){
+    // var dropdowns = document.getElementsByClassName("album-dropdown");
+    // var deletePosts = document.getElementsByClassName("post-album-delete");
+    // for(var i = 0; i < dropdowns.length; i++){
+    //     dropdowns[i].style.display = "none";
+    //     deletePosts[i].style.display = "block";
+    // }
+
+    $(".album-dropdown").hide();
+    $(".post-album-delete").show();
 }
 
 function deleteAlbum(albumID){
@@ -136,7 +147,17 @@ function deleteAlbum(albumID){
             alert(data)
         }
     });
+    albums = getAlbumsForPage();
+}
 
+function deleteAlbumPost(postID){
+    $.ajax({
+        url : "feed/deleteAlbumPost",
+        type : "POST",
+        data:{postID : postID, albumID : currentAlbumID}
+    }).then(function (data) {
+        document.getElementById("post" + postID).innerHTML = "";
+    })
 }
 
 function showSubscriptions() {

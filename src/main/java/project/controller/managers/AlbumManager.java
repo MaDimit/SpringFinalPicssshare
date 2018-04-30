@@ -47,7 +47,7 @@ public class AlbumManager {
             }
         }
     }
-    public  void removePostFromAlbum(int postID, int albumID) throws SQLException {
+    public void removePostFromAlbum(int postID, int albumID) throws SQLException {
         albumDao.removePostFromAlbumInDB(postID, albumID);
     }
 

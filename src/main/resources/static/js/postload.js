@@ -37,7 +37,7 @@ function loadUserPosts(id) {
         data: {id : id},
     }).then(function (data) {
         $(".page-header").html(data.user.username +"'s page");
-        if(String(data.owner) ==="false") {
+        if(!data.owner) {
             document.getElementById('subscribeButton').style.display = "block";
             document.getElementById('ownerID').innerHTML = data.user.id;
             document.getElementById('showSubscriptions').style.display="none";
@@ -47,8 +47,7 @@ function loadUserPosts(id) {
             }
 
         }
-        else if(String(data.owner) ==="true"){
-
+        else {
             document.getElementById("container").style.display="none";
             document.getElementById('subscribeButton').style.display = "none";
             document.getElementById('showSubscriptions').style.display="block";
@@ -134,6 +133,7 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
 
     //adding albums dropdown
     newChild += addAlbumDiv(postID);
+    newChild += deleteAlbumPostDiv(postID);
     //likes dislikes
     newChild +=
         "<br><div class=\"btn-group\">" +
@@ -272,16 +272,21 @@ function addComment(lastCommentID, commentSectionID, postID){
 
 function addAlbumDiv(postID){
     var div =
-        "<div class='dropdown' style='float:right'>\n" +
-        "    <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>Add to album\n" +
-        "        <span class='caret'></span></button>\n" +
+        "<div class='dropdown album-dropdown' style='float:right'>\n" +
+        "    <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>Add to album</button>\n" +
         "    <ul class='dropdown-menu'>\n";
     for(i = 0; i < albums.length; i++){
         var albumID = albums[i].id;
         var albumName = albums[i].albumName;
-        div += "<li><a onclick='addToAlbum("+albumID+", "+postID+")'>"+albumName+"></a></li>"
+        div += "<li><a onclick='addToAlbum("+albumID+", "+postID+")'>"+albumName+"</a></li>"
     }
     div += "</ul></div>";
+    return div;
+}
+
+function deleteAlbumPostDiv(postID){
+    var div = "<div class='post-album-delete' style='float:right; display: none'  onclick='deleteAlbumPost("+postID+")'>" +
+        "<button class='btn btn-primary' type='button'>Delete from album</button></div>"
     return div;
 }
 
