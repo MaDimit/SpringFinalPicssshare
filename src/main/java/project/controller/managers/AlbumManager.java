@@ -37,8 +37,15 @@ public class AlbumManager {
        albumDao.addAlbumInDB(album);
     }
 
-    public void addPostInAlbum(int postID, int albumID) throws SQLException {
-        albumDao.addPostInAlbumInDB(postID, albumID);
+    public void addPostInAlbum(int postID, int albumID)throws Exception {
+        try {
+            albumDao.addPostInAlbumInDB(postID, albumID);
+        }catch (SQLException e){
+            System.out.println(e);
+            if(e.getMessage().startsWith("Duplicate entry")){
+                throw new Exception("This post already in album");
+            }
+        }
     }
     public  void removePostFromAlbum(int postID, int albumID) throws SQLException {
         albumDao.removePostFromAlbumInDB(postID, albumID);

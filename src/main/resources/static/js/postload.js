@@ -1,4 +1,11 @@
 //get friends feed
+var albums;
+
+$(document).ready(function () {
+   albums = getAlbumsForPage();
+});
+
+
 function loadFriendsFeed() {
 
     document.getElementById("container").style.display="none";
@@ -39,6 +46,7 @@ function loadUserPosts(id) {
 }
 
 function loadTagFeed(id){
+
     $("#newpost").html("");
     $.ajax({
         url: "feed/tag",
@@ -47,18 +55,6 @@ function loadTagFeed(id){
         $(".page-header").html(data.tagname);
         insertPosts(data.posts);
     });
-}
-
-function addUserData(data){
-    $(".page-header").html(data.user.username +"'s page");
-    if(data.owner) {
-        document.getElementById('subscribeButton').style.visibility = "visible";
-        document.getElementById('ownerID').innerHTML = data.user.id;
-    }
-    else{
-        document.getElementById("container").style.display="none";
-        document.getElementById('subscribeButton').style.visibility = "hidden";
-    }
 }
 
 //get trending feed
@@ -94,7 +90,6 @@ function insertPosts(json) {
 }
 //used for post visualising
 function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDate, postID, postLikes, postDislikes) {
-    loadAlbumsNames();
     var postPosterUsername = postPoster.username;
     //the place where the post will be visualized
     var parent = document.getElementById('newpost');
@@ -113,8 +108,9 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
         newChild += "<a href='#' ><span class=\"label label-primary\" style='font-size: medium'>" + postTags[i] + "</span></a>  ";  //TODO Tag inserting to search
     }
 
+    //adding albums dropdown
+    newChild += addAlbumDiv(postID);
     //likes dislikes
-   // newChild+=loadAlbumsNames();
     newChild +=
         "<br><div class=\"btn-group\">" +
         "            <button class=\"btn btn-success\" onclick=\"like("+postID+")\" ><i\n" +
@@ -235,6 +231,21 @@ function addComment(lastCommentID, commentSectionID, postID){
 
     });
     document.getElementById("commentContext"+postID+"").value = "";
+}
+
+function addAlbumDiv(postID){
+    var div =
+        "<div class='dropdown' style='float:right'>\n" +
+        "    <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>Add to album\n" +
+        "        <span class='caret'></span></button>\n" +
+        "    <ul class='dropdown-menu'>\n";
+    for(i = 0; i < albums.length; i++){
+        var albumID = albums[i].id;
+        var albumName = albums[i].albumName;
+        div += "<li><a onclick='addToAlbum("+albumID+", "+postID+")'>"+albumName+"></a></li>"
+    }
+    div += "</ul></div>";
+    return div;
 }
 
 function insertModal(post) {

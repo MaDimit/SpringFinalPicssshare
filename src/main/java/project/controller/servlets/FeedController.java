@@ -2,6 +2,7 @@ package project.controller.servlets;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -132,6 +133,17 @@ public class FeedController {
             e.printStackTrace();
         }
         return posts;
+    }
+
+    @PostMapping("/addToAlbum")
+    public String addToAlbum (@RequestParam int postID, @RequestParam int albumID){
+        String msg = "Successfully added to album";
+        try {
+            albumManager.addPostInAlbum(postID, albumID);
+        } catch (Exception e) {
+            msg = e.getMessage();
+        }
+        return msg;
     }
 
     @RequestMapping(value = "/tag")
