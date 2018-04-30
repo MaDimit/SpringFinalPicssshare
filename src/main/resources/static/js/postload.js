@@ -14,9 +14,15 @@ function loadFriendsFeed() {
     $.ajax({
         url: "/feed/friends"
     }).then(function (data) {
+        // console.log(JSON.stringify(data));
+        // console.log("FRIENDS POST ID: "+data[i].id);
         insertPosts(data);
         document.getElementById('subscribeButton').style.display="none";
         document.getElementById('showSubscriptions').style.display="none";
+        // for(i=0;i<data.length;i++){
+        //     console.log(document.getElementById("deletePost"+data[i].id));
+        //     document.getElementById("deletePost"+data[i].id).display="none";
+        // }
     });
 }
 
@@ -35,13 +41,22 @@ function loadUserPosts(id) {
             document.getElementById('subscribeButton').style.display = "block";
             document.getElementById('ownerID').innerHTML = data.user.id;
             document.getElementById('showSubscriptions').style.display="none";
+            insertPosts(data.posts);
+            for(i=0;i<data.posts.length;i++){
+                document.getElementById("deletePost"+data.posts[i].id).style.display="none";
+            }
+
         }
         else if(String(data.owner) ==="true"){
+
             document.getElementById("container").style.display="none";
             document.getElementById('subscribeButton').style.display = "none";
             document.getElementById('showSubscriptions').style.display="block";
+            insertPosts(data.posts);
+            for(i=0;i<data.posts.length;i++){
+                document.getElementById("deletePost"+data.posts[i].id).style.display="block";
+            }
         }
-        insertPosts(data.posts);
     });
 }
 
@@ -53,6 +68,7 @@ function loadTagFeed(id){
         data: {id : id}
     }).then(function (data) {
         $(".page-header").html(data.tagname);
+        document.getElementById("deletePost"+data.posts[i].id).display="none";
         insertPosts(data.posts);
     });
 }
@@ -66,9 +82,16 @@ function loadTrendingFeed() {
     $.ajax({
         url: "feed/trending"
     }).then(function (data) {
+        // console.log(JSON.stringify(data));
+        // console.log("TRENDING POST ID: "+data[i].id);
         insertPosts(data);
         document.getElementById('subscribeButton').style.display="none";
         document.getElementById('showSubscriptions').style.display="none";
+        // for(var i=0;i<data.length;i++){
+        //     console.log(document.getElementById("deletePost"+data[i].id));
+        //     document.getElementById("deletePost"+data[i].id).display="none";
+        // }
+
     });
 }
 
@@ -85,6 +108,7 @@ function insertPosts(json) {
         var postLikes = post.likes;
         var postDislikes = post.dislikes;
         insertNewPost(post, postPoster, postComments, postUrl, postTags, postDate, postID, postLikes, postDislikes);
+
     }
 
 }
@@ -144,12 +168,25 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
         "                    </div>\n" +
         "                    <div class=\"card-footer text-muted\">\n" +
         "                        Posted on " + postDate + " by\n" +
-        "                        <a href=\"#\" onclick='loadUserPosts("+postPoster.id+")'>" + postPosterUsername + "</a>\n" +
+        "                        <a href=\"#\" onclick='loadUserPosts("+postPoster.id+")'>" + postPosterUsername + "</a><a href='#' id=\"deletePost" + postID +"\" onclick='deletePost("+postID+")' style='float:right; display: none'>delete</a>\n" +
         "                    </div>\n" +
         "                </div><br>";
     parent.insertAdjacentHTML('beforeend', newChild);
     //load post's picture
     addImage(imageID, postUrl);
+}
+
+function deletePost(postID){
+    $.ajax({
+        url: "feed/deletePost",
+        type:"POST",
+        data: {postID : postID}
+    }).then(function (data) {
+        if(data==='success'){
+            alert('You have successfully deleted the post.');
+            document.getElementById("post"+postID).innerHTML="";
+        }
+    });
 }
 //function for disliking post
 function dislike(postID){

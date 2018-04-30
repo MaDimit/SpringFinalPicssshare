@@ -31,7 +31,6 @@ function addAlbum(albumName){
             alert(data)
         }
     });
-    albums = getAlbumsForPage();
 }
 
 function loadAlbums() {
@@ -43,9 +42,6 @@ function loadAlbums() {
         document.getElementById('subscribeButton').style.display="none";
         $(".page-header").html("");
         document.getElementById('showSubscriptions').style.display="none";
-
-        console.log("Albums: " + data);
-        console.log("DATA:" + JSON.stringify(data));
         document.getElementById("container").style.display = "block";
         var container = document.getElementById("container");
         container.innerHTML =
@@ -105,15 +101,12 @@ function getAlbumsForPage(){
 
 
 function loadPicturesFromAlbum(albumID, albumName) {
-    console.log("ALBUM ID:" + albumID);
-    console.log("ALBUM NAME: " + albumName);
     $("#newpost").html("");
     $.ajax({
         url: "feed/album",
         type: "POST",
         data: {albumID: albumID},
     }).then(function (data) {
-        console.log("DATA:" + JSON.stringify(data));
         if(data.length>0){
             $(".page-header").html(albumName);
         }
@@ -135,7 +128,6 @@ function deleteAlbum(albumID){
             $("#newpost").html("");
 
            document.getElementById('album'+albumID).innerHTML="";
-            console.log(document.getElementById('album'+albumID));
             $(".page-header").html("");
             alert('You have deleted this album.');
 
