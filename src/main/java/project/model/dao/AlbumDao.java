@@ -48,6 +48,7 @@ public class AlbumDao {
 
 
     public void addAlbumInDB(Album album) throws SQLException {
+        int albumID;
         try (Connection conn = dataSource.getConnection()) {
             String sql = "INSERT INTO albums (name, belonger_id) VALUES (?,?)";
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -56,10 +57,10 @@ public class AlbumDao {
             stmt.executeUpdate();
 
             ResultSet generatedKeys = stmt.getGeneratedKeys();
-            int id;
+
             if (generatedKeys.next()) {
-                id = generatedKeys.getInt(1);
-                album.setId(id);
+                albumID = generatedKeys.getInt(1);
+                album.setId(albumID);
             } else {
                 throw new SQLException("Creating post failed, no ID obtained.");
             }

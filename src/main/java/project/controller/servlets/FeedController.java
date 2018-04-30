@@ -87,6 +87,19 @@ public class FeedController {
         return albums;
     }
 
+    @RequestMapping(value = "/addAlbum")
+    public String addAlbum(@RequestParam String albumName, HttpSession session)  {
+        String message = "success";
+        User u = (User) session.getAttribute("user");
+        try {
+           albumManager.createAlbum(u,albumName);
+
+        } catch (SQLException e) {
+            message=e.getMessage();
+        }
+        return message;
+    }
+
     @RequestMapping(value = "/deleteAlbum")
     public String deleteAlbum(@RequestParam int albumID)  {
         String message = "success";

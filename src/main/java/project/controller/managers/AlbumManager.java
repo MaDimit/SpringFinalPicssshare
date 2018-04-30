@@ -34,7 +34,7 @@ public class AlbumManager {
         //create album object
         Album album = new Album(u, name);
         //add in db
-        albumDao.addAlbumInDB(album);
+       albumDao.addAlbumInDB(album);
     }
 
     public void addPostInAlbum(int postID, int albumID) throws SQLException {

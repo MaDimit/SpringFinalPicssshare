@@ -1,3 +1,38 @@
+function askForAlbumName(){
+    var txt;
+    var albumName = prompt("Please the album name:", "Something like friends, collegues, trip....");
+    if (albumName == null || albumName == "") {
+        alert("No album name entered.");
+    } else {
+        addAlbum(albumName);
+    }
+}
+
+function addAlbum(albumName){
+    $.ajax({
+        url: "feed/addAlbum",
+        type: "POST",
+        data:{
+            albumName: albumName
+        }
+    }).then(function (data) {
+        if(data==='success'){
+            loadAlbums();
+
+            // $("#newpost").html("");
+            //
+            // document.getElementById('album'+albumID).innerHTML="";
+            // console.log(document.getElementById('album'+albumID));
+            // $(".page-header").html("");
+            alert('Successfully added album.');
+
+        }
+        else {
+            alert(data)
+        }
+    });
+}
+
 function loadAlbums() {
     $("#newpost").html("");
     $.ajax({
@@ -13,7 +48,8 @@ function loadAlbums() {
         document.getElementById("container").style.display = "block";
         var container = document.getElementById("container");
         container.innerHTML =
-            "<br><br><br><h1><b>Albums</b></h1>\n";
+            "<br><br><br><table><tr><td><h1><b>Albums</b></h1></td><td width='50%'><button class=\"btn btn-success\" onclick=\"askForAlbumName()\" style='float: right'>Add new album</button></td></tr></table>\n";
+
         for (i = 0; i < data.length; i++) {
 
             var album = data[i];
