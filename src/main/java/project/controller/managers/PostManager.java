@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.model.dao.PostDao;
 import project.model.pojo.Post;
-import project.model.pojo.TagFeedWrapper;
 import project.model.pojo.User;
+import project.model.pojo.wrappers.TagFeedWrapper;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 @Component
 public class PostManager {
@@ -132,6 +134,16 @@ public class PostManager {
 
     private void validate(Post post) throws PostException{
         validate(post, post.getPoster());
+    }
+
+    public List<String> addTags(String input, int postID) throws SQLException{
+        input = input.replaceAll(","," ").replaceAll("/s", " ");
+        List<String> tags = new ArrayList<>(Arrays.asList(input.split(" ")));
+        List<String> modifiedTags = new ArrayList<>();
+        tags.forEach(s -> modifiedTags.add("#"+s));
+        System.out.println(modifiedTags);
+        postDao.addTags(modifiedTags, postID);
+        return modifiedTags;
     }
 
 }

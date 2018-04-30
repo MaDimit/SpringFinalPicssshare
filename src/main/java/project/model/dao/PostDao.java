@@ -4,8 +4,8 @@ package project.model.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.model.pojo.Post;
-import project.model.pojo.SearchWrapper;
 import project.model.pojo.User;
+import project.model.pojo.wrappers.SearchWrapper;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -338,6 +338,40 @@ public class PostDao {
         List<String> tag = new ArrayList<>();
         tag.add(tagname);
         return new ArrayList<Post>(getPostsByTags(tag));
+    }
+
+    public void addTags(List<String> tags, int postID) throws SQLException{
+        Connection conn = dataSource.getConnection();
+        System.out.println(tags);
+        System.out.println("Post id: " + postID);
+        try{
+            conn.setAutoCommit(false);
+            List<Integer> tagsID;
+            String sql = "INSERT IGNORE INTO tags (tag_name) VALUES (?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+
+            for(String tag : tags){
+                stmt.setString(1, tag);
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+
+            sql = "INSERT INTO post_tag (post_id, tag_id) VALUES (?, (SELECT id FROM tags WHERE tag_name = ?))";
+            stmt = conn.prepareStatement(sql);
+            for(String tag : tags){
+                stmt.setInt(1, postID);
+                stmt.setString(2, tag);
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+            conn.commit();
+        }catch (SQLException e){
+            conn.rollback();
+            throw e;
+        }finally {
+            conn.setAutoCommit(true);
+            conn.close();
+        }
     }
 
 }

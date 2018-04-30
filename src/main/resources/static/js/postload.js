@@ -110,7 +110,7 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
 
     //adding tags
     for (i = 0; i < postTags.length; i++) {
-        newChild += "<a href='#'><span class=\"label label-primary\">" + postTags[i] + "</span></a> ";  //TODO Tag inserting to search
+        newChild += "<a href='#' ><span class=\"label label-primary\">" + postTags[i] + "</span></a> ";  //TODO Tag inserting to search
     }
 
     //likes dislikes
@@ -335,7 +335,7 @@ function insertNewComment(comment) {
         "                        <div class=\"col-sm-8\">\n" +
         "                            <h4><a href=\"#\" onclick='loadUserPosts("+commentPoster.id+")'>" + commentPoster.username + "</a>\n" +
         "                                <small>" + commentDate + "</small><small>, Likers: </small><small id=\"comment"+commentID+"likes\"></small>\n" +
-        "                            </h4><button onclick='likeComment("+commentID+")' style='float:right'>LIKE</button><button style='float: right;' onclick='deleteComment("+commentID+")'>DELETE</button>" +
+        "                            </h4><button class='btn btn-primary' onclick='likeComment("+commentID+")' style='float:right'>LIKE</button><button class='btn btn-primary' style='float: right;' onclick='deleteComment("+commentID+")'>DELETE</button>" +
 
         "                            <p>" + commentContent + "</p>\n" +
         "                            <br>\n" +

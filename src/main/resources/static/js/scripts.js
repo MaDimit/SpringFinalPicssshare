@@ -55,7 +55,7 @@ function autoComplete() {
             var user = users[i];
             var username = user.username;
             var id = user.id;
-            var div = "<div onclick='loadUserPosts("+id+")' " +
+            var div = "<div onclick='loadUserPosts(" + id + ")' " +
                 "<strong>" + username.substr(0, input.length) + "</strong>" +
                 username.substr(input.length) +
                 "</a></div>";
@@ -66,7 +66,7 @@ function autoComplete() {
             var tag = tags[i];
             var tagname = tag.tag;
             var id = tag.id;
-            var div = "<div onclick='loadTagFeed("+id+")' " +
+            var div = "<div onclick='loadTagFeed(" + id + ")' " +
                 "<strong>" + tagname.substr(0, input.length) + "</strong>" +
                 tagname.substr(input.length) +
                 "</a></div>";
@@ -74,5 +74,3 @@ function autoComplete() {
         }
     })
 }
-
-

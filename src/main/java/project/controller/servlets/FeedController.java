@@ -9,7 +9,11 @@ import project.controller.managers.AlbumManager;
 import project.controller.managers.PostManager;
 import project.controller.managers.UserManager;
 import project.model.dao.UserDao;
-import project.model.pojo.*;
+import project.model.pojo.Album;
+import project.model.pojo.Post;
+import project.model.pojo.User;
+import project.model.pojo.UserFeed;
+import project.model.pojo.wrappers.TagFeedWrapper;
 
 import javax.servlet.http.HttpSession;
 import java.sql.SQLException;

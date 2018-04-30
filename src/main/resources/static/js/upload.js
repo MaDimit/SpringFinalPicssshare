@@ -6,7 +6,7 @@ $(document).ready(function () {
         event.preventDefault();
 
         fire_ajax_submit();
-
+        $("#uploadedPost").css('display','block');
     });
 
 });
@@ -30,10 +30,11 @@ function fire_ajax_submit() {
         cache: false,
         timeout: 600000,
         success: function (data) {
-            console.log("SUCCESS : ", data);
-            console.log(typeof data);
-            $("#image").attr("src", getImageSrc(data));
-            $("#btnSubmit").prop("disabled", false);
+            var image = data.base64Image;
+            var post = data.post;
+            $("#image").attr("src", getImageSrc(image));
+            $("#postID").val(post.id);
+            // $("#btnSubmit").prop("disabled", false);
 
         },
         error: function (e) {
@@ -45,4 +46,18 @@ function fire_ajax_submit() {
         }
     });
 
+}
+
+function addTags(){
+    var input = $("#tagsinput").val();
+    var postID = $("#postID").val();
+    $.ajax({
+        type:"POST",
+        url: "/util/addTag",
+        data: {input: input, postID : postID}
+    }).then(function (data) {
+        for(var i = 0; i < data.length ; i++){
+            $("#tags").append("<a href='#' ><span class='label label-primary'>" + data[i] + "</span></a>");
+        }
+    });
 }
