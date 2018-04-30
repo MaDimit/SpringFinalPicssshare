@@ -1,13 +1,17 @@
 package project.controller.servlets;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import project.controller.managers.PostManager;
 import project.controller.managers.UtilManager;
 import project.model.pojo.wrappers.SearchWrapper;
 
+import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/util")
@@ -23,6 +27,7 @@ public class UtilsController {
         SearchWrapper sr = utilManager.search(input);
         return sr;
     }
+
 
     @ResponseBody
     @RequestMapping(value = "/addTag", method = RequestMethod.POST)

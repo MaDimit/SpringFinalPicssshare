@@ -2,12 +2,12 @@ package project.controller.servlets;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 import project.controller.managers.LoggingManager;
 import project.controller.managers.PostManager;
 import project.controller.managers.UserManager;
 import project.model.dao.PostDao;
 import project.model.dao.UserDao;
-import project.model.pojo.Comment;
 import project.model.pojo.SubscriberUserPojo;
 import project.model.pojo.User;
 
@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 @RestController
 @RequestMapping(value = "/user")
@@ -207,6 +206,13 @@ public class UserController {
             e.printStackTrace();
         }
         return subscriptions;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "success";
     }
 
 

@@ -22,10 +22,11 @@
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="js/upload.js"></script>
     <script type="text/javascript" src="js/scripts.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Stalemate" rel="stylesheet">
 
 </head>
-
-
+<body style="font-family: 'Josefin Sans', sans-serif; ">
 <!-- Navigation -->
 <div class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed-top">
     <div class="container">
@@ -36,22 +37,31 @@
         </button>
 
         <!-- brand/logo -->
-        <a class="navbar-brand" href="index.html">Picssshare</a>
+        <a class="navbar-brand" href="" onclick="loadTrendingFeed()" style='color: #1aff2f'>Picssshare</a>
+        <!-- search -->
 
+        <form autocomplete="off" onkeyup="autoComplete()">
+            <div class="autocomplete">
+                <input type="text" placeholder="Search.." id="searchbar">
+                <div id ="search-results" class="autocomplete-items">
+
+                </div>
+            </div>
+        </form>
         <!-- nav menu -->
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto" style="float:right">
+        <div class="collapse navbar-collapse" id="navbarResponsive" >
+            <ul class="navbar-nav ml-auto" style="float: right">
                 <li class="nav-item">
-                    <a class="nav-link" href="index.html#my">My Posts</a>
+                    <a class="nav-link" href="javascript:void(0);" onclick="loadUserPosts()">My Posts</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="index.html#albums">Albums</a>
+                    <a class="nav-link" href="#" onclick="loadAlbums()">Albums</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="index.html#friends">Friends feed</a>
+                    <a class="nav-link" href="javascript:void(0);" onclick="loadFriendsFeed()">Friends feed</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="index.html">Trending</a>
+                    <a class="nav-link" href="javascript:void(0);" onclick="loadTrendingFeed()">Trending</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="editprofile.html">Edit Profile</a>
@@ -64,12 +74,13 @@
     </div>
 </div>
 
+
 <!-- Page Content -->
 <div class="container">
     <br>
     <form method="POST" enctype="multipart/form-data" id="fileUploadForm">
         <input type="file" name="file" accept="image/*"/><br/><br/>
-        <input type="submit" value="Submit" id="btnSubmit"/>
+        <input type="submit" value="Submit" id="btnSubmit" style="border: 1px solid lightslategrey"/>
     </form>
 
     <div id="uploadedPost" class="card" style="display: none;">

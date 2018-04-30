@@ -110,7 +110,7 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
 
     //adding tags
     for (i = 0; i < postTags.length; i++) {
-        newChild += "<a href='#' ><span class=\"label label-primary\" style='font-size: medium'>" + postTags[i] + "</span></a><br> ";  //TODO Tag inserting to search
+        newChild += "<a href='#' ><span class=\"label label-primary\" style='font-size: medium'>" + postTags[i] + "</span></a>  ";  //TODO Tag inserting to search
     }
 
     //likes dislikes

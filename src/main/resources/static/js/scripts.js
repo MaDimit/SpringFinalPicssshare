@@ -74,3 +74,14 @@ function autoComplete() {
         }
     })
 }
+
+function logout(){
+    $.ajax({
+        url: "/user/logout",
+        type: "POST",
+    }).then(function (data) {
+        if(data==="success"){
+            window.location.replace("login.html");
+        }
+    });
+}
