@@ -15,8 +15,10 @@ function loadAlbums() {
         container.innerHTML =
             "<br><br><br><h1><b>Albums</b></h1>\n";
         for (i = 0; i < data.length; i++) {
+
             var album = data[i];
             var albumName = String(album.name);
+
             container.innerHTML += "\n" +
                 "<div id='album\"+album.id+\"' class=\"responsive\" onclick='loadPicturesFromAlbum(" + album.id + ",\"" + albumName + "\")'>\n" +
                 "  <div class=\"gallery\">\n" +
@@ -31,6 +33,34 @@ function loadAlbums() {
 
 
 }
+
+function loadAlbumsNames() {
+    var element = "<p>Add to album:</p><select id='albums''>";
+
+        $.ajax({
+            url: "feed/albumNames",
+            type: "POST",
+        }).then(function (data) {
+            console.log("DATA:" + JSON.stringify(data));
+
+            for (var key in data) {
+                if (data.hasOwnProperty(key)) {
+                    var albumID = key;
+                    var albumName = data[key];
+                    var option = document.createElement("option");
+                    option.text = albumName;
+                    option.value = albumID;
+                   element+="<option value=\""+option.value+"\">"+option.text+"</option>";
+
+                    console.log(key + " -> " + data[key]);
+                }
+            }
+            element+="</select><br>";
+
+        });
+        return element;
+    }
+
 
 //
 function loadPicturesFromAlbum(albumID, albumName) {

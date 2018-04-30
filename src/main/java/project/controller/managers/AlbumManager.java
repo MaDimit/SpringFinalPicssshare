@@ -9,6 +9,7 @@ import project.model.pojo.User;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Component
@@ -16,6 +17,10 @@ public class AlbumManager {
 
     @Autowired
     private AlbumDao albumDao;
+
+    public HashMap<Integer, String> getAllAlbumsNames(int userID) throws SQLException {
+        return albumDao.getAllAlbumsNames(userID);
+    }
 
     public List<Album> getAllAlbumsForUser(int userID) throws SQLException {
         return albumDao.getAllAlbumsForUser(userID);

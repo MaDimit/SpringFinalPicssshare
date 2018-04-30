@@ -14,6 +14,7 @@ import project.model.pojo.*;
 import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -80,6 +81,18 @@ public class FeedController {
             e.printStackTrace();
         }
         return albums;
+    }
+
+    @RequestMapping(value = "/albumNames")
+    public HashMap<Integer, String> getAlbumsNames(HttpSession session)  {
+        HashMap<Integer, String> albumsNames=null;
+        User currentUser = (User) session.getAttribute("user");
+        try {
+            albumsNames = albumManager.getAllAlbumsNames(currentUser.getId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return albumsNames;
     }
 
     @RequestMapping(value = "/album")

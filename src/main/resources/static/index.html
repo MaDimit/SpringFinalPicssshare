@@ -106,7 +106,13 @@
     </div>
     <!-- /.container -->
 </footer>
-
+<script>
+    $(document).on('change','#albums',function(){
+        var choice =  $(this).find("option:selected").attr('value');
+        console.log(choice);
+        alert(choice);
+    });
+</script>
 </body>
 
 </html>

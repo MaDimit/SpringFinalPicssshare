@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 import javax.xml.crypto.Data;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Component
@@ -152,5 +153,23 @@ public class AlbumDao {
 
         }
         return posts;
+    }
+
+    public HashMap<Integer, String> getAllAlbumsNames(int userID) throws SQLException {
+        HashMap<Integer, String> albumsNames =null;
+        try (Connection conn = dataSource.getConnection()) {
+            albumsNames = new HashMap<>();
+            String query = "SELECT id,name FROM albums WHERE belonger_id=?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, userID);
+            ResultSet results = statement.executeQuery();
+            while (results.next()) {
+                int albumID = results.getInt("id");
+                String albumName = results.getString("name");
+                albumsNames.put(albumID, albumName);
+            }
+
+        }
+        return albumsNames;
     }
 }

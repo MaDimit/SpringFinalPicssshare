@@ -94,6 +94,7 @@ function insertPosts(json) {
 }
 //used for post visualising
 function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDate, postID, postLikes, postDislikes) {
+    loadAlbumsNames();
     var postPosterUsername = postPoster.username;
     //the place where the post will be visualized
     var parent = document.getElementById('newpost');
@@ -113,6 +114,7 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
     }
 
     //likes dislikes
+   // newChild+=loadAlbumsNames();
     newChild +=
         "<br><div class=\"btn-group\">" +
         "            <button class=\"btn btn-success\" onclick=\"like("+postID+")\" ><i\n" +
