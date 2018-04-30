@@ -39,12 +39,10 @@ public class PostManager {
         }
     }
 
-    public void deletePost(int postID) throws PostException{
-        try{
+    public void deletePost(int postID) throws PostException, SQLException {
+
             postDao.deletePost(postID);
-        }catch (SQLException e){
-            throw new PostException("Problem during removing post from DB");
-        }
+
     }
 
     public Post getPost(int postID) throws PostException{

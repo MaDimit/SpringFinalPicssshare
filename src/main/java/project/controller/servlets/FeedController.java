@@ -40,6 +40,19 @@ public class FeedController {
     @Value("${userid.session}")
     private int USER_ID;
 
+    @RequestMapping(value = "/deletePost")
+    public String deletePost(@RequestParam int postID) {
+        String message = "success";
+        try {
+            postManager.deletePost(postID);
+        } catch (PostManager.PostException e) {
+            message=e.getMessage();
+        } catch (SQLException e) {
+            message=e.getMessage();
+        }
+        return message;
+    }
+
     @RequestMapping(value = "/friends")
     public List<Post> getFriendsFeed(HttpSession session) throws SQLException, PostManager.PostException {
         //TEMP adding user to session on index page without login for testing
