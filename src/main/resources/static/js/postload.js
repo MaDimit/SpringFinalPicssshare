@@ -110,7 +110,7 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
 
     //adding tags
     for (i = 0; i < postTags.length; i++) {
-        newChild += "<a href='#' ><span class=\"label label-primary\">" + postTags[i] + "</span></a> ";  //TODO Tag inserting to search
+        newChild += "<a href='#' ><span class=\"label label-primary\" style='font-size: medium'>" + postTags[i] + "</span></a><br> ";  //TODO Tag inserting to search
     }
 
     //likes dislikes
@@ -150,7 +150,7 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
         "                        Posted on " + postDate + " by\n" +
         "                        <a href=\"#\" onclick='loadUserPosts("+postPoster.id+")'>" + postPosterUsername + "</a>\n" +
         "                    </div>\n" +
-        "                </div>";
+        "                </div><br>";
     parent.insertAdjacentHTML('beforeend', newChild);
     //load post's picture
     addImage(imageID, postUrl);

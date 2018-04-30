@@ -29,6 +29,10 @@
   font-size: 14px;
 }
 
+.JosefinSansFont{
+  font-family: 'Josefin Sans', sans-serif;
+}
+
 .fill {
   display: flex;
   justify-content: center;
