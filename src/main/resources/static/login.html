@@ -144,8 +144,6 @@
         var password1 = $('#password1').val();
         var password2 = $('#password2').val();
         var email = $('#email').val();
-       // var json = {username : username, password1 : password1, password2 : password2, email : email};
-        console.log(username + " " + password1 + " " + password2 + " " + email),
             $.ajax({
                 type: "POST",
                 url : "user/register",
@@ -153,8 +151,7 @@
                 success: function (data) {
                     var msg;
                     if (data === "success") {
-                        $(location).attr('href', "/index.html");
-
+                        $(location).attr('href', "/editprofile.html");
                     }
                     else if (data === "passNotMatch") {
                         msg = "Password doesn't match";

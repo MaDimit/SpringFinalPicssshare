@@ -28,7 +28,6 @@ public class CommentsController {
         ArrayList<User> commentLikers=null;
         try {
             commentLikers = (ArrayList<User>) commentManager.getCommentLikers(commentID);
-            System.out.println(commentLikers);
         } catch (SQLException e) {
 
         }

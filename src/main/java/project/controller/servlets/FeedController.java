@@ -1,7 +1,6 @@
 package project.controller.servlets;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,9 +36,6 @@ public class FeedController {
     //TEMP
     @Autowired
     UserDao userDao;
-    //TEMP
-    @Value("${userid.session}")
-    private int USER_ID;
 
     @RequestMapping(value = "/deletePost")
     public String deletePost(@RequestParam int postID) {
@@ -56,9 +52,6 @@ public class FeedController {
 
     @RequestMapping(value = "/friends")
     public List<Post> getFriendsFeed(HttpSession session) throws SQLException, PostManager.PostException {
-        //TEMP adding user to session on index page without login for testing
-        session.setAttribute("user", userDao.getUserByID(USER_ID));
-        //TEMP
         User user = (User)session.getAttribute("user");
 
         return postManager.getFriendsFeed(user.getId());
@@ -66,9 +59,6 @@ public class FeedController {
 
     @RequestMapping(value = "/trending")
     public List<Post>getTrendingFeed(HttpSession session) throws SQLException, PostManager.PostException {
-        //TEMP adding user to session on index page without login for testing
-        session.setAttribute("user", userDao.getUserByID(USER_ID));
-        //TEMP
 
         return postManager.getTrendingFeed();
     }

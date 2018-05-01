@@ -2,7 +2,6 @@ package project.controller.servlets;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
 import project.controller.managers.LoggingManager;
 import project.controller.managers.PostManager;
 import project.controller.managers.UserManager;
@@ -45,7 +44,6 @@ public class UserController {
                                @RequestParam String email,
                                HttpSession session) {
         String message = "success";
-        System.out.println(username);
 
         try {
             User user = (User) session.getAttribute("user");

@@ -67,8 +67,8 @@ function loadTagFeed(id){
         data: {id : id}
     }).then(function (data) {
         $(".page-header").html(data.tagname);
-        document.getElementById("deletePost"+data.posts[i].id).display="none";
         insertPosts(data.posts);
+        document.getElementById("deletePost"+data.posts[i].id).display="none";
     });
 }
 

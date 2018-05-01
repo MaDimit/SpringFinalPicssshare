@@ -210,9 +210,7 @@ public class UserDao {
             String sql = "UPDATE users SET " + sb.toString() + " WHERE id = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, u.getId());
-            System.out.println(sql);
             stmt.executeUpdate();
-            System.out.println("EXECUTED");
             stmt.close();
         }
     }

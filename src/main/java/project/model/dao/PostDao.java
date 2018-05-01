@@ -36,7 +36,7 @@ public class PostDao {
         try(Connection conn = dataSource.getConnection()) {
             String sql = "INSERT INTO posts (date, poster_id, url) VALUES (?,?,?)";
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            stmt.setObject(1, Timestamp.valueOf(post.getDate()));
+            stmt.setTimestamp(1, Timestamp.valueOf(post.getDate()));
             stmt.setInt(2, post.getPoster().getId());
             stmt.setString(3, post.getUrl());
             stmt.executeUpdate();
@@ -343,7 +343,7 @@ public class PostDao {
     public List<String> addTags(List<String> tags, int postID) throws SQLException{
         List<String> addedTags = new ArrayList<>();
         Connection conn = dataSource.getConnection();
-        System.out.println(tags);
+
         try{
             conn.setAutoCommit(false);
             List<Integer> tagsID;
@@ -366,7 +366,6 @@ public class PostDao {
 
             int[] result = stmt.executeBatch();
             for(int i = 0 ; i < result.length ;i++){
-                System.out.println("result i: " + result[i]);
                 if(result[i] == 1){
                     addedTags.add(tags.get(i));
                 }

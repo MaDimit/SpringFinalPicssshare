@@ -33,14 +33,13 @@ public class LoggingManager {
         if (!validatePassword(password)) {
             throw new RegistrationException("weakPass");
         }
-
         if (!validateEmailAddress(email)) {
             throw new RegistrationException("emailNotValid");
         }
 
         //if data is valid user obj is created
         User user = new User(username, password, email);
-
+        user.setProfilePicUrl("defaultAvatar.png");
         //adding to DB and collections
         try {
             userDao.registerUser(user);

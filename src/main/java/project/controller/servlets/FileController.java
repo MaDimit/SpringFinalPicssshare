@@ -55,14 +55,7 @@ public class FileController {
     @GetMapping(value = "/get")
     public String getImage(@RequestParam("url") String url) throws IOException{
         String path = UPLOAD_PATH + url;
-        String defaultPicturePath = UPLOAD_PATH + "default-user.png";
-        File f = new File(path);
-        if(f.exists()){
-            return Base64Utils.encodeToString(IOUtils.toByteArray(new FileInputStream(path)));
-        }
-        else {
-            return Base64Utils.encodeToString(IOUtils.toByteArray(new FileInputStream(defaultPicturePath)));
-        }
+        return Base64Utils.encodeToString(IOUtils.toByteArray(new FileInputStream(path)));
     }
 
     @PostMapping("/uploadProfilePic")
@@ -81,10 +74,10 @@ public class FileController {
         return Base64Utils.encodeToString(IOUtils.toByteArray(new FileInputStream(path)));
     }
 
-//    @PostMapping("/deleteUploaded")
-//    public void deleteUploadedPost(@RequestParam("postID") int postID) throws PostManager.PostException {
-//        postManager.deletePost(postID);
-//    }
+    @PostMapping("/deleteUploaded")
+    public void deleteUploadedPost(@RequestParam("postID") int postID) throws SQLException, PostManager.PostException {
+        postManager.deletePost(postID);
+    }
 
     private String createUri(String username){
         return username + File.separator + System.currentTimeMillis();
