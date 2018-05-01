@@ -10,6 +10,9 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import project.controller.servlets.DefaultExceptionHandler;
 import project.controller.servlets.LoginFilter;
 
 import javax.servlet.Filter;
@@ -46,6 +49,11 @@ public class Application extends WebMvcAutoConfiguration {
     @Bean
     public Filter loginFilter() {
         return new LoginFilter();
+    }
+
+    @Bean
+    public DefaultExceptionHandler defaultExceptionHandler(){
+        return new DefaultExceptionHandler();
     }
 
 

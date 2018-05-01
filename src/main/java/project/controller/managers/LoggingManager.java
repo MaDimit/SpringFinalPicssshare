@@ -55,15 +55,19 @@ public class LoggingManager {
 
     //========================VALIDATIONS===================================//
     // validate username
-    public boolean validateUsername(String username) throws RegistrationException, SQLException {
+    public boolean validateUsername(String username) throws RegistrationException {
         if (username == null || username.isEmpty()) {
-            throw new RegistrationException("emptyName");
+            throw new RegistrationException("Empty username.");
         }
         if (!username.matches("^[a-zA-Z0-9]+([_ -]?[a-zA-Z0-9])*$")) {
-            throw new RegistrationException("nonValidChars");
+            throw new RegistrationException("Username consists non valid characters.");
         }
-        if (userDao.checkIfUsernameIsTaken(username)) {
-            throw new RegistrationException("nameExists");
+        try {
+            if(userDao.checkIfUsernameIsTaken(username)){
+                throw new RegistrationException("Username is taken.");
+            }
+        } catch (SQLException e) {
+            throw new RegistrationException("Problem with the username.");
         }
         return true;
     }
@@ -109,14 +113,20 @@ public class LoggingManager {
     //=========================LOGGING=======================================//
 
     //Logging by username and password ----> //TODO: CHECK FOR RIGHT LOGIN IN THE SESSION
-    public User login(String username, String password) throws LoggingException, SQLException {
-        User user = userDao.login(username);
-        if (user == null) {
-            throw new LoggingException("wrongUsername");
+    public User login(String username, String password) throws LoggingException {
+        User user = null;
+        try {
+            user = userDao.login(username);
+            if (user == null) {
+                throw new LoggingException("Wrong username.");
+            }
+            if (!user.getPassword().equals(password)) {
+                throw new LoggingException("Wrong password.");
+            }
+        } catch (SQLException e) {
+            throw new LoggingException("Problem during logging.");
         }
-        if (!user.getPassword().equals(password)) {
-            throw new LoggingException("wrongPassword");
-        }
+        System.out.println("LOGINMANAGER:"+user);
         return user;
     }
 }

@@ -12,18 +12,23 @@ function loadFriendsFeed() {
     $("#newpost").html("");
     $(".page-header").html("Friends Feed");
     $.ajax({
-        url: "/feed/friends"
-    }).then(function (data) {
-        // console.log(JSON.stringify(data));
-        // console.log("FRIENDS POST ID: "+data[i].id);
-        insertPosts(data);
-        document.getElementById('subscribeButton').style.display="none";
-        document.getElementById('showSubscriptions').style.display="none";
-        // for(i=0;i<data.length;i++){
-        //     console.log(document.getElementById("deletePost"+data[i].id));
-        //     document.getElementById("deletePost"+data[i].id).display="none";
-        // }
+        url: "/feed/friends",
+        success: function (data) {
+            // console.log(JSON.stringify(data));
+            // console.log("FRIENDS POST ID: "+data[i].id);
+            insertPosts(data);
+            document.getElementById('subscribeButton').style.display="none";
+            document.getElementById('showSubscriptions').style.display="none";
+            // for(i=0;i<data.length;i++){
+            //     console.log(document.getElementById("deletePost"+data[i].id));
+            //     document.getElementById("deletePost"+data[i].id).display="none";
+            // }
+        },
+        error: function(jqXHR, exception) {
+            alert(jqXHR.responseJSON.message);
+        }
     });
+
 }
 
 //get feed with user's posts
@@ -35,26 +40,30 @@ function loadUserPosts(id) {
     $.ajax({
         url: "feed/user",
         data: {id : id},
-    }).then(function (data) {
-        $(".page-header").html(data.user.username +"'s page");
-        if(!data.owner) {
-            document.getElementById('subscribeButton').style.display = "block";
-            document.getElementById('ownerID').innerHTML = data.user.id;
-            document.getElementById('showSubscriptions').style.display="none";
-            insertPosts(data.posts);
-            for(i=0;i<data.posts.length;i++){
-                document.getElementById("deletePost"+data.posts[i].id).style.display="none";
-            }
+        success: function (data) {
+            $(".page-header").html(data.user.username +"'s page");
+            if(!data.owner) {
+                document.getElementById('subscribeButton').style.display = "block";
+                document.getElementById('ownerID').innerHTML = data.user.id;
+                document.getElementById('showSubscriptions').style.display="none";
+                insertPosts(data.posts);
+                for(i=0;i<data.posts.length;i++){
+                    document.getElementById("deletePost"+data.posts[i].id).style.display="none";
+                }
 
-        }
-        else {
-            document.getElementById("container").style.display="none";
-            document.getElementById('subscribeButton').style.display = "none";
-            document.getElementById('showSubscriptions').style.display="block";
-            insertPosts(data.posts);
-            for(i=0;i<data.posts.length;i++){
-                document.getElementById("deletePost"+data.posts[i].id).style.display="block";
             }
+            else {
+                document.getElementById("container").style.display="none";
+                document.getElementById('subscribeButton').style.display = "none";
+                document.getElementById('showSubscriptions').style.display="block";
+                insertPosts(data.posts);
+                for(i=0;i<data.posts.length;i++){
+                    document.getElementById("deletePost"+data.posts[i].id).style.display="block";
+                }
+            }
+        },
+        error: function(jqXHR, exception) {
+            alert(jqXHR.responseJSON.message);
         }
     });
 }
@@ -64,11 +73,16 @@ function loadTagFeed(id){
     $("#newpost").html("");
     $.ajax({
         url: "feed/tag",
-        data: {id : id}
-    }).then(function (data) {
-        $(".page-header").html(data.tagname);
-        insertPosts(data.posts);
-        document.getElementById("deletePost"+data.posts[i].id).display="none";
+        data: {id : id},
+        success: function (data) {
+            console.log(data);
+            $(".page-header").html(data.tagname);
+            insertPosts(data.posts);
+            document.getElementById("deletePost"+data.posts[i].id).display="none";
+        },
+        error: function(jqXHR, exception) {
+            alert(jqXHR.responseJSON.message);
+        }
     });
 }
 
@@ -79,18 +93,21 @@ function loadTrendingFeed() {
     $(".page-header").html("Trending Feed");
 
     $.ajax({
-        url: "feed/trending"
-    }).then(function (data) {
-        // console.log(JSON.stringify(data));
-        // console.log("TRENDING POST ID: "+data[i].id);
-        insertPosts(data);
-        document.getElementById('subscribeButton').style.display="none";
-        document.getElementById('showSubscriptions').style.display="none";
-        // for(var i=0;i<data.length;i++){
-        //     console.log(document.getElementById("deletePost"+data[i].id));
-        //     document.getElementById("deletePost"+data[i].id).display="none";
-        // }
-
+        url: "feed/trending",
+        success: function (data) {
+            // console.log(JSON.stringify(data));
+            // console.log("TRENDING POST ID: "+data[i].id);
+            insertPosts(data);
+            document.getElementById('subscribeButton').style.display="none";
+            document.getElementById('showSubscriptions').style.display="none";
+            // for(var i=0;i<data.length;i++){
+            //     console.log(document.getElementById("deletePost"+data[i].id));
+            //     document.getElementById("deletePost"+data[i].id).display="none";
+            // }
+        },
+        error: function(jqXHR, exception) {
+            alert(jqXHR.responseJSON.message);
+        }
     });
 }
 
@@ -180,15 +197,18 @@ function deletePost(postID){
     $.ajax({
         url: "feed/deletePost",
         type:"POST",
-        data: {postID : postID}
-    }).then(function (data) {
-        if(data==='success'){
+        data: {postID : postID},
+        success: function (data) {
             alert('You have successfully deleted the post.');
             document.getElementById("post"+postID).innerHTML="";
+        },
+        error: function(jqXHR, exception) {
+            alert(jqXHR.responseJSON.message);
         }
     });
 }
 //function for disliking post
+//TODO
 function dislike(postID){
     $.ajax({
         url: "user/addDislike",
@@ -223,27 +243,30 @@ function like(postID){
         type: "POST",
         data:{
             postID: postID
-        }
-    }).then(function (data) {
-        if(data==='success'){
-            // alert('Successfully liked post');
-            var oldValue = parseInt(document.getElementById("post"+postID+"likes").innerHTML);
-            var newValue = Number(oldValue) + Number(1);
-            document.getElementById("post"+postID+"likes").innerHTML=String(newValue);
-        }
-        if(data==='removedDislikeAddLike'){
-            var oldDislikeValue = parseInt(document.getElementById("post"+postID+"dislikes").innerHTML);
-            var newDislikeValue = Number(oldDislikeValue) - Number(1);
-            var oldLikeValue = parseInt(document.getElementById("post"+postID+"likes").innerHTML);
-            var newLikeValue = Number(oldLikeValue) + Number(1);
+        },
+        success: function (data) {
+            console.log(data);
+            if(data==='success'){
+                alert('Successfully liked post');
+                var oldValue = parseInt(document.getElementById("post"+postID+"likes").innerHTML);
+                var newValue = Number(oldValue) + Number(1);
+                document.getElementById("post"+postID+"likes").innerHTML=String(newValue);
+            }
+            if(data==='removedDislikeAddLike'){
+                var oldDislikeValue = parseInt(document.getElementById("post"+postID+"dislikes").innerHTML);
+                var newDislikeValue = Number(oldDislikeValue) - Number(1);
+                var oldLikeValue = parseInt(document.getElementById("post"+postID+"likes").innerHTML);
+                var newLikeValue = Number(oldLikeValue) + Number(1);
 
-            document.getElementById("post"+postID+"dislikes").innerHTML=String(newDislikeValue);
-            document.getElementById("post"+postID+"likes").innerHTML=String(newLikeValue);
-        }
-        if(data==='You have already liked this post.'){
-            // alert('You have already liked this post.');
+                document.getElementById("post"+postID+"dislikes").innerHTML=String(newDislikeValue);
+                document.getElementById("post"+postID+"likes").innerHTML=String(newLikeValue);
+            }
+        },
+        error: function(jqXHR, exception) {
+            alert(jqXHR.responseJSON.message);
         }
     });
+
 
 }
 //funcion used to post comment -> put in db -> return result
@@ -256,16 +279,20 @@ function addComment(lastCommentID, commentSectionID, postID){
         type: "POST",
         data:{
                 postID: postID,
-                commentText:commentContextValue}
-    }).then(function (data) {
-        var newcommentdiv = insertNewComment(data);
-        if(lastCommentID != undefined) {
-            $(newcommentdiv).insertAfter("#comment" + lastCommentID + "");
-        }
-        else{
-            $(newcommentdiv).insertAfter("#" + commentSectionID.id + "");
-        }
+                commentText:commentContextValue},
 
+        success: function (data) {
+            var newcommentdiv = insertNewComment(data);
+            if(lastCommentID != undefined) {
+                $(newcommentdiv).insertAfter("#comment" + lastCommentID + "");
+            }
+            else{
+                $(newcommentdiv).insertAfter("#" + commentSectionID.id + "");
+            }
+        },
+        error: function(jqXHR, exception) {
+            alert(jqXHR.responseJSON.message);
+        }
     });
     document.getElementById("commentContext"+postID+"").value = "";
 }
@@ -325,14 +352,14 @@ function deleteComment(commentID){
         type: "POST",
         data: {
             commentID: commentID
-        }
-    }).then(function (data) {
-        if(data==='success'){
+        },
+
+        success: function (data) {
             document.getElementById("comment"+commentID).innerHTML="";
             alert('You have successfully deleted your comment.')
-        }
-        else {
-            alert('Sorry! Problems occured.');
+        },
+        error: function(jqXHR, exception) {
+            alert(jqXHR.responseJSON.message);
         }
     });
 }
@@ -406,12 +433,17 @@ function getCommentsLikesCount(commentID){
         type: "POST",
         data:{
             commentID: commentID
+        },
+        success: function (data) {
+            var likers = data;
+            var numberOfLikers = data.length;
+            document.getElementById("comment"+commentID+"likes").innerText = numberOfLikers;
+        },
+        error: function(jqXHR, exception) {
+            alert(jqXHR.responseJSON.message);
         }
-    }).then(function (data) {
-        var likers = data;
-        var numberOfLikers = data.length;
-        document.getElementById("comment"+commentID+"likes").innerText = numberOfLikers;
     });
+
 }
 
 function likeComment(commentID){
@@ -420,18 +452,17 @@ function likeComment(commentID){
         type: "POST",
         data:{
             commentID: commentID
-        }
-    }).then(function (data) {
-        if(data==='success'){
+        },
+        success: function (data) {
             alert('Successfully liked comment');
             var likes = Number(document.getElementById("comment"+commentID+"likes").innerText );
             document.getElementById("comment"+commentID+"likes").innerText = String(Number(likes+1));
             // var oldValue = parseInt(document.getElementById("post"+postID+"likes").innerHTML);
             // var newValue = Number(oldValue) + Number(1);
             // document.getElementById("post"+postID+"likes").innerHTML=String(newValue);
-        }
-        else {
-            alert(data);
+        },
+        error: function(jqXHR, exception) {
+            alert(jqXHR.responseJSON.message);
         }
     });
 }
@@ -440,15 +471,27 @@ function subsrcibe(subscribedToID){
     $.ajax({
         url: "user/subscribe",
         type: "POST",
-        data:{
+        data: {
             subscribedToID: subscribedToID
-        }
-    }).then(function (data) {
-        if(data==='success'){
-            alert('Subscription successfully performed.');
-        }
-        else {
-            alert(data)
+        },
+        success: function (data) {
+            alert("Successfully subscribed to the user.");
+        },
+        error: function(jqXHR, exception) {
+            alert(jqXHR.responseJSON.message);
         }
     });
+
+        // .then(function(data) {
+        //     console.log(data);
+        //     // if(data.message != undefined){
+        //     //     alert('Subscription successfully performed.');
+        //     // }
+        //     // else {
+        //     //     alert(data.message);
+        //     // }
+        // })
+        // .catch(function(data) {
+        //     console.log(data.message);
+        // });
 }
