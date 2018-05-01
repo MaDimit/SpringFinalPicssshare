@@ -16,6 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import project.controller.servlets.DefaultExceptionHandler;
 
 import javax.sql.DataSource;
 
@@ -45,6 +46,11 @@ public class Application extends WebMvcAutoConfiguration {
                 .username(jdbcUser)
                 .driverClassName(jdbcDriver)
                 .build();
+    }
+
+    @Bean
+    public DefaultExceptionHandler defaultExceptionHandler(){
+        return new DefaultExceptionHandler();
     }
 
 

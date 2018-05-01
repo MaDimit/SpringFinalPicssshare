@@ -24,70 +24,37 @@ public class CommentsController {
 
     @ResponseBody
     @RequestMapping(value = "/getCommentLikes", method = RequestMethod.POST)
-    public ArrayList<User> getCommentLikes(@RequestParam int commentID){
+    public ArrayList<User> getCommentLikes(@RequestParam int commentID) throws CommentManager.CommentManagerException {
         ArrayList<User> commentLikers=null;
-        try {
-            commentLikers = (ArrayList<User>) commentManager.getCommentLikers(commentID);
-            System.out.println(commentLikers);
-        } catch (SQLException e) {
+        commentLikers = (ArrayList<User>) commentManager.getCommentLikers(commentID);
 
-        }
         return commentLikers;
     }
 
     @ResponseBody
     @RequestMapping(value = "/addCommentLike", method = RequestMethod.POST)
-    public String addCommentLike(@RequestParam int commentID, HttpSession session){
-
+    public void addCommentLike(@RequestParam int commentID, HttpSession session) throws CommentManager.CommentManagerException {
         User user = (User)session.getAttribute("user");
-        String message ="success";
-        try {
+        commentManager.likeComment(commentID, user.getId());
 
-            commentManager.likeComment(commentID, user.getId());
-
-
-        } catch (SQLException e) {
-            if(e.getMessage().startsWith("Duplicate ")){
-                message = "You have already liked this comment.";
-                return message;
-            }
-           message = e.getMessage();
-        } catch (Exception e) {
-            message = e.getMessage();
-        }
-
-        return message;
     }
 
     @ResponseBody
     @RequestMapping(value = "/addComment", method = RequestMethod.POST)
-    public Comment addComment(@RequestParam int postID, @RequestParam String commentText, HttpSession session){
+    public Comment addComment(@RequestParam int postID, @RequestParam String commentText, HttpSession session) throws CommentManager.CommentManagerException, SQLException {
         Comment comment=null;
         User user = (User)session.getAttribute("user");
-        try {
-            comment = new Comment(postDao.getPost(postID), user, commentText);
-            commentManager.addComment(comment);
-
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
+        //TODO
+        comment = new Comment(postDao.getPost(postID), user, commentText);
+        commentManager.addComment(comment);
         return comment;
     }
 
     @ResponseBody
     @RequestMapping(value = "/deleteComment", method = RequestMethod.POST)
-    public String deleteComment(@RequestParam int commentID){
+    public void deleteComment(@RequestParam int commentID) throws CommentManager.CommentManagerException {
+        commentManager.deleteComment(commentID);
 
-        String message = "success";
-        try {
-            commentManager.deleteComment(commentID);
-
-        } catch (SQLException e) {
-            message=e.getMessage();
-        }
-        return message;
     }
 
 

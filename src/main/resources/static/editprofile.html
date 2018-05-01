@@ -140,15 +140,13 @@
                     firstName: firstName,
                     lastName: lastName,
                     email: email,
-                }
-        }).then(function (data) {
-            if(data==='success'){
+                },
+            success: function (data) {
                 alert('Successfully edited information.');
+            },
+            error: function(jqXHR, exception) {
+                alert(jqXHR.responseJSON.message);
             }
-            else {
-                alert(data);
-            }
-
         });
     }
 

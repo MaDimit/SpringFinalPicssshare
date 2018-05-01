@@ -35,7 +35,7 @@ public class UserController {
     @ResponseBody
     @RequestMapping(value = "/editUserData", method = RequestMethod.POST)
 
-    public String editUserData(
+    public void editUserData(
                                @RequestParam String username,
                                @RequestParam String oldPassword,
                                @RequestParam String newPassword,
@@ -43,11 +43,9 @@ public class UserController {
                                @RequestParam String firstName,
                                @RequestParam String lastName,
                                @RequestParam String email,
-                               HttpSession session) {
-        String message = "success";
-        System.out.println(username);
+                               HttpSession session) throws LoggingManager.RegistrationException, UserManager.UserManagerException {
 
-        try {
+
             User user = (User) session.getAttribute("user");
             if (oldPassword.equals(user.getPassword())) {
                 //if there is new password entered
@@ -56,7 +54,7 @@ public class UserController {
                         userManager.updateProfileInfo(user, newPassword, firstName, lastName, email);
 
                     } else {
-                        message = "New passwords don't match.";
+                        throw new UserManager.UserManagerException("Passwords don't match.");
                     }
                     //use the old password
                 } else {
@@ -64,13 +62,9 @@ public class UserController {
                 }
 
             } else {
-                message = "You have entered wrong origin password.";
-                return message;
+                throw new UserManager.UserManagerException("You have entered wrong origin password.");
             }
-        } catch (Exception e) {
-            message = e.getMessage();
-        }
-        return message;
+
     }
 
 
@@ -82,51 +76,34 @@ public class UserController {
     }
 
     @GetMapping(value = "/get")
-    public User getUser(@RequestParam("id") int userID){
-        User user = null;
-        try {
-            user = userManager.getUser(userID);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public User getUser(@RequestParam("id") int userID) throws UserManager.UserManagerException {
+        User user = userManager.getUser(userID);
         return user;
     }
 
     @ResponseBody
     @RequestMapping(value = "/subscribe", method = RequestMethod.POST)
-    public String subscribe(@RequestParam int subscribedToID, HttpSession session){
-        String message = "success";
-
-        try {
-
+    public void subscribe(@RequestParam int subscribedToID, HttpSession session) throws UserManager.UserManagerException {
             User subscriber = (User)session.getAttribute("user");
-            User subscribedTo =  userDao.getUserByID(subscribedToID);
-            userManager.subscribe(subscriber,subscribedTo );
-
+        User subscribedTo = null;
+        try {
+            subscribedTo = userDao.getUserByID(subscribedToID);
         } catch (SQLException e) {
-            message=e.getMessage();
-        } catch (UserManager.UserManagerException e) {
-            message=e.getMessage();
+            throw new  UserManager.UserManagerException("Problem during subscribing.");
         }
-
-        return message;
+        userManager.subscribe(subscriber,subscribedTo );
     }
 
-    @ResponseBody
     @RequestMapping(value = "/unsubscribe", method = RequestMethod.POST)
-    public String unsubscribe(@RequestParam int subscribedToID, HttpSession session){
-        String message = "success";
+    public void unsubscribe(@RequestParam int subscribedToID, HttpSession session) throws UserManager.UserManagerException {
+        User subscriber = (User)session.getAttribute("user");
+        User subscribedTo = null;
         try {
-            User subscriber = (User)session.getAttribute("user");
-            User subscribedTo =  userDao.getUserByID(subscribedToID);
-            userManager.removeSubscription(subscriber,subscribedTo );
+            subscribedTo = userDao.getUserByID(subscribedToID);
         } catch (SQLException e) {
-            message=e.getMessage();
-        } catch (UserManager.UserManagerException e) {
-            message=e.getMessage();
+            throw new  UserManager.UserManagerException("Problem during unsubscribing.");
         }
-
-        return message;
+        userManager.removeSubscription(subscriber,subscribedTo );
     }
 
 
@@ -138,9 +115,8 @@ public class UserController {
                            @RequestParam String password1,
                            @RequestParam String password2,
                            @RequestParam String email,
-                           HttpSession session) {
+                           HttpSession session) throws LoggingManager.RegistrationException, SQLException {
         String message = "success";
-        try {
             if (!password1.equals(password2)) {
                 message = "passNotMatch";
                 return message;
@@ -149,62 +125,45 @@ public class UserController {
                 session.setAttribute("user", user);
             }
 
-        } catch (Exception e) {
-            message = e.getMessage();
-        }
+
         return message;
     }
 
     @ResponseBody
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String login(@RequestParam String username, @RequestParam String password, HttpServletRequest request) {
-        String message = "success";
-        try {
-            User user = loggingManager.login(username, password);
-            request.getSession().setAttribute("user", user);
-        } catch (Exception e) {
-            message = e.getMessage();
-        }
-        return message;
+    public void login(@RequestParam String username, @RequestParam String password, HttpServletRequest request) throws LoggingManager.LoggingException {
+        User user = loggingManager.login(username, password);
+        System.out.println("CONTROLLER:"+user);
+        request.getSession().setAttribute("user", user);
     }
 
     @ResponseBody
     @RequestMapping(value = "/addLike", method = RequestMethod.POST)
-    public String addLike(@RequestParam int postID, HttpSession session) {
-        String message = "";
+    public String addLike(@RequestParam int postID, HttpSession session) throws PostManager.PostManagerException, SQLException {
+
         User user = (User)session.getAttribute("user");
-        try {
-            message = postManager.likePost(postDao.getPost(postID), user);
-        } catch (Exception e) {
-            message = e.getMessage();
-        }
-        return message;
+        String text;
+           text= postManager.likePost(postDao.getPost(postID), user);
+           System.out.println("USERCONTROLLER: "+text);
+        return text;
+
     }
 
     @ResponseBody
     @RequestMapping(value = "/addDislike", method = RequestMethod.POST)
-    public String addDislike(@RequestParam int postID, HttpSession session) {
-        String message = "";
+    public void addDislike(@RequestParam int postID, HttpSession session) throws PostManager.PostManagerException, SQLException {
         User user = (User)session.getAttribute("user");
-        try {
-            message = postManager.dislikePost(postDao.getPost(postID),user);
-        } catch (Exception e) {
-            message = e.getMessage();
-        }
-        return message;
+        postManager.dislikePost(postDao.getPost(postID),user);
+
     }
 
     @ResponseBody
     @RequestMapping(value = "/getSubscriptions", method = RequestMethod.POST)
-    public ArrayList<SubscriberUserPojo> getSubscriptions(HttpSession session) {
+    public ArrayList<SubscriberUserPojo> getSubscriptions(HttpSession session) throws UserManager.UserManagerException {
 
         User user = (User)session.getAttribute("user");
         ArrayList<SubscriberUserPojo> subscriptions=null;
-        try {
-            subscriptions = userManager.getAllSubscriptions(user.getId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        subscriptions = userManager.getAllSubscriptions(user.getId());
         return subscriptions;
     }
 

@@ -57,12 +57,16 @@ function addTags(){
     $.ajax({
         type:"POST",
         url: "/util/addTag",
-        data: {input: input, postID : postID}
-    }).then(function (data) {
-        for(var i = 0; i < data.length ; i++){
-            $("#tags").append("<a href='#' ><span class='label label-primary'>" + data[i] + "&nbsp;</span></a>");
+        data: {input: input, postID : postID},
+        success: function (data) {
+            for(var i = 0; i < data.length ; i++){
+                $("#tags").append("<a href='#' ><span class='label label-primary'>" + data[i] + "&nbsp;</span></a>");
+            }
+            $("#tagsinput").val("");
+        },
+        error: function(jqXHR, exception) {
+            alert(jqXHR.responseJSON.message);
         }
-        $("#tagsinput").val("");
     });
 }
 
@@ -72,8 +76,12 @@ function cancelPostUpload(){
     $.ajax({
         type: "POST",
         url:"img/deleteUploaded",
-        data:{postID : postID}
-    }).then(function (data) {
-        window.location.replace("index.html#my");
-    })
+        data:{postID : postID},
+        success: function (data) {
+            window.location.replace("index.html#my");
+        },
+        error: function(jqXHR, exception) {
+            alert(jqXHR.responseJSON.message);
+        }
+    });
 }

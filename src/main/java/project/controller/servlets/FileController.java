@@ -15,6 +15,7 @@ import project.model.pojo.wrappers.PostWrapper;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -34,7 +35,7 @@ public class FileController {
     private String UPLOAD_PATH;
 
     @PostMapping("upload")
-    public PostWrapper uploadImage(@RequestParam("file") MultipartFile uploadfile, HttpSession session) throws IOException, PostManager.PostException, Exception{
+    public PostWrapper uploadImage(@RequestParam("file") MultipartFile uploadfile, HttpSession session) throws Exception{
         if(!checkFileType(uploadfile)){
             throw new Exception("file type not supported");
         }
@@ -53,7 +54,7 @@ public class FileController {
 
     //Get image by url from post
     @GetMapping(value = "/get")
-    public String getImage(@RequestParam("url") String url) throws IOException{
+    public String getImage(@RequestParam("url") String url) throws IOException {
         String path = UPLOAD_PATH + url;
         String defaultPicturePath = UPLOAD_PATH + "default-user.png";
         File f = new File(path);
@@ -66,7 +67,7 @@ public class FileController {
     }
 
     @PostMapping("/uploadProfilePic")
-    public String uploadProfileImage(@RequestParam("file") MultipartFile uploadfile, HttpSession session) throws IOException, SQLException, Exception {
+    public String uploadProfileImage(@RequestParam("file") MultipartFile uploadfile, HttpSession session) throws  Exception {
         if(!checkFileType(uploadfile)){
             throw new Exception("file type not supported");
         }

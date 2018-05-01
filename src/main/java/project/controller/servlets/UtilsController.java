@@ -23,7 +23,7 @@ public class UtilsController {
     private PostManager postManager;
 
     @GetMapping("/search")
-    public SearchWrapper search(@RequestParam("input") String input) throws SQLException {
+    public SearchWrapper search(@RequestParam("input") String input) throws UtilManager.UtilManagerException {
         SearchWrapper sr = utilManager.search(input);
         return sr;
     }
@@ -31,7 +31,7 @@ public class UtilsController {
 
     @ResponseBody
     @RequestMapping(value = "/addTag", method = RequestMethod.POST)
-    public List<String> addTags(@RequestParam String input, @RequestParam int postID) throws Exception{
+    public List<String> addTags(@RequestParam String input, @RequestParam int postID) throws Exception {
         if(input.isEmpty()){
             throw new Exception("tags not found");
         }

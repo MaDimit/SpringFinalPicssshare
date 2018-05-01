@@ -122,15 +122,17 @@
                 url: "user/login",
                 data: {username: username, password: password},
                 success: function (data) {
+                    $(location).attr('href', "/index.html");
                     console.log(data);
-                    if (data === "wrongUsername") {
+
+                },
+                error : function (jqXHR, exception) {
+                    var e = jqXHR.responseJSON.message;
+                    if (e === "Wrong username.") {
                         $('#loginalert').html('').append("Wrong username!").show();
                     }
-                    if (data === "wrongPassword") {
+                    if (e === "Wrong password.") {
                         $('#loginalert').html('').append("Wrong password").show();
-                    }
-                    if (data === "success") {
-                        $(location).attr('href', "/index.html");
                     }
                 }
             });
@@ -154,7 +156,6 @@
                     var msg;
                     if (data === "success") {
                         $(location).attr('href', "/index.html");
-
                     }
                     else if (data === "passNotMatch") {
                         msg = "Password doesn't match";
@@ -176,15 +177,15 @@
                     }
                     else if (data === "emailNotValid") {
                         msg="Email is not valid";
-                    }else{
-                        msg = "Something went wrong"
                     }
                     $('#registeralert').html('').append(msg).show();
                 },
-                error : function (e) {
-                    alert(e);
+                error: function(jqXHR, exception) {
+                    var message;
+                    message=jqXHR.responseJSON.message;
+                    $('#registeralert').html('').append(message).show();
                 }
-            })
+            });
     });
 
 </script>
