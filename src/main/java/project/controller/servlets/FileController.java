@@ -33,7 +33,7 @@ public class FileController {
     @Value("${upload.path}")
     private String UPLOAD_PATH;
 
-    @PostMapping("upload")
+    @PostMapping("/upload")
     public PostWrapper uploadImage(@RequestParam("file") MultipartFile uploadfile, HttpSession session) throws Exception{
         if(!checkFileType(uploadfile)){
             throw new Exception("file type not supported");

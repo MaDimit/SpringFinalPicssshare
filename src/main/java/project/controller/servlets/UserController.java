@@ -31,42 +31,51 @@ public class UserController {
     UserDao userDao;
 
 
-    @ResponseBody
-    @RequestMapping(value = "/editUserData", method = RequestMethod.POST)
+//    @ResponseBody
+//    @RequestMapping(value = "/editUserData", method = RequestMethod.POST)
 
-    public void editUserData(
-                               @RequestParam String username,
-                               @RequestParam String oldPassword,
-                               @RequestParam String newPassword,
-                               @RequestParam String confirmPassword,
-                               @RequestParam String firstName,
-                               @RequestParam String lastName,
-                               @RequestParam String email,
-                               HttpSession session) throws LoggingManager.RegistrationException, UserManager.UserManagerException {
+//    public void editUserData(
+//                               @RequestParam String oldPassword,
+//                               @RequestParam String newPassword,
+//                               @RequestParam String confirmPassword,
+//                               @RequestParam String firstName,
+//                               @RequestParam String lastName,
+//                               @RequestParam String email,
+//                               HttpSession session) throws LoggingManager.RegistrationException, UserManager.UserManagerException {
+//
+//
+//            User user = (User) session.getAttribute("user");
+//            if (oldPassword.equals(user.getPassword())) {
+//                //if there is new password entered
+//                if (newPassword != "" && !newPassword.isEmpty() && newPassword != null) {
+//                    if (newPassword.equals(confirmPassword)) {
+//                        userManager.updateProfileInfo(user, newPassword, firstName, lastName, email);
+//
+//                    } else {
+//                        throw new UserManager.UserManagerException("Passwords don't match.");
+//                    }
+//                    //use the old password
+//                } else {
+//                    userManager.updateProfileInfo(user, oldPassword, firstName, lastName, email);
+//                }
+//
+//            } else {
+//                throw new UserManager.UserManagerException("You have entered wrong origin password.");
+//            }
+//
+//    }
 
-
-            User user = (User) session.getAttribute("user");
-            if (oldPassword.equals(user.getPassword())) {
-                //if there is new password entered
-                if (newPassword != "" && !newPassword.isEmpty() && newPassword != null) {
-                    if (newPassword.equals(confirmPassword)) {
-                        userManager.updateProfileInfo(user, newPassword, firstName, lastName, email);
-
-                    } else {
-                        throw new UserManager.UserManagerException("Passwords don't match.");
-                    }
-                    //use the old password
-                } else {
-                    userManager.updateProfileInfo(user, oldPassword, firstName, lastName, email);
-                }
-
-            } else {
-                throw new UserManager.UserManagerException("You have entered wrong origin password.");
-            }
-
+    @PostMapping(value="/edit")
+    public void editProfile( @RequestParam String oldPassword,
+                             @RequestParam String newPassword,
+                             @RequestParam String confirmPassword,
+                             @RequestParam String firstName,
+                             @RequestParam String lastName,
+                             @RequestParam String email,
+                             HttpSession session) throws UserManager.UserManagerException, SQLException {
+        User user = (User) session.getAttribute("user");
+        userManager.updateProfileInfo(user, oldPassword, newPassword, confirmPassword, firstName, lastName, email);
     }
-
-
 
     @ResponseBody
     @RequestMapping(value = "/getCurrent", method = RequestMethod.POST)

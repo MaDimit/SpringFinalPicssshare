@@ -10,9 +10,7 @@ import project.model.pojo.wrappers.SearchWrapper;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class UserDao {
@@ -139,78 +137,16 @@ public class UserDao {
         }
     }
 
-    // username and id should not be modified
-    public void executeProfileUpdate(User u, String password, String first_name, String last_name, String email)
-            throws SQLException, LoggingManager.RegistrationException {
-
-        try (Connection conn = dataSource.getConnection()) {
-
-            // TODO Exctract notnull validation to UserManager
-            // Store in collection not null values, because the user could choose to change
-            // different number of
-            // information for his profile
-
-            HashMap<String, String> notNullValues = new HashMap<>();
-
-            if (loggingManager.validatePassword(password)) {
-                notNullValues.put("password", password);
-                u.setPassword(password);
-            }
-            else throw new LoggingManager.RegistrationException("Invalid format for the new password.");
-
-            if (loggingManager.validateFirstName(first_name)) {
-                notNullValues.put("first_name", first_name);
-                u.setFirstName(first_name);
-            }
-            else throw new LoggingManager.RegistrationException("Error. Maybe you have used illegal characters for first name?");
-
-
-            if (loggingManager.validateLastName(last_name)) {
-                notNullValues.put("last_name", last_name);
-                u.setLastName(last_name);
-
-            }
-            else throw new LoggingManager.RegistrationException("Error. Maybe you have used illegal characters for last name?");
-
-            // check the existing ones and if there is not such an email - set it
-            if (email.equals(u.getEmail())) {
-                notNullValues.put("email", email);
-            } else {
-                //if email is different
-                if (loggingManager.validateEmailAddress(email)) {
-                    //if new email is not taken
-                    if (!checkIfEmailIsTaken(email)) {
-                        notNullValues.put("email", email);
-                        u.setEmail(email);
-                    } else
-                        throw new LoggingManager.RegistrationException("This email is already taken. Try with other...");
-
-                } else throw new LoggingManager.RegistrationException("Invalid format for the new email address.");
-
-
-                System.out.println("EMAIL SET");
-            }
-
-
-            StringBuilder sb = new StringBuilder();
-            // comma count is used for placing commas between set statements
-            int commaCounter = 0;
-            for (Map.Entry<String, String> entry : notNullValues.entrySet()) {
-                commaCounter++;
-                sb.append(entry.getKey());
-                sb.append("='");
-                sb.append(entry.getValue());
-                sb.append("'");
-                if (commaCounter > 0 && commaCounter < notNullValues.size()) {
-                    sb.append(", ");
-                }
-
-            }
-            String sql = "UPDATE users SET " + sb.toString() + " WHERE id = ?";
+    public void updateProfile(User user) throws SQLException{
+        try(Connection conn = dataSource.getConnection()){
+            String sql = "UPDATE users SET password = ?, first_name = ?, last_name = ?, email = ? WHERE id = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, u.getId());
+            stmt.setString(1, user.getPassword());
+            stmt.setString(2, user.getFirstName());
+            stmt.setString(3, user.getLastName());
+            stmt.setString(4, user.getEmail());
+            stmt.setInt(5, user.getId());
             stmt.executeUpdate();
-            stmt.close();
         }
     }
 
