@@ -161,7 +161,6 @@ public class UserDao {
             if (loggingManager.validateFirstName(first_name)) {
                 notNullValues.put("first_name", first_name);
                 u.setFirstName(first_name);
-
             }
             else throw new LoggingManager.RegistrationException("Error. Maybe you have used illegal characters for first name?");
 

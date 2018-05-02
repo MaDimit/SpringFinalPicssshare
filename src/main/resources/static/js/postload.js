@@ -57,6 +57,7 @@ function loadUserPosts(id) {
                 document.getElementById('subscribeButton').style.display = "none";
                 document.getElementById('showSubscriptions').style.display="block";
                 insertPosts(data.posts);
+                $(".deleteComment").show();
                 for(i=0;i<data.posts.length;i++){
                     document.getElementById("deletePost"+data.posts[i].id).style.display="block";
                 }
@@ -415,7 +416,7 @@ function insertNewComment(comment) {
         "                        <div class=\"col-sm-8\">\n" +
         "                            <h4><a href=\"#\" onclick='loadUserPosts("+commentPoster.id+")'>" + commentPoster.username + "</a>\n" +
         "                                <small>" + commentDate + "</small><small>, Likers: </small><small id=\"comment"+commentID+"likes\"></small>\n" +
-        "                            </h4><button class='btn btn-primary' onclick='likeComment("+commentID+")' style='float:right'>LIKE</button><button class='btn btn-primary' style='float: right;' onclick='deleteComment("+commentID+")'>DELETE</button>" +
+        "                            </h4><button class='btn btn-primary' onclick='likeComment("+commentID+")' style='float:right'>LIKE</button><button class='btn btn-primary deleteComment' style='float: right; display: none' onclick='deleteComment("+commentID+")'>DELETE</button>" +
 
         "                            <p>" + commentContent + "</p>\n" +
         "                            <br>\n" +
