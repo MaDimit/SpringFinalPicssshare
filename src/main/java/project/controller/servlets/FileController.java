@@ -15,7 +15,6 @@ import project.model.pojo.wrappers.PostWrapper;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;

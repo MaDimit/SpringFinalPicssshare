@@ -211,7 +211,7 @@ function unsubscribe(subscribedToID){
         },
         success: function (data) {
             alert("You have unsubscribed to this user.");
-            //document.getElementById("subscriber"+subscribedToID).innerHTML="";
+            document.getElementById("subscriber"+subscribedToID).innerHTML="";
         },
         error: function(jqXHR, exception) {
             alert(jqXHR.responseJSON.message);
