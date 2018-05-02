@@ -104,7 +104,7 @@ public class UserDao {
         }
     }
 
-    public ArrayList<SubscriberUserPojo> getAllSubscriptions(int subscriber_id) throws SQLException {
+    public List<SubscriberUserPojo> getAllSubscriptions(int subscriber_id) throws SQLException {
 
         try (Connection conn = dataSource.getConnection()) {
             ArrayList<SubscriberUserPojo> subscriptions = new ArrayList<>();

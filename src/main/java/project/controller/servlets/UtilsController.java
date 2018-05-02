@@ -6,6 +6,7 @@ import project.controller.managers.PostManager;
 import project.controller.managers.UtilManager;
 import project.model.pojo.wrappers.SearchWrapper;
 
+import java.sql.SQLException;
 import java.util.List;
 
 
@@ -19,7 +20,7 @@ public class UtilsController {
     private PostManager postManager;
 
     @GetMapping("/search")
-    public SearchWrapper search(@RequestParam("input") String input) throws UtilManager.UtilManagerException {
+    public SearchWrapper search(@RequestParam("input") String input) throws SQLException, UtilManager.UtilManagerException {
         SearchWrapper sr = utilManager.search(input);
         return sr;
     }
@@ -27,10 +28,7 @@ public class UtilsController {
 
     @ResponseBody
     @RequestMapping(value = "/addTag", method = RequestMethod.POST)
-    public List<String> addTags(@RequestParam String input, @RequestParam int postID) throws Exception {
-        if(input.isEmpty()){
-            throw new Exception("tags not found");
-        }
+    public List<String> addTags(@RequestParam String input, @RequestParam int postID) throws PostManager.PostManagerException, SQLException {
         return postManager.addTags(input, postID);
 
     }

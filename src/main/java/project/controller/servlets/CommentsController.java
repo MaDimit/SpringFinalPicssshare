@@ -24,7 +24,7 @@ public class CommentsController {
 
     @ResponseBody
     @RequestMapping(value = "/getCommentLikes", method = RequestMethod.POST)
-    public ArrayList<User> getCommentLikes(@RequestParam int commentID) throws CommentManager.CommentManagerException {
+    public ArrayList<User> getCommentLikes(@RequestParam int commentID) throws SQLException {
         ArrayList<User> commentLikers=null;
         commentLikers = (ArrayList<User>) commentManager.getCommentLikers(commentID);
 
@@ -33,7 +33,7 @@ public class CommentsController {
 
     @ResponseBody
     @RequestMapping(value = "/addCommentLike", method = RequestMethod.POST)
-    public void addCommentLike(@RequestParam int commentID, HttpSession session) throws CommentManager.CommentManagerException {
+    public void addCommentLike(@RequestParam int commentID, HttpSession session) throws CommentManager.CommentManagerException, SQLException {
         User user = (User)session.getAttribute("user");
         commentManager.likeComment(commentID, user.getId());
 
@@ -44,7 +44,6 @@ public class CommentsController {
     public Comment addComment(@RequestParam int postID, @RequestParam String commentText, HttpSession session) throws CommentManager.CommentManagerException, SQLException {
         Comment comment=null;
         User user = (User)session.getAttribute("user");
-        //TODO
         comment = new Comment(postDao.getPost(postID), user, commentText);
         commentManager.addComment(comment);
         return comment;
@@ -52,7 +51,7 @@ public class CommentsController {
 
     @ResponseBody
     @RequestMapping(value = "/deleteComment", method = RequestMethod.POST)
-    public void deleteComment(@RequestParam int commentID, HttpSession session) throws CommentManager.CommentManagerException {
+    public void deleteComment(@RequestParam int commentID, HttpSession session) throws CommentManager.CommentManagerException, SQLException {
         User user = (User) session.getAttribute("user");
         commentManager.deleteComment(commentID, user);
 

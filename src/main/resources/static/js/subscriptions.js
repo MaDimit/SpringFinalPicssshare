@@ -7,13 +7,13 @@ function showSubscriptions() {
             $(".page-header").html("");
             document.getElementById("container").style.display="block";
             var container = document.getElementById("container");
-            container.innerHTML= "<br><br><br><h1><b>Subscriptions</b></h1>\n";
+            container.innerHTML= "<br><br><br><h1><b>Subscriptions</b></h1>";
 
             //hid the showSubscription button
             document.getElementById('showSubscriptions').style.display="none";
-            var newChild;
+            var newChild = "";
             for(i=0;i<data.length;i++){
-                newChild+="<div id=\"subscriber" + data[i].id + "\" class=\"row\">\n" +
+                newChild += "<div id=\"subscriber" + data[i].id + "\" class=\"row\">\n" +
                     "                        <div class=\"col-sm-1 text-center\">\n" +
                     "                            <img id='subscriberPic" + data[i].id + "' src=\"\" \n" +
                     "                                 class=\"img-circle\" height=\"65\" width=\"65\" alt=\"Avatar\">\n" +

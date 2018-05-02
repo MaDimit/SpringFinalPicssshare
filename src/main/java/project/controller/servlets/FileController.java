@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import project.controller.managers.PostManager;
 import project.controller.managers.UserManager;
+import project.controller.managers.exceptions.InfoException;
 import project.model.pojo.Post;
 import project.model.pojo.User;
 import project.model.pojo.wrappers.PostWrapper;
@@ -24,6 +25,12 @@ import java.sql.SQLException;
 @RequestMapping("/img")
 public class FileController {
 
+    public class UploadFileException extends InfoException {
+        public UploadFileException(String msg) {
+            super(msg);
+        }
+    }
+
     @Autowired
     private PostManager postManager;
 
@@ -34,9 +41,9 @@ public class FileController {
     private String UPLOAD_PATH;
 
     @PostMapping("/upload")
-    public PostWrapper uploadImage(@RequestParam("file") MultipartFile uploadfile, HttpSession session) throws Exception{
+    public PostWrapper uploadImage(@RequestParam("file") MultipartFile uploadfile, HttpSession session) throws IOException, UploadFileException, SQLException, PostManager.PostManagerException {
         if(!checkFileType(uploadfile)){
-            throw new Exception("file type not supported");
+            throw new UploadFileException("file type not supported");
         }
         User user = (User)session.getAttribute("user");
         String postUrl = createUri(user.getUsername());
@@ -59,9 +66,9 @@ public class FileController {
     }
 
     @PostMapping("/uploadProfilePic")
-    public String uploadProfileImage(@RequestParam("file") MultipartFile uploadfile, HttpSession session) throws  Exception {
+    public String uploadProfileImage(@RequestParam("file") MultipartFile uploadfile, HttpSession session) throws UploadFileException, IOException, SQLException {
         if(!checkFileType(uploadfile)){
-            throw new Exception("file type not supported");
+            throw new UploadFileException("file type not supported");
         }
         User user = (User)session.getAttribute("user");
         String profilePicUrl = user.getUsername() + File.separator + "avatar";
@@ -75,7 +82,7 @@ public class FileController {
     }
 
     @PostMapping("/deleteUploaded")
-    public void deleteUploadedPost(@RequestParam("postID") int postID)throws SQLException, PostManager.PostManagerException {
+    public void deleteUploadedPost(@RequestParam("postID") int postID)throws SQLException {
         postManager.deletePost(postID);
     }
 

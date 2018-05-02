@@ -1,7 +1,10 @@
 package project.controller.managers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import project.controller.managers.exceptions.InfoException;
 import project.model.dao.PostDao;
 import project.model.pojo.Post;
 import project.model.pojo.User;
@@ -19,7 +22,7 @@ public class PostManager {
     private static final int COMMENT_MODIFIER = 5;
 
 
-    public static class PostManagerException extends Exception{
+    public static class PostManagerException extends InfoException {
         public PostManagerException(String msg) {
             super(msg);
         }
@@ -28,87 +31,96 @@ public class PostManager {
     @Autowired
     private PostDao postDao;
 
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(PostManager.class);
 
     //================= Post manipulation =================//
-    public void addPost(Post post) throws PostManagerException {
+    public void addPost(Post post) throws SQLException, PostManagerException {
         validate(post);
         try {
             postDao.addPost(post);
         }catch (SQLException e){
-            throw new PostManagerException("Problem during adding post to DB");
+            LOGGER.error("Data base exception occurred in addPost() for userID:{}, postID:{} . {}", post.getPoster().getId(), post.getId(), e.getMessage());
+            throw e;
         }
+        LOGGER.info("User {}, id:{} added post with id:{}",post.getPoster().getUsername(), post.getPoster().getId(), post.getId());
     }
 
-    public void deletePost(int postID) throws PostManagerException {
-
+    public void deletePost(int postID) throws SQLException {
+        //TODO validate if current user is post owner
         try {
             postDao.deletePost(postID);
         } catch (SQLException e) {
-            throw new PostManagerException("Problem with deleting a post.");
+            LOGGER.error("Data base exception occurred in deletePost() for postID:{} . {}", postID, e.getMessage());
+            throw e;
         }
-
+        LOGGER.info("Post with id:{} was deleted", postID);
     }
 
-    public Post getPost(int postID) throws PostManagerException{
+    public Post getPost(int postID) throws SQLException{
         try{
             return postDao.getPost(postID);
         }catch (SQLException e){
-            throw new PostManagerException("Post with getting post by ID.");
+            LOGGER.error("Data base exception occurred in getPost() for postID:{} . {}", postID, e.getMessage());
+            throw e;
         }
     }
 
     //================= liking/disliking =================//
 
     public String likePost(Post post, User user) throws PostManagerException, SQLException {
-        String text = postDao.addLike(post, user);
-            switch (text){
-                case "success": text="success"; break;
-                case "You have already liked this post.": throw new PostManagerException("You have already liked this post.");
-                case "removedDislikeAddLike": text="removedDislikeAddLike"; break;
-                case "removedLikeAddDislike": text="removedLikeAddDislike"; break;
-
-                case "null": throw new PostManagerException("Problem during adding post.");
-            }
-        return text;
+        String text;
+        try {
+            text = postDao.addLike(post, user);
+        }catch (SQLException e){
+            LOGGER.error("Data base exception occurred in likePost() for userID:{}, postID:{} . {}", user.getId(), post.getId(), e.getMessage());
+            throw e;
+        }
+        return checkStatus(text);
     }
 
     public String dislikePost(Post post, User user) throws PostManagerException, SQLException {
         String text;
-        text = postDao.addDislike(post, user);
+        try {
+            text = postDao.addDislike(post, user);
+        }catch (SQLException e){
+            LOGGER.error("Data base exception occurred in dislikePost() for userID:{}, postID:{} . {}", user.getId(), post.getId(), e.getMessage());
+            throw e;
+        }
+        return checkStatus(text);
+    }
+
+    private String checkStatus(String text) throws PostManagerException{
         switch (text){
             case "success": text="success"; break;
             case "You have already liked this post.": throw new PostManagerException("You have already liked this post.");
             case "removedDislikeAddLike": text="removedDislikeAddLike"; break;
             case "removedLikeAddDislike": text="removedLikeAddDislike"; break;
-
             case "null": throw new PostManagerException("Problem during adding post.");
         }
-
         return text;
     }
 
     //================= Feed =================//
 
-    public List<Post> getUserFeed(int userID) throws PostManagerException{
+    public List<Post> getUserFeed(int userID) throws SQLException{
         try {
-            List<Post> posts = postDao.getUserFeed(userID);
-            return posts;
+            return postDao.getUserFeed(userID);
         }catch (SQLException e){
-            throw new PostManagerException("Problem during user feed creation");
+            LOGGER.error("Data base exception occurred in getUserFeed() for userID:{} . {}",userID, e.getMessage());
+            throw e;
         }
     }
 
-    public List<Post> getFriendsFeed(int userID) throws PostManagerException{
+    public List<Post> getFriendsFeed(int userID) throws SQLException{
         try {
-            List<Post> posts = postDao.getFriendsFeed(userID);
-            return posts;
+            return postDao.getFriendsFeed(userID);
         }catch (SQLException e){
-            throw new PostManagerException("Problem during friends feed creation");
+            LOGGER.error("Data base exception occurred in getFriendsFeed() for userID:{} . {}",userID, e.getMessage());
+            throw e;
         }
     }
 
-    public List<Post> getTrendingFeed() throws PostManagerException{
+    public List<Post> getTrendingFeed() throws SQLException{
         try {
             List<Post> posts = postDao.getTrendingFeed();
             posts.sort((p1, p2)->{
@@ -122,11 +134,12 @@ public class PostManager {
             });
             return posts;
         }catch (SQLException e){
-            throw new PostManagerException("Problem during trending feed creation");
+            LOGGER.error("Data base exception occurred in getTrendingFeed(). {}", e.getMessage());
+            throw e;
         }
     }
 
-    public TagFeedWrapper getTagFeed(int tagID) throws PostManagerException{
+    public TagFeedWrapper getTagFeed(int tagID) throws SQLException{
         String tagname = null;
         try {
             tagname = postDao.getTagByID(tagID);
@@ -134,7 +147,8 @@ public class PostManager {
             List<Post> posts = postDao.getPostsByTags(tagname);
             return new TagFeedWrapper(posts, tagname);
         } catch (SQLException e) {
-            throw new PostManagerException("Problem during getting tags.");
+            LOGGER.error("Data base exception occurred in getTagFeed(). {}", e.getMessage());
+            throw e;
         }
     }
 
@@ -152,14 +166,18 @@ public class PostManager {
         validate(post, post.getPoster());
     }
 
-    public List<String> addTags(String input, int postID) throws PostManagerException{
+    public List<String> addTags(String input, int postID) throws SQLException, PostManagerException{
+        if(input == null || input.isEmpty()){
+            throw new PostManagerException("Input tags, or upload post without tags.");
+        }
         List<String> tags = new ArrayList<>(Arrays.asList(input.split("\\s*(,|\\s)\\s*")));
         List<String> modifiedTags = new ArrayList<>();
         tags.forEach(s -> modifiedTags.add("#"+s));
         try {
             return postDao.addTags(modifiedTags, postID);
         } catch (SQLException e) {
-            throw new PostManagerException("Problem during adding tags.");
+            LOGGER.error("Data base exception occurred in addTags() for tags {} to postID:{} . {}",input, postID, e.getMessage());
+            throw e;
         }
     }
 

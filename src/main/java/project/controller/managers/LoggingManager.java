@@ -1,14 +1,19 @@
 package project.controller.managers;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import project.controller.managers.exceptions.InfoException;
 import project.model.dao.UserDao;
 import project.model.pojo.User;
 
 import java.sql.SQLException;
+
 @Component
 public class LoggingManager {
-    public static class RegistrationException extends Exception {
+    public static class RegistrationException extends InfoException {
         public RegistrationException(String msg) {
             super(msg);
         }
@@ -22,6 +27,8 @@ public class LoggingManager {
 
     @Autowired
     private UserDao userDao;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingManager.class);
 
     //========================REGISTER PART===================================//
 
@@ -44,18 +51,17 @@ public class LoggingManager {
         try {
             userDao.registerUser(user);
         } catch (SQLException e) {
-            System.out.println("Registering to DB problem: " + e.getMessage());
-            e.printStackTrace();
-            throw new RegistrationException("Data base connection problem!");
+           LOGGER.error("Data base exception occurred in register() for user {}, id:{} . {}", user.getUsername(), user.getId(), e.getMessage());
+           throw e;
         }
 
-        System.out.println("Registration of " + user.getUsername() + " is successfull!");
+        LOGGER.info("User {}, id:{} registered", user.getUsername(), user.getId());
         return user;
     }
 
     //========================VALIDATIONS===================================//
     // validate username
-    public boolean validateUsername(String username) throws RegistrationException {
+    public boolean validateUsername(String username) throws RegistrationException, SQLException {
         if (username == null || username.isEmpty()) {
             throw new RegistrationException("Empty username.");
         }
@@ -67,7 +73,8 @@ public class LoggingManager {
                 throw new RegistrationException("Username is taken.");
             }
         } catch (SQLException e) {
-            throw new RegistrationException("Problem with the username.");
+            LOGGER.error("Data base exception occurred in validateUsername() for username {}. {}",username, e.getMessage());
+            throw e;
         }
         return true;
     }
@@ -101,10 +108,14 @@ public class LoggingManager {
         java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
         java.util.regex.Matcher m = p.matcher(email);
 
-        if (userDao.checkIfEmailIsTaken(email)) {
-            throw new RegistrationException("Email is already taken.");
+        try {
+            if (userDao.checkIfEmailIsTaken(email)) {
+                throw new RegistrationException("Email is already taken.");
+            }
+        }catch (SQLException e){
+            LOGGER.error("Data base exception occurred in validateEmailAddress(). {}", e.getMessage());
+            throw e;
         }
-
         return m.matches();
     }
 
@@ -113,7 +124,7 @@ public class LoggingManager {
     //=========================LOGGING=======================================//
 
     //Logging by username and password ----> //TODO: CHECK FOR RIGHT LOGIN IN THE SESSION
-    public User login(String username, String password) throws LoggingException {
+    public User login(String username, String password) throws LoggingException, SQLException {
         User user = null;
         try {
             user = userDao.login(username);
@@ -124,9 +135,10 @@ public class LoggingManager {
                 throw new LoggingException("Wrong password.");
             }
         } catch (SQLException e) {
-            throw new LoggingException("Problem during logging.");
+           LOGGER.error("Data base exception occurred in login(). {}", e.getMessage());
+           throw e;
         }
-        System.out.println("LOGINMANAGER:"+user);
+        LOGGER.info("User {}, id:{} logged in", user.getUsername(),user.getId());
         return user;
     }
 }

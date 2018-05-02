@@ -18,8 +18,8 @@ import project.model.pojo.wrappers.TagFeedWrapper;
 import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/feed")
@@ -38,20 +38,20 @@ public class FeedController {
     UserDao userDao;
 
     @RequestMapping(value = "/deletePost")
-    public void deletePost(@RequestParam int postID) throws PostManager.PostManagerException {
+    public void deletePost(@RequestParam int postID) throws SQLException {
         postManager.deletePost(postID);
     }
 
     //TODO
     @RequestMapping(value = "/friends")
-    public List<Post> getFriendsFeed(HttpSession session) throws SQLException, PostManager.PostManagerException {
+    public List<Post> getFriendsFeed(HttpSession session) throws SQLException {
         User user = (User)session.getAttribute("user");
         return postManager.getFriendsFeed(user.getId());
     }
 
     //TODO
     @RequestMapping(value = "/trending")
-    public List<Post>getTrendingFeed(HttpSession session) throws PostManager.PostManagerException, SQLException {
+    public List<Post>getTrendingFeed(HttpSession session) throws  SQLException {
 
         return postManager.getTrendingFeed();
     }
@@ -59,7 +59,7 @@ public class FeedController {
     @RequestMapping(value = "/user")
     public UserFeed getUserFeed(
             @RequestParam(value = "id", required = false) Integer id,
-            HttpSession session) throws PostManager.PostManagerException, UserManager.UserManagerException {
+            HttpSession session) throws SQLException {
         User currentUser = (User)session.getAttribute("user");
         boolean owner = true;
         User user = currentUser;
@@ -73,7 +73,7 @@ public class FeedController {
     }
 
     @RequestMapping(value = "/albums")
-    public ArrayList<Album> getAlbumFeed(HttpSession session) throws AlbumManager.AlbumManagerException {
+    public ArrayList<Album> getAlbumFeed(HttpSession session) throws SQLException {
         ArrayList<Album> albums = null;
         User currentUser = (User) session.getAttribute("user");
         albums = (ArrayList<Album>) albumManager.getAllAlbumsForUser(currentUser.getId());
@@ -82,7 +82,7 @@ public class FeedController {
     }
 
     @RequestMapping(value = "/addAlbum")
-    public void addAlbum(@RequestParam String albumName, HttpSession session) throws AlbumManager.AlbumManagerException {
+    public void addAlbum(@RequestParam String albumName, HttpSession session) throws SQLException {
         String message = "success";
         User u = (User) session.getAttribute("user");
         albumManager.createAlbum(u,albumName);
@@ -90,22 +90,22 @@ public class FeedController {
     }
 
     @RequestMapping(value = "/deleteAlbum")
-    public void deleteAlbum(@RequestParam int albumID) throws AlbumManager.AlbumManagerException {
+    public void deleteAlbum(@RequestParam int albumID) throws SQLException {
 
         albumManager.deleteAlbum(albumID);
 
     }
 
     @RequestMapping(value = "/albumNames")
-    public HashMap<Integer, String> getAlbumsNames(HttpSession session) throws AlbumManager.AlbumManagerException {
-        HashMap<Integer, String> albumsNames=null;
+    public Map<Integer, String> getAlbumsNames(HttpSession session) throws SQLException {
+        Map<Integer, String> albumsNames=null;
         User currentUser = (User) session.getAttribute("user");
         albumsNames = albumManager.getAllAlbumsNames(currentUser.getId());
         return albumsNames;
     }
 
     @RequestMapping(value = "/album")
-    public ArrayList<Post> getAlbumPictures(@RequestParam int albumID) throws AlbumManager.AlbumManagerException {
+    public ArrayList<Post> getAlbumPictures(@RequestParam int albumID) throws SQLException {
         ArrayList<Post> posts = null;
         posts = albumManager.getAlbumByID(albumID);
 
@@ -113,17 +113,17 @@ public class FeedController {
     }
 
     @PostMapping("/addToAlbum")
-    public void addToAlbum (@RequestParam int postID, @RequestParam int albumID) throws AlbumManager.AlbumManagerException {
+    public void addToAlbum (@RequestParam int postID, @RequestParam int albumID) throws AlbumManager.AlbumManagerException, SQLException {
         albumManager.addPostInAlbum(postID, albumID);
     }
 
     @PostMapping("/deleteAlbumPost")
-    public void deleteAlbumPost(@RequestParam int postID, @RequestParam int albumID) throws AlbumManager.AlbumManagerException {
+    public void deleteAlbumPost(@RequestParam int postID, @RequestParam int albumID) throws SQLException {
         albumManager.removePostFromAlbum(postID, albumID);
     }
 
     @RequestMapping(value = "/tag")
-    public TagFeedWrapper getTagFeed(@RequestParam int id) throws PostManager.PostManagerException {
+    public TagFeedWrapper getTagFeed(@RequestParam int id) throws SQLException {
         return postManager.getTagFeed(id);
     }
 }
