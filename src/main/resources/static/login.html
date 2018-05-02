@@ -120,6 +120,11 @@
                 login();
             }
         });
+        $('#loginname').keydown(function(e){
+            if(e.keyCode === 13){
+                login();
+            }
+        });
         //login reuqest
         $('#loginbtn').on('click', function () {
            login();

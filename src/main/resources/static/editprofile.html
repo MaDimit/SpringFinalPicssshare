@@ -6,12 +6,10 @@
     <!-- Bootstrap core JavaScript -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript" src="js/postload.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/blog-home.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/scripts.js"></script>
     <title>Title</title>
@@ -105,6 +103,7 @@
 
 <script>
 
+
     function loadUserData(){
         $.ajax({
             url: "user/getCurrent",
@@ -133,14 +132,14 @@
             url: "user/editUserData",
             type: "POST",
             data: {
-                    username: username,
-                    oldPassword: oldPassword,
-                    newPassword: newPassword,
-                    confirmPassword: confirmPassword,
-                    firstName: firstName,
-                    lastName: lastName,
-                    email: email,
-                },
+                username: username,
+                oldPassword: oldPassword,
+                newPassword: newPassword,
+                confirmPassword: confirmPassword,
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+            },
             success: function (data) {
                 alert('Successfully edited information.');
             },
@@ -150,19 +149,6 @@
         });
     }
 
-
-    $(document).ready(function () {
-
-        $("#btnSubmit").click(function (event) {
-
-            //stop submit the form, we will post it manually.
-            event.preventDefault();
-
-            fire_ajax_submit();
-
-        });
-
-    });
 
     function fire_ajax_submit() {
 
@@ -197,6 +183,20 @@
         });
 
     }
+
+
+    $(document).ready(function () {
+
+        $("#btnSubmit").click(function (event) {
+
+            //stop submit the form, we will post it manually.
+            event.preventDefault();
+
+            fire_ajax_submit();
+
+        });
+
+    });
 </script>
 </body>
 </html>

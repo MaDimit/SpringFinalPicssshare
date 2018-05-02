@@ -25,26 +25,28 @@ function addImage(imageID, postUrl) {
     });
 }
 
-function getUserInfo(id) {
-    $.ajax({
-        url: "/user/get",
-        data: id,
-        success: function (data) {
-            return {
-                id: data.id,
-                username: data.username,
-                firstname: data.firstName,
-                lastname: data.lastName,
-                email: data.email,
-                profilePicUrl: data.profilePicURL
-            };
-        },
-        error: function(jqXHR, exception) {
-            alert(jqXHR.responseJSON.message);
-        }
-    });
+//WILL BE USED IF USER PAGE HAS A STATIC URL
 
-}
+// function getUserInfo(id) {
+//     $.ajax({
+//         url: "/user/get",
+//         data: id,
+//         success: function (data) {
+//             return {
+//                 id: data.id,
+//                 username: data.username,
+//                 firstname: data.firstName,
+//                 lastname: data.lastName,
+//                 email: data.email,
+//                 profilePicUrl: data.profilePicURL
+//             };
+//         },
+//         error: function(jqXHR, exception) {
+//             alert(jqXHR.responseJSON.message);
+//         }
+//     });
+//
+// }
 
 function autoComplete() {
     var searchbar = $("#searchbar");
