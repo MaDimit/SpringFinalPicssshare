@@ -141,6 +141,20 @@
         console.log(choice);
         alert(choice);
     });
+
+    $("body").click
+    (
+        function(e)
+        {
+            if(e.target.id !== "searchbar")
+            {
+                $("#search-results").hide();
+            }
+            else {
+                $("#search-results").show();
+            }
+        }
+    );
 </script>
 </body>
 
