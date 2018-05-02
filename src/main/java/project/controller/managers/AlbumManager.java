@@ -28,7 +28,7 @@ public class AlbumManager {
             return albumDao.getAllAlbumsNames(userID);
         } catch (SQLException e) {
             //add log here
-            throw new AlbumManagerException("Problem with getting albums for this user by name.");
+            throw new AlbumManagerException("Problem with getting albumsDropdown for this user by name.");
         }
     }
 
@@ -37,7 +37,7 @@ public class AlbumManager {
             return albumDao.getAllAlbumsForUser(userID);
         } catch (SQLException e) {
             //add log here
-            throw new AlbumManagerException("Problem with getting albums for this user.");
+            throw new AlbumManagerException("Problem with getting albumsDropdown for this user.");
         }
     }
 

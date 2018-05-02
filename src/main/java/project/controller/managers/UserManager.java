@@ -8,7 +8,6 @@ import project.model.pojo.User;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 @Component
 public class UserManager {

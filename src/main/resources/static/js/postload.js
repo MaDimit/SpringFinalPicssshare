@@ -1,8 +1,8 @@
 //get friends feed
-var albums;
+var albumsDropdown;
 
 $(document).ready(function () {
-   albums = getAlbumsForPage();
+   albumsDropdown = getAlbumsForPage();
 });
 
 
@@ -148,7 +148,7 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
         newChild += "<a href='#' ><span class=\"label label-primary\" style='font-size: medium'>" + postTags[i] + "</span></a>  ";  //TODO Tag inserting to search
     }
 
-    //adding albums dropdown
+    //adding albumsDropdown dropdown
     newChild += addAlbumDiv(postID);
     newChild += deleteAlbumPostDiv(postID);
     //likes dislikes
@@ -302,9 +302,9 @@ function addAlbumDiv(postID){
         "<div class='dropdown album-dropdown' style='float:right'>\n" +
         "    <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>Add to album</button>\n" +
         "    <ul class='dropdown-menu'>\n";
-    for(i = 0; i < albums.length; i++){
-        var albumID = albums[i].id;
-        var albumName = albums[i].albumName;
+    for(i = 0; i < albumsDropdown.length; i++){
+        var albumID = albumsDropdown[i].id;
+        var albumName = albumsDropdown[i].albumName;
         div += "<li><a onclick='addToAlbum("+albumID+", "+postID+")'>"+albumName+"</a></li>"
     }
     div += "</ul></div>";

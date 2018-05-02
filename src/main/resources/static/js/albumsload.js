@@ -18,12 +18,13 @@ function addAlbum(albumName){
         success: function (data) {
             loadAlbums();
             alert('Successfully added album.');
+            albumsDropdown = getAlbumsForPage();
         },
         error: function(jqXHR, exception) {
             alert(jqXHR.responseJSON.message);
          }
         });
-    albums = getAlbumsForPage();
+
 }
 
 function loadAlbums() {
@@ -126,13 +127,6 @@ function loadPicturesFromAlbum(albumID, albumName) {
 }
 
 function replaceDropdowns(){
-    // var dropdowns = document.getElementsByClassName("album-dropdown");
-    // var deletePosts = document.getElementsByClassName("post-album-delete");
-    // for(var i = 0; i < dropdowns.length; i++){
-    //     dropdowns[i].style.display = "none";
-    //     deletePosts[i].style.display = "block";
-    // }
-
     $(".album-dropdown").hide();
     $(".post-album-delete").show();
 }
@@ -150,13 +144,12 @@ function deleteAlbum(albumID){
             document.getElementById('album'+albumID).innerHTML="";
             $(".page-header").html("");
             alert('You have deleted this album.');
+            albumsDropdown = getAlbumsForPage();
         },
         error: function(jqXHR, exception) {
             alert(jqXHR.responseJSON.message);
         }
     });
-
-    albums = getAlbumsForPage();
 }
 
 function deleteAlbumPost(postID){
