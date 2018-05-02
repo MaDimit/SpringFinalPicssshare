@@ -36,14 +36,6 @@ public class CommentManager {
         }
     }
 
-    //NO SUCH FUNCTIONALITY
-//    public void editComment(int oldCommentID, String editContent) throws PostManager.PostException, SQLException {
-//        Comment comment = commentDao.getCommentByID(oldCommentID);
-//        comment.setContent(editContent);
-//        comment.setDate(LocalDateTime.now());
-//        commentDao.editComment(comment);
-//    }
-
     public void likeComment(int commentID, int likerID) throws CommentManagerException {
         if(commentID>-1 && likerID>-1) {
             try {
