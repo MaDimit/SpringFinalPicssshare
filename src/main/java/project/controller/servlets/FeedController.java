@@ -101,8 +101,6 @@ public class FeedController {
         HashMap<Integer, String> albumsNames=null;
         User currentUser = (User) session.getAttribute("user");
         albumsNames = albumManager.getAllAlbumsNames(currentUser.getId());
-
-
         return albumsNames;
     }
 

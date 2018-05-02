@@ -36,6 +36,7 @@ public class CommentManager {
         }
     }
 
+
     public void likeComment(int commentID, int likerID) throws CommentManagerException {
         if(commentID>-1 && likerID>-1) {
             try {
