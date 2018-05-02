@@ -113,32 +113,48 @@
 <script src="vendor/jquery/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
+
+        //login reuqest using enter
+        $('#loginpass').keydown(function(e){
+            if(e.keyCode === 13){
+                login();
+            }
+        });
+        $('#loginname').keydown(function(e){
+            if(e.keyCode === 13){
+                login();
+            }
+        });
         //login reuqest
         $('#loginbtn').on('click', function () {
-            var username = $('#loginname').val();
-            var password = $('#loginpass').val();
-            $.ajax({
-                type: "POST",
-                url: "user/login",
-                data: {username: username, password: password},
-                success: function (data) {
-                    $(location).attr('href', "/index.html");
-                    console.log(data);
-
-                },
-                error : function (jqXHR, exception) {
-                    var e = jqXHR.responseJSON.message;
-                    if (e === "Wrong username.") {
-                        $('#loginalert').html('').append("Wrong username!").show();
-                    }
-                    if (e === "Wrong password.") {
-                        $('#loginalert').html('').append("Wrong password").show();
-                    }
-                }
-            });
+           login();
         });
 
     });
+
+    function login(){
+        var username = $('#loginname').val();
+        var password = $('#loginpass').val();
+        $.ajax({
+            type: "POST",
+            url: "user/login",
+            data: {username: username, password: password},
+            success: function (data) {
+                $(location).attr('href', "/index.html");
+                console.log(data);
+
+            },
+            error : function (jqXHR, exception) {
+                var e = jqXHR.responseJSON.message;
+                if (e === "Wrong username.") {
+                    $('#loginalert').html('').append("Wrong username!").show();
+                }
+                if (e === "Wrong password.") {
+                    $('#loginalert').html('').append("Wrong password").show();
+                }
+            }
+        });
+    }
 
 
     $('#registerbtn').on('click', function () {
