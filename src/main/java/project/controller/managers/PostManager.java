@@ -61,37 +61,31 @@ public class PostManager {
     //================= liking/disliking =================//
 
     public String likePost(Post post, User user) throws PostManagerException, SQLException {
-        String text;
-
-            text = postDao.addLike(post, user);
-
+        String text = postDao.addLike(post, user);
             switch (text){
                 case "success": text="success"; break;
                 case "You have already liked this post.": throw new PostManagerException("You have already liked this post.");
                 case "removedDislikeAddLike": text="removedDislikeAddLike"; break;
+                case "removedLikeAddDislike": text="removedLikeAddDislike"; break;
+
                 case "null": throw new PostManagerException("Problem during adding post.");
             }
-
         return text;
-//////////////////////////
-//        String likerPost = user.getId() + "" + post.getId();
-//
-//        try{
-//            //get message to see what happened
-//            return postDao.addLike(post, user);
-//        }catch (SQLException e){
-//            throw new PostException("Problem during like adding");
-//        }
-
     }
 
-    public void dislikePost(Post post, User user) throws PostManagerException{
+    public String dislikePost(Post post, User user) throws PostManagerException, SQLException {
+        String text;
+        text = postDao.addDislike(post, user);
+        switch (text){
+            case "success": text="success"; break;
+            case "You have already liked this post.": throw new PostManagerException("You have already liked this post.");
+            case "removedDislikeAddLike": text="removedDislikeAddLike"; break;
+            case "removedLikeAddDislike": text="removedLikeAddDislike"; break;
 
-        try{
-            postDao.addDislike(post, user);
-        }catch (SQLException e){
-            throw new PostManagerException("Problem during dislike adding");
+            case "null": throw new PostManagerException("Problem during adding post.");
         }
+
+        return text;
     }
 
     //================= Feed =================//

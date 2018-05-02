@@ -10,6 +10,7 @@ import project.model.pojo.Post;
 import project.model.pojo.User;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -34,7 +35,7 @@ public class CommentManager {
             throw new CommentManagerException("Problem with getting likers for a comment.");
         }
     }
-    
+
 
     public void likeComment(int commentID, int likerID) throws CommentManagerException {
         if(commentID>-1 && likerID>-1) {

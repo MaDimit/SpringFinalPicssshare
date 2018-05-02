@@ -142,17 +142,17 @@ public class UserController {
 
         User user = (User)session.getAttribute("user");
         String text;
-           text= postManager.likePost(postDao.getPost(postID), user);
-           System.out.println("USERCONTROLLER: "+text);
+        text= postManager.likePost(postDao.getPost(postID), user);
+        System.out.println("USERCONTROLLER: "+text);
         return text;
 
     }
 
     @ResponseBody
     @RequestMapping(value = "/addDislike", method = RequestMethod.POST)
-    public void addDislike(@RequestParam int postID, HttpSession session) throws PostManager.PostManagerException, SQLException {
+    public String addDislike(@RequestParam int postID, HttpSession session) throws PostManager.PostManagerException, SQLException {
         User user = (User)session.getAttribute("user");
-        postManager.dislikePost(postDao.getPost(postID),user);
+        return postManager.dislikePost(postDao.getPost(postID),user);
 
     }
 
