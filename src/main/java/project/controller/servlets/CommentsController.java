@@ -52,8 +52,9 @@ public class CommentsController {
 
     @ResponseBody
     @RequestMapping(value = "/deleteComment", method = RequestMethod.POST)
-    public void deleteComment(@RequestParam int commentID) throws CommentManager.CommentManagerException {
-        commentManager.deleteComment(commentID);
+    public void deleteComment(@RequestParam int commentID, HttpSession session) throws CommentManager.CommentManagerException {
+        User user = (User) session.getAttribute("user");
+        commentManager.deleteComment(commentID, user);
 
     }
 

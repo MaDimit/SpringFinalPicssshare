@@ -3,8 +3,10 @@ package project.controller.managers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.model.dao.CommentDao;
+import project.model.dao.PostDao;
 import project.model.dao.UserDao;
 import project.model.pojo.Comment;
+import project.model.pojo.Post;
 import project.model.pojo.User;
 
 import java.sql.SQLException;
@@ -19,6 +21,8 @@ public class CommentManager {
         }
     }
 
+    @Autowired
+    private PostDao postDao;
     @Autowired
     private CommentDao commentDao;
     @Autowired
@@ -66,11 +70,22 @@ public class CommentManager {
         }
     }
 
-    public void deleteComment(int commentID) throws CommentManagerException {
+    public void deleteComment(int commentID, User userInSession) throws CommentManagerException {
         if(commentID>-1) {
             try {
-                commentDao.deleteComment(commentID);
+                //FOR SECURITY --> If a person changes html to display the delete button, here we compare the user in
+                //session with the owner of the post. One can delete comments only from his posts.
+                Comment comment = commentDao.getCommentByID(commentID);
+                Post commentPost = comment.getPost();
+                User postOwner = commentPost.getPoster();
+                if(postOwner.getId() == userInSession.getId()){
+                    commentDao.deleteComment(commentID);
+                }
+                else {
+                    throw new CommentManagerException("You are not owner of this post.");
+                }
             } catch (SQLException e) {
+                //TODO LOG HERE
                 throw new CommentManagerException("Error with deleting a comment.");
             }
         }

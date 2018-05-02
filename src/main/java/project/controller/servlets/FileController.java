@@ -76,7 +76,7 @@ public class FileController {
     }
 
     @PostMapping("/deleteUploaded")
-    public void deleteUploadedPost(@RequestParam("postID") int postID) throws SQLException, PostManager.PostException {
+    public void deleteUploadedPost(@RequestParam("postID") int postID) throws SQLException, PostManager.PostManagerException {
         postManager.deletePost(postID);
     }
 
