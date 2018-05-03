@@ -1,6 +1,7 @@
 package project.controller.managers;
 
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,7 @@ public class LoggingManager {
         }
 
         //if data is valid user obj is created
+        password = BCrypt.hashpw(password, BCrypt.gensalt());
         User user = new User(username, password, email);
         user.setProfilePicUrl("defaultAvatar.png");
         //adding to DB and collections
@@ -125,7 +127,7 @@ public class LoggingManager {
             if (user == null) {
                 throw new LoggingException("Wrong username.");
             }
-            if (!user.getPassword().equals(password)) {
+            if (!BCrypt.checkpw(password,user.getPassword())) {
                 throw new LoggingException("Wrong password.");
             }
         } catch (SQLException e) {

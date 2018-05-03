@@ -1,5 +1,6 @@
 package project.controller.managers;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +19,13 @@ public class UserManager {
 
     public void changeUserPassword(User user) throws UserManagerException {
         String newPassword = SendMailSSL.randomStringGenerator.generateString();
+        SendMailSSL.sendResetPasswordEmail(user.getUsername(), user.getEmail(), newPassword);
+        newPassword = BCrypt.hashpw(newPassword,BCrypt.gensalt());
         try {
             userDao.changeUserPassword(newPassword, user.getId());
         } catch (SQLException e) {
             throw new UserManagerException("Problem with changing password.");
         }
-        SendMailSSL.sendResetPasswordEmail(user.getUsername(), user.getEmail(), newPassword);
     }
 
     public static class UserManagerException extends InfoException {
@@ -88,24 +90,24 @@ public class UserManager {
     }
 
     public void updateProfileInfo(User user, String oldPassword, String newPassword, String confirmPassword, String firstName, String lastName, String email, String confirmation) throws UserManagerException, SQLException {
-        String editedPassword = oldPassword;
+        String editedPassword = user.getPassword();
         String editedEmail = user.getEmail();
         System.out.println(confirmation);
 
         //Checking old password
-        if (!user.getPassword().equals(oldPassword)) {
+        if (!BCrypt.checkpw(oldPassword,user.getPassword())) {
             throw new UserManagerException("You have entered wrong origin password.");
         }
 
         //Checking new Password
-        if (!oldPassword.isEmpty() && !newPassword.isEmpty()) {
+        if (!newPassword.isEmpty()) {
             if (!newPassword.equals(confirmPassword)) {
                 throw new UserManagerException("Passwords don't match.");
             }
             if (!loggingManager.validatePassword(newPassword)) {
                 throw new UserManagerException("Weak password.");
             }
-            editedPassword = newPassword;
+            editedPassword = BCrypt.hashpw(newPassword,BCrypt.gensalt());
         }
 
         //Email validation

@@ -37,7 +37,7 @@ public class UserController {
                             @RequestParam String firstName,
                             @RequestParam String lastName,
                             @RequestParam String email,
-                            @RequestParam String confirmation,
+                            @RequestParam(required = false) String confirmation,
                             HttpSession session) throws UserManager.UserManagerException, SQLException {
         User user = (User) session.getAttribute("user");
         userManager.updateProfileInfo(user, oldPassword, newPassword, confirmPassword, firstName, lastName, email, confirmation);
