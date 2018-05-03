@@ -40,6 +40,30 @@ public class UserDao {
             return matchingUsers;
         }
     }
+    public User getUserByEmail(String email) throws SQLException {
+
+        try (Connection conn = dataSource.getConnection()) {
+            String sql = "SELECT id, username, password, first_name, last_name, email, profile_picture_url FROM users WHERE users.email = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, email);
+            ResultSet resultSet = stmt.executeQuery();
+            if (resultSet.next()) {
+                return createUser(resultSet);
+            }
+            return null;
+        }
+    }
+
+    public void changeUserPassword(String newPassword, int userID) throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
+            String sql = "UPDATE users SET password = ? WHERE id = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, newPassword);
+            stmt.setInt(2, userID);
+            stmt.executeUpdate();
+            stmt.close();
+        }
+    }
 
     public User getUserByID(int id) throws SQLException {
 

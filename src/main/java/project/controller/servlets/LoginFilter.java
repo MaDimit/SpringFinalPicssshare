@@ -22,7 +22,7 @@ public class LoginFilter implements  Filter{
 
         String path = request.getRequestURI();
         boolean loggedIn = session != null && session.getAttribute("user") != null;
-        boolean loginRequest = (path.startsWith("/login.html") || path.startsWith("/user/register") || path.startsWith("/user/login"));
+        boolean loginRequest = (path.startsWith("/login.html") || path.startsWith("/user/register") || path.startsWith("/user/login") || path.startsWith("/util/forgotPassword"));
 
         if (loggedIn || loginRequest || path.endsWith(".css") || path.endsWith(".js")) {
             chain.doFilter(req, resp);

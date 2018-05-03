@@ -2,7 +2,7 @@ package project.model.pojo.wrappers;
 
 import java.util.List;
 
-public class SearchWrapper {
+public class SearchDTO {
 
     public static class SearchedUser{
         private String username;
@@ -43,7 +43,7 @@ public class SearchWrapper {
     private List<SearchedUser> users;
     private List<SearchedTag> tags;
 
-    public SearchWrapper(List<SearchedUser> users, List<SearchedTag> tags) {
+    public SearchDTO(List<SearchedUser> users, List<SearchedTag> tags) {
         this.users = users;
         this.tags = tags;
     }

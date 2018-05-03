@@ -4,12 +4,12 @@ import project.model.pojo.Post;
 
 import java.util.List;
 
-public class TagFeedWrapper {
+public class TagFeedDTO {
 
     private List<Post> posts;
     private String tagname;
 
-    public TagFeedWrapper(List<Post> posts, String tagname) {
+    public TagFeedDTO(List<Post> posts, String tagname) {
         this.posts = posts;
         this.tagname = tagname;
     }

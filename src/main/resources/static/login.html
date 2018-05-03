@@ -74,8 +74,31 @@
                       name="password" required></p>
             <p>
                 <button class="w3-button" name="login" id="loginbtn">Login</button>
+                <button class="w3-button" name="login" id="forgotPassword" onclick="document.getElementById('login').style.display='none'; document.getElementById('forgotPasswordModal').style.display='block'">Forgot password?</button>
             </p>
             <div class="w3-container alert" style="display: none" id="loginalert">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--FORGOT PASSWORD-->
+<div id="forgotPasswordModal" class="w3-modal">
+    <div class="w3-modal-content w3-animate-zoom">
+        <div class="w3-container w3-black">
+            <span onclick="document.getElementById('forgotPasswordModal').style.display='none'"
+                  class="w3-button w3-display-topright w3-large">x</span>
+            <h1>Forgot password</h1>
+        </div>
+        <div class="w3-container">
+            <p>Enter your email and we will send you details by email.</p>
+            <p><input class="w3-input w3-padding-16 w3-border" type="text" placeholder="Email here.." id="forgotEmail"
+                      name="email"
+                      required></p>
+
+                <button class="w3-button" name="emailSending" id="sendEmail">Send</button>
+            </p>
 
             </div>
         </div>
@@ -112,6 +135,34 @@
 </div>
 <script src="vendor/jquery/jquery.min.js"></script>
 <script>
+    $(document).ready(function () {
+        //FORGOT PASSWORD
+        $('#sendEmail').keydown(function(e){
+            if(e.keyCode === 13){
+                forgotPassword();
+            }
+        });
+        $('#sendEmail').on('click', function () {
+            forgotPassword();
+        });
+    });
+
+    function forgotPassword(){
+        var email = $('#forgotEmail').val();
+        $.ajax({
+            type: "POST",
+            url : "util/forgotPassword",
+            data : {email: email},
+            success: function (data) {
+                alert('You have changed your password. Check your email for details.');
+            },
+            error: function(jqXHR, exception) {
+                alert(jqXHR.responseJSON.message);
+            }
+        });
+    }
+
+
     $(document).ready(function () {
 
         //login reuqest using enter

@@ -39,7 +39,7 @@ public class SendMailSSL {
 
     }
 
-    public static String sendMail(String username, String email){
+    public static String sendMail(String username, String email) {
         String code = SendMailSSL.randomStringGenerator.generateString();
         try {
 
@@ -48,19 +48,43 @@ public class SendMailSSL {
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(email));
             message.setSubject("Registration confirmation");
-            message.setText("Dear " + username + "," +
-                    "\n\nThank you for registering. We are glad that you have become part of us." +
-                    "\nUse this code to confirm your account: " + code + "\n " +
-                    "\n\nYou can activate your account by going to \"Edit Profile\" section and enter it in the last field.");
 
-            Transport.send(message);
+                message.setText("Dear " + username + "," +
+                        "\n\nThank you for registering. We are glad that you have become part of us." +
+                        "\nUse this code to confirm your account: " + code + "\n " +
+                        "\n\nYou can activate your account by going to \"Edit Profile\" section and enter it in the last field.");
 
-            System.out.println("Done");
+                Transport.send(message);
+
+                System.out.println("Done");
+
+
 
         } catch (MessagingException e) {
-           throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
         return code;
+    }
+
+    public static void sendResetPasswordEmail(String username, String email, String newPassword) {
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("picssshareweb@gmail.com"));
+            message.setRecipients(Message.RecipientType.TO,
+                    InternetAddress.parse(email));
+            message.setSubject("Reset password");
+
+                message.setText("Dear " + username + "," +
+                                "\n\nThis is your new password: " + newPassword+
+                        "\nUse it to enter your account. \n" +
+                                "\n\nYou can change your password later.");
+                Transport.send(message);
+                System.out.println("Done");
+
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 

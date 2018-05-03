@@ -2,12 +2,12 @@ package project.model.pojo.wrappers;
 
 import project.model.pojo.Post;
 
-public class PostWrapper {
+public class PostDTO {
 
     private String base64Image;
     private Post post;
 
-    public PostWrapper(Post post, String base64Image) {
+    public PostDTO(Post post, String base64Image) {
         this.post = post;
         this.base64Image = base64Image;
     }
