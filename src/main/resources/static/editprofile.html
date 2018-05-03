@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Bootstrap core JavaScript -->
     <script src="vendor/jquery/jquery.min.js"></script>
@@ -80,6 +83,12 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="col-lg-3 control-label" id='confirmationLabel'>Confirm registration:</label>
+                    <div class="col-lg-8" id='confirmation'>
+                        <input  class="form-control" type="text" value="" id='confirmationCode'>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="col-md-3 control-label"></label>
                     <div class="col-md-8">
                         <input type="button" class="btn btn-primary" value="Save Changes" onclick="editUserData()">
@@ -100,9 +109,18 @@
             url: "user/getCurrent",
             type: "POST"
         }).then(function (data) {
+            console.log(data);
             document.getElementById('firstName').value = data.firstName;
             document.getElementById('lastName').value = data.lastName;
             document.getElementById('email').value = data.email;
+            if(data.activated===false) {
+                console.log("not activated");
+            }
+            else {
+                console.log("activated");
+            document.getElementById('confirmationLabel').innerText = "Account status:";
+            document.getElementById('confirmation').innerHTML="<i style='font-size: 24px; color: #005cbf' class='fa'>&#xf00c;</i>Activated";
+            }
 
             $('#avatar').attr("src", addImage("avatar", data.profilePicUrl));
         });
@@ -116,6 +134,7 @@
         var firstName = document.getElementById('firstName').value;
         var lastName = document.getElementById('lastName').value;
         var email = document.getElementById('email').value;
+        var confirmation = document.getElementById('confirmationCode').value;
 
         $.ajax({
             url: "user/edit",
@@ -126,7 +145,8 @@
                     confirmPassword: confirmPassword,
                     firstName: firstName,
                     lastName: lastName,
-                    email: email
+                    email: email,
+                    confirmation:confirmation
                 },
             success: function (data) {
                 alert('Successfully edited information.');

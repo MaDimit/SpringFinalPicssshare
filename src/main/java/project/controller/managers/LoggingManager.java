@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.controller.managers.exceptions.InfoException;
+import project.controller.servlets.SendMailSSL;
 import project.model.dao.UserDao;
 import project.model.pojo.User;
 
@@ -49,7 +50,9 @@ public class LoggingManager {
         user.setProfilePicUrl("defaultAvatar.png");
         //adding to DB and collections
         try {
-            userDao.registerUser(user);
+
+            String codeGenerated = SendMailSSL.sendMail(user.getUsername(), user.getEmail());
+            userDao.registerUser(user, codeGenerated);
         } catch (SQLException e) {
            LOGGER.error("Data base exception occurred in register() for user {}, id:{} . {}", user.getUsername(), user.getId(), e.getMessage());
            throw e;

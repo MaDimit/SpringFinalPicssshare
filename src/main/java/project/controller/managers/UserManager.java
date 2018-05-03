@@ -77,9 +77,10 @@ public class UserManager {
         }
     }
 
-    public void updateProfileInfo(User user, String oldPassword, String newPassword, String confirmPassword, String firstName, String lastName, String email) throws UserManagerException, SQLException {
+    public void updateProfileInfo(User user, String oldPassword, String newPassword, String confirmPassword, String firstName, String lastName, String email, String confirmation) throws UserManagerException, SQLException {
         String editedPassword = oldPassword;
         String editedEmail = user.getEmail();
+        System.out.println(confirmation);
 
         //Checking old password
         if (!user.getPassword().equals(oldPassword)) {
@@ -115,6 +116,15 @@ public class UserManager {
         user.setEmail(editedEmail);
 
         try {
+
+            //get the generated confirmation code
+            if(confirmation!=null && confirmation!=""){
+                String confirmationCode = userDao.getConfirmationCode(user.getId());
+                if(confirmation.equalsIgnoreCase(confirmation)){
+                    userDao.confirmRegistration(user.getId());
+                    user.setActivated();
+                }
+            }
             userDao.updateProfile(user);
         } catch (SQLException e) {
             LOGGER.error("Database problem occurred in updateProfileInfo(). {}", e.getMessage());
