@@ -2,7 +2,6 @@ package project.model.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import project.controller.managers.LoggingManager;
 import project.model.pojo.DTO.SearchDTO;
 import project.model.pojo.DTO.SubscriberUserDTO;
 import project.model.pojo.User;
@@ -17,11 +16,6 @@ public class UserDao {
 
     @Autowired
     private DataSource dataSource;
-    @Autowired
-    private LoggingManager loggingManager;
-
-    public UserDao() throws SQLException {
-    }
 
     //================== User Interface ==================//
 

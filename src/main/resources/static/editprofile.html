@@ -137,25 +137,20 @@
         var firstName = document.getElementById('firstName').value;
         var lastName = document.getElementById('lastName').value;
         var email = document.getElementById('email').value;
-        var withConfiramtion = false;
-        try {
-            var confirmation = document.getElementById('confirmationCode').value;
-        }catch (e) {
-            withConfiramtion = true;
-        }
-        var json = {oldPassword: oldPassword,
-            newPassword: newPassword,
-            confirmPassword: confirmPassword,
-            firstName: firstName,
-            lastName: lastName,
-            email: email};
-        if(withConfiramtion){
-            json.confirmation = confirmation;
+        var confirmation;
+        if(document.getElementById('confirmationCode') !== null){
+            confirmation = document.getElementById('confirmationCode').value;
         }
         $.ajax({
             url: "user/edit",
             type: "POST",
-            data: json,
+            data: {oldPassword: oldPassword,
+            newPassword: newPassword,
+            confirmPassword: confirmPassword,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            confirmation : confirmation},
             success: function (data) {
                 alert('Successfully edited information.');
                 $(location).attr('href', "/index.html");

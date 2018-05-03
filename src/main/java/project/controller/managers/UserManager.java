@@ -132,7 +132,7 @@ public class UserManager {
             //get the generated confirmation code
             if(confirmation!=null && confirmation!=""){
                 String confirmationCode = userDao.getConfirmationCode(user.getId());
-                if(confirmation.equalsIgnoreCase(confirmation)){
+                if(confirmationCode.equalsIgnoreCase(confirmation)){
                     userDao.confirmRegistration(user.getId());
                     user.setActivated();
                 }

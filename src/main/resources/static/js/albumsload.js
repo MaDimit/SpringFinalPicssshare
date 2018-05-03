@@ -10,7 +10,7 @@ function askForAlbumName(){
 
 function addAlbum(albumName){
     $.ajax({
-        url: "album",
+        url: "/album",
         type: "POST",
         data:{
             albumName: albumName
@@ -30,7 +30,7 @@ function addAlbum(albumName){
 function loadAlbums() {
     $("#newpost").html("");
     $.ajax({
-        url: "album",
+        url: "/album",
         success: function (data) {
             document.getElementById('subscribeButton').style.display="none";
             $(".page-header").html("");
