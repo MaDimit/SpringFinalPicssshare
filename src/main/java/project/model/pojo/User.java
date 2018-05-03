@@ -15,7 +15,7 @@ public class User {
     private String lastName;
     private String email;
     private String profilePicUrl;
-
+    private boolean isActivated;
     // Used during registration
     public User(String username,String password,String email){
         this.username = username;
@@ -38,6 +38,10 @@ public class User {
 
     //========================== Setters ==========================//
 
+
+    public void setActivated() {
+        isActivated = true;
+    }
 
     public void setId(int id) {
         this.id = id;
@@ -66,6 +70,10 @@ public class User {
 
     //========================== Getters ==========================//
 
+
+    public boolean isActivated() {
+        return isActivated;
+    }
 
     public int getId() {
         return id;

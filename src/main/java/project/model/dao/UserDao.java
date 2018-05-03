@@ -150,6 +150,29 @@ public class UserDao {
         }
     }
 
+    public String getConfirmationCode(int userID) throws SQLException {
+        String confirmationCode=null;
+        try(Connection conn = dataSource.getConnection()){
+            String sql = "SELECT activation_code FROM users WHERE id = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userID);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                confirmationCode=rs.getString("activation_code");
+            }
+        }
+        return confirmationCode;
+    }
+
+    public void confirmRegistration(int userID) throws SQLException {
+        try(Connection conn = dataSource.getConnection()){
+            String sql = "UPDATE users SET activation_code=null WHERE id = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userID);
+            stmt.executeUpdate();
+        }
+    }
+
     public void changeProfilePic(int userID, String url) throws SQLException{
         try (Connection conn = dataSource.getConnection()) {
             String sql = "UPDATE users SET profile_picture_url = ? WHERE id = ?";
@@ -190,29 +213,42 @@ public class UserDao {
     public User login(String username) throws SQLException {
 
         try (Connection conn = dataSource.getConnection()) {
-            String sql = "SELECT id, username, password,first_name,last_name,email,profile_picture_url FROM users WHERE username = ?";
+            String sql = "SELECT id, username, password,first_name,last_name,email,profile_picture_url, activation_code FROM users WHERE username = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
+            boolean activated=true;
             if (!rs.next()) {
                 return null;
+
+            }
+            else{
+                String activationCode = rs.getString("activation_code");
+                if(activationCode!=null){
+                    activated = false;
+                }
             }
             User user = createUser(rs);
+            //if it is activated - set it
+            if(activated){
+                user.setActivated();
+            }
             stmt.close();
             return user;
         }
     }
 
 
-    public void registerUser(User user) throws SQLException {
+    public void registerUser(User user, String codeGenerated) throws SQLException {
 
         try (Connection conn = dataSource.getConnection()) {
             // Inserting into DB
-            String sql = "INSERT INTO users (username, password, email) VALUES (?,?,?)";
+            String sql = "INSERT INTO users (username, password, email, activation_code) VALUES (?,?,?,?)";
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getPassword());
             stmt.setString(3, user.getEmail());
+            stmt.setString(4, codeGenerated);
             stmt.executeUpdate();
 
             // Getting id for registered user
