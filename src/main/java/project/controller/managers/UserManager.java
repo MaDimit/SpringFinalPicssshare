@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.controller.managers.exceptions.InfoException;
+import project.controller.servlets.SendMailSSL;
 import project.model.dao.UserDao;
 import project.model.pojo.SubscriberUserPojo;
 import project.model.pojo.User;
@@ -15,6 +16,16 @@ import java.util.List;
 
 @Component
 public class UserManager {
+
+    public void changeUserPassword(User user) throws UserManagerException {
+        String newPassword = SendMailSSL.randomStringGenerator.generateString();
+        try {
+            userDao.changeUserPassword(newPassword, user.getId());
+        } catch (SQLException e) {
+            throw new UserManagerException("Problem with changing password.");
+        }
+        SendMailSSL.sendResetPasswordEmail(user.getUsername(), user.getEmail(), newPassword);
+    }
 
     public static class UserManagerException extends InfoException {
         public UserManagerException(String msg) {
@@ -190,6 +201,17 @@ public class UserManager {
             user = userDao.getUserByUsername(username);
         }catch (SQLException e){
             LOGGER.error("Database problem occurred in getUser() username:{}. {}", username, e.getMessage());
+            throw e;
+        }
+        return user;
+    }
+
+    public User getUserByEmail(String email) throws SQLException {
+        User user = null;
+        try {
+            user = userDao.getUserByEmail(email);
+        }catch (SQLException e){
+            LOGGER.error("Database problem occurred in getUser() userID:{}. {}", user.getId(), e.getMessage());
             throw e;
         }
         return user;

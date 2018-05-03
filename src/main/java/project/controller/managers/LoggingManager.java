@@ -14,6 +14,7 @@ import java.sql.SQLException;
 
 @Component
 public class LoggingManager {
+
     public static class RegistrationException extends InfoException {
         public RegistrationException(String msg) {
             super(msg);
@@ -28,6 +29,7 @@ public class LoggingManager {
 
     @Autowired
     private UserDao userDao;
+
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingManager.class);
 
@@ -144,4 +146,6 @@ public class LoggingManager {
         LOGGER.info("User {}, id:{} logged in", user.getUsername(),user.getId());
         return user;
     }
+
+
 }

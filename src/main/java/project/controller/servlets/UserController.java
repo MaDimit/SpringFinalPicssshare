@@ -92,6 +92,8 @@ public class UserController {
         return message;
     }
 
+
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public void login(@RequestParam String username, @RequestParam String password, HttpServletRequest request) throws LoggingManager.LoggingException, SQLException {
         User user = loggingManager.login(username, password);
