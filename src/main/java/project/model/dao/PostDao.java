@@ -3,9 +3,9 @@ package project.model.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import project.model.pojo.DTO.SearchDTO;
 import project.model.pojo.Post;
 import project.model.pojo.User;
-import project.model.pojo.wrappers.SearchWrapper;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -78,15 +78,15 @@ public class PostDao {
         }
     }
 
-    public List<SearchWrapper.SearchedTag> searchTags(String input) throws SQLException{
+    public List<SearchDTO.SearchedTag> searchTags(String input) throws SQLException{
         try (Connection conn = dataSource.getConnection()){
-            List<SearchWrapper.SearchedTag> tags = new ArrayList<>();
+            List<SearchDTO.SearchedTag> tags = new ArrayList<>();
             String sql = "SELECT tag_name, id FROM tags WHERE tag_name LIKE ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, input );
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
-                tags.add(new SearchWrapper.SearchedTag(rs.getString("tag_name"), rs.getInt("id")));
+                tags.add(new SearchDTO.SearchedTag(rs.getString("tag_name"), rs.getInt("id")));
             }
             return tags;
         }

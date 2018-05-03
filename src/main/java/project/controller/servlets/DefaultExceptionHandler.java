@@ -45,44 +45,6 @@ public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-//    @ExceptionHandler(UserManager.UserManagerException.class)
-//    public final ResponseEntity<ErrorMessage> userException(UserManager.UserManagerException ex){
-//        ErrorMessage exceptionResponse = new ErrorMessage(ex.getMessage(), "Non valid data was send to user service.");
-//        return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
-//    }
-//
-//    @ExceptionHandler(CommentManager.CommentManagerException.class)
-//    public final ResponseEntity<ErrorMessage> commentException(CommentManager.CommentManagerException ex){
-//        ErrorMessage exceptionResponse = new ErrorMessage(ex.getMessage(), "Comment manager exception.");
-//        return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
-//
-//    @ExceptionHandler(AlbumManager.AlbumManagerException.class)
-//    public final ResponseEntity<ErrorMessage> albumException(AlbumManager.AlbumManagerException ex){
-//        ErrorMessage exceptionResponse = new ErrorMessage(ex.getMessage(), "Album manager exception.");
-//        return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
-//    @ExceptionHandler(LoggingManager.RegistrationException.class)
-//    public final ResponseEntity<ErrorMessage> registrationException(LoggingManager.RegistrationException ex){
-//        ErrorMessage exceptionResponse = new ErrorMessage(ex.getMessage(), "Registration exception.");
-//        return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
-//    @ExceptionHandler(LoggingManager.LoggingException.class)
-//    public final ResponseEntity<ErrorMessage> loggingException(LoggingManager.LoggingException ex){
-//        ErrorMessage exceptionResponse = new ErrorMessage(ex.getMessage(), "Login exception.");
-//        return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
-//    @ExceptionHandler(PostManager.PostManagerException.class)
-//    public final ResponseEntity<ErrorMessage> postException(PostManager.PostManagerException ex){
-//        ErrorMessage exceptionResponse = new ErrorMessage(ex.getMessage(), "Post manager exception.");
-//        return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
-//    @ExceptionHandler(UtilManager.UtilManagerException.class)
-//    public final ResponseEntity<ErrorMessage> utilException(UtilManager.UtilManagerException ex){
-//        ErrorMessage exceptionResponse = new ErrorMessage(ex.getMessage(), "Util manager exception.");
-//        return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
-
 
     class ErrorMessage{
         private String message;

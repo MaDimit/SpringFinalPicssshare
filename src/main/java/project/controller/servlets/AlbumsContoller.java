@@ -29,21 +29,21 @@ public class AlbumsContoller {
     }
 
     @PostMapping()
-    public void addAlbum(@RequestParam String albumName, HttpSession session) throws SQLException {
+    public void addAlbum(@RequestParam String albumName, HttpSession session) throws SQLException, AlbumManager.AlbumManagerException {
         String message = "success";
         User u = (User) session.getAttribute("user");
         albumManager.createAlbum(u,albumName);
 
     }
 
-    @PostMapping(value = "/delete")
+    @PostMapping("/delete")
     public void deleteAlbum(@RequestParam int albumID) throws SQLException {
 
         albumManager.deleteAlbum(albumID);
 
     }
 
-    @GetMapping(value = "/names")
+    @GetMapping("/names")
     public Map<Integer, String> getAlbumsNames(HttpSession session) throws SQLException {
         Map<Integer, String> albumsNames=null;
         User currentUser = (User) session.getAttribute("user");
@@ -51,7 +51,7 @@ public class AlbumsContoller {
         return albumsNames;
     }
 
-    @RequestMapping(value = "/posts")
+    @RequestMapping("/posts")
     public ArrayList<Post> getAlbumPictures(@RequestParam int albumID) throws SQLException {
         ArrayList<Post> posts = null;
         posts = albumManager.getAlbumByID(albumID);

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import project.controller.managers.exceptions.InfoException;
 import project.model.dao.PostDao;
 import project.model.dao.UserDao;
-import project.model.pojo.wrappers.SearchWrapper;
+import project.model.pojo.DTO.SearchDTO;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -30,12 +30,12 @@ public class UtilManager {
     private final String TAG_TEMPLATE = "#%s%%";
     private final String USER_TEMPLATE = "%s%%";
 
-    public SearchWrapper search(String input) throws SQLException, UtilManagerException {
+    public SearchDTO search(String input) throws SQLException, UtilManagerException {
         if(input == null || input.isEmpty()){
             throw new UtilManagerException("You can't search with empty input.");
         }
-        List<SearchWrapper.SearchedUser> users = null;
-        List<SearchWrapper.SearchedTag> tags = null;
+        List<SearchDTO.SearchedUser> users = null;
+        List<SearchDTO.SearchedTag> tags = null;
         try {
             users = userDao.searchUsers(String.format(USER_TEMPLATE,input));
             tags = postDao.searchTags(String.format(TAG_TEMPLATE,input));
@@ -43,7 +43,7 @@ public class UtilManager {
             LOGGER.error("Database problem occurred in search() for input {}. {}", input, e.getMessage());
             throw e;
         }
-        return new SearchWrapper(users,tags);
+        return new SearchDTO(users,tags);
     }
 
 }

@@ -1,8 +1,7 @@
 function showSubscriptions() {
     $("#newpost").html("");
     $.ajax({
-        url: "user/getSubscriptions",
-        type: "POST",
+        url: "user/subscriptions",
         success: function (data) {
             $(".page-header").html("");
             document.getElementById("container").style.display="block";
@@ -42,7 +41,7 @@ function unsubscribe(subscribedToID){
             subscribedToID: subscribedToID
         },
         success: function (data) {
-            alert("You have unsubscribed to this user.");
+            alert("You have unsubscribed from this user.");
             document.getElementById("subscriber"+subscribedToID).innerHTML="";
         },
         error: function(jqXHR, exception) {

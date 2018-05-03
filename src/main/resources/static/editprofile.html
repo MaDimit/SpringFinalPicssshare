@@ -110,8 +110,7 @@
 
     function loadUserData(){
         $.ajax({
-            url: "user/getCurrent",
-            type: "POST"
+            url: "user/current"
         }).then(function (data) {
             console.log(data);
             document.getElementById('firstName').value = data.firstName;
@@ -177,7 +176,7 @@
         $.ajax({
             type: "POST",
             enctype: 'multipart/form-data',
-            url: "/img/uploadProfilePic",
+            url: "/img/upload/profile",
             data: data,
             processData: false,
             contentType: false,

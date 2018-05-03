@@ -3,9 +3,9 @@ package project.model.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.controller.managers.LoggingManager;
-import project.model.pojo.SubscriberUserPojo;
+import project.model.pojo.DTO.SearchDTO;
+import project.model.pojo.DTO.SubscriberUserDTO;
 import project.model.pojo.User;
-import project.model.pojo.wrappers.SearchWrapper;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -128,10 +128,10 @@ public class UserDao {
         }
     }
 
-    public List<SubscriberUserPojo> getAllSubscriptions(int subscriber_id) throws SQLException {
+    public List<SubscriberUserDTO> getAllSubscriptions(int subscriber_id) throws SQLException {
 
         try (Connection conn = dataSource.getConnection()) {
-            ArrayList<SubscriberUserPojo> subscriptions = new ArrayList<>();
+            ArrayList<SubscriberUserDTO> subscriptions = new ArrayList<>();
             String sql = "SELECT subscribedto_id FROM subscriber_subscribed WHERE subscriber_id=?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, subscriber_id);
@@ -140,22 +140,22 @@ public class UserDao {
                 int subscribedToID = rs.getInt("subscribedto_id");
                 String subscribedToUsername = getUserByID(subscribedToID).getUsername();
                 String subscriberToProfilePic = getUserByID(subscribedToID).getProfilePicUrl();
-                SubscriberUserPojo user = new SubscriberUserPojo(subscribedToID, subscribedToUsername, subscriberToProfilePic);
+                SubscriberUserDTO user = new SubscriberUserDTO(subscribedToID, subscribedToUsername, subscriberToProfilePic);
                 subscriptions.add(user);
             }
             return subscriptions;
         }
     }
 
-    public List<SearchWrapper.SearchedUser> searchUsers(String input) throws SQLException{
+    public List<SearchDTO.SearchedUser> searchUsers(String input) throws SQLException{
         try (Connection conn = dataSource.getConnection()){
-            List<SearchWrapper.SearchedUser> users = new ArrayList<>();
+            List<SearchDTO.SearchedUser> users = new ArrayList<>();
             String sql = "SELECT username, id FROM users WHERE username LIKE ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, input);
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
-                users.add(new SearchWrapper.SearchedUser(rs.getString("username"), rs.getInt("id")));
+                users.add(new SearchDTO.SearchedUser(rs.getString("username"), rs.getInt("id")));
             }
             return users;
         }

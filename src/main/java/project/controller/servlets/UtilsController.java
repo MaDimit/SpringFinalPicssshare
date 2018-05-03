@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import project.controller.managers.PostManager;
 import project.controller.managers.UserManager;
 import project.controller.managers.UtilManager;
+import project.model.pojo.DTO.SearchDTO;
 import project.model.pojo.User;
-import project.model.pojo.wrappers.SearchWrapper;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -24,20 +24,17 @@ public class UtilsController {
     private UserManager userManager;
 
     @GetMapping("/search")
-    public SearchWrapper search(@RequestParam("input") String input) throws SQLException, UtilManager.UtilManagerException {
-        SearchWrapper sr = utilManager.search(input);
-        return sr;
+    public SearchDTO search(@RequestParam("input") String input) throws SQLException, UtilManager.UtilManagerException {
+        return utilManager.search(input);
     }
 
-    @RequestMapping(value = "/forgotPassword", method = RequestMethod.POST)
+    @PostMapping("/recovery/password")
     public void forgotPassword(@RequestParam String email) throws SQLException, UserManager.UserManagerException {
         User user = userManager.getUserByEmail(email);
         userManager.changeUserPassword(user);
     }
 
-
-    @ResponseBody
-    @RequestMapping(value = "/addTag", method = RequestMethod.POST)
+    @PostMapping("/addTag")
     public List<String> addTags(@RequestParam String input, @RequestParam int postID) throws PostManager.PostManagerException, SQLException {
         return postManager.addTags(input, postID);
 

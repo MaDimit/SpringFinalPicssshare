@@ -5,9 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.controller.managers.exceptions.InfoException;
-import project.controller.servlets.SendMailSSL;
 import project.model.dao.UserDao;
-import project.model.pojo.SubscriberUserPojo;
+import project.model.pojo.DTO.SubscriberUserDTO;
 import project.model.pojo.User;
 
 import java.sql.SQLException;
@@ -40,8 +39,8 @@ public class UserManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserManager.class);
 
-    public List<SubscriberUserPojo> getAllSubscriptions(int subscriberID) throws SQLException {
-        List<SubscriberUserPojo> subscriptions = null;
+    public List<SubscriberUserDTO> getAllSubscriptions(int subscriberID) throws SQLException {
+        List<SubscriberUserDTO> subscriptions = null;
         try {
             subscriptions = userDao.getAllSubscriptions(subscriberID);
         } catch (SQLException e) {

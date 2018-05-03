@@ -1,7 +1,7 @@
 
 function dislike(postID){
     $.ajax({
-        url: "user/addDislike",
+        url: "user/post/dislike",
         type: "POST",
         data:{
             postID: postID
@@ -29,7 +29,7 @@ function dislike(postID){
 //function for liking post
 function like(postID){
     $.ajax({
-        url: "user/addLike",
+        url: "user/post/like",
         type: "POST",
         data:{
             postID: postID

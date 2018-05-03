@@ -7,7 +7,7 @@ import project.controller.managers.PostManager;
 import project.controller.managers.UserManager;
 import project.model.dao.PostDao;
 import project.model.dao.UserDao;
-import project.model.pojo.SubscriberUserPojo;
+import project.model.pojo.DTO.SubscriberUserDTO;
 import project.model.pojo.User;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,8 +30,7 @@ public class UserController {
     @Autowired
     UserDao userDao;
 
-
-    @PostMapping(value = "/edit")
+    @PostMapping("/edit")
     public void editProfile(@RequestParam String oldPassword,
                             @RequestParam String newPassword,
                             @RequestParam String confirmPassword,
@@ -44,37 +43,31 @@ public class UserController {
         userManager.updateProfileInfo(user, oldPassword, newPassword, confirmPassword, firstName, lastName, email, confirmation);
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/getCurrent", method = RequestMethod.POST)
+    @GetMapping("/current")
     public User getUserData(HttpSession session) {
         return (User) session.getAttribute("user");
     }
 
-    @GetMapping(value = "/get")
+    @GetMapping()
     public User getUser(@RequestParam("id") int userID) throws SQLException {
-        User user = userManager.getUser(userID);
-        return user;
+        return userManager.getUser(userID);
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/subscribe", method = RequestMethod.POST)
+    @PostMapping("/subscribe")
     public void subscribe(@RequestParam int subscribedToID, HttpSession session) throws UserManager.UserManagerException, SQLException {
         User subscriber = (User) session.getAttribute("user");
         User subscribedTo = userDao.getUserByID(subscribedToID);
         userManager.subscribe(subscriber, subscribedTo);
     }
 
-    @RequestMapping(value = "/unsubscribe", method = RequestMethod.POST)
+    @PostMapping("/unsubscribe")
     public void unsubscribe(@RequestParam int subscribedToID, HttpSession session) throws UserManager.UserManagerException, SQLException {
         User subscriber = (User) session.getAttribute("user");
-        User subscribedTo = null;
-        subscribedTo = userDao.getUserByID(subscribedToID);
+        User subscribedTo = userDao.getUserByID(subscribedToID);
         userManager.removeSubscription(subscriber, subscribedTo);
     }
 
-
-    @ResponseBody
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @PostMapping("/register")
     public String register(@RequestParam String username,
                            @RequestParam String password1,
                            @RequestParam String password2,
@@ -93,17 +86,14 @@ public class UserController {
         return message;
     }
 
-
-
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @PostMapping("/login")
     public void login(@RequestParam String username, @RequestParam String password, HttpServletRequest request) throws LoggingManager.LoggingException, SQLException {
         User user = loggingManager.login(username, password);
         request.getSession().setAttribute("user", user);
     }
 
-    @RequestMapping(value = "/addLike", method = RequestMethod.POST)
+    @PostMapping("/post/like")
     public String addLike(@RequestParam int postID, HttpSession session) throws PostManager.PostManagerException, SQLException {
-
         User user = (User) session.getAttribute("user");
         String text;
         text = postManager.likePost(postDao.getPost(postID), user);
@@ -112,24 +102,19 @@ public class UserController {
 
     }
 
-    @RequestMapping(value = "/addDislike", method = RequestMethod.POST)
+    @PostMapping("/post/dislike")
     public String addDislike(@RequestParam int postID, HttpSession session) throws PostManager.PostManagerException, SQLException {
         User user = (User) session.getAttribute("user");
         return postManager.dislikePost(postDao.getPost(postID), user);
-
     }
 
-    @RequestMapping(value = "/getSubscriptions", method = RequestMethod.POST)
-    public List<SubscriberUserPojo> getSubscriptions(HttpSession session) throws SQLException {
-
+    @GetMapping(value = "/subscriptions")
+    public List<SubscriberUserDTO> getSubscriptions(HttpSession session) throws SQLException {
         User user = (User) session.getAttribute("user");
-        List<SubscriberUserPojo> subscriptions = null;
-        subscriptions = userManager.getAllSubscriptions(user.getId());
-        return subscriptions;
+        return userManager.getAllSubscriptions(user.getId());
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @GetMapping(value = "/logout")
     public String logout(HttpSession session) {
         session.invalidate();
         return "success";

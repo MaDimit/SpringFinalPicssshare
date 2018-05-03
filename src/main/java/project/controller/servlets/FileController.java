@@ -9,9 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 import project.controller.managers.PostManager;
 import project.controller.managers.UserManager;
 import project.controller.managers.exceptions.InfoException;
+import project.model.pojo.DTO.PostDTO;
 import project.model.pojo.Post;
 import project.model.pojo.User;
-import project.model.pojo.wrappers.PostWrapper;
 
 import javax.servlet.http.HttpSession;
 import java.io.File;
@@ -41,7 +41,7 @@ public class FileController {
     private String UPLOAD_PATH;
 
     @PostMapping("/upload")
-    public PostWrapper uploadImage(@RequestParam("file") MultipartFile uploadfile, HttpSession session) throws IOException, UploadFileException, SQLException, PostManager.PostManagerException {
+    public PostDTO uploadImage(@RequestParam("file") MultipartFile uploadfile, HttpSession session) throws IOException, UploadFileException, SQLException, PostManager.PostManagerException {
         if(!checkFileType(uploadfile)){
             throw new UploadFileException("file type not supported");
         }
@@ -55,17 +55,17 @@ public class FileController {
         Post post = new Post(user,postUrl);
         postManager.addPost(post);
         String base64Image = Base64Utils.encodeToString(IOUtils.toByteArray(new FileInputStream(path)));
-        return new PostWrapper(post, base64Image);
+        return new PostDTO(post, base64Image);
     }
 
     //Get image by url from post
-    @GetMapping(value = "/get")
+    @GetMapping()
     public String getImage(@RequestParam("url") String url) throws IOException {
         String path = UPLOAD_PATH + url;
         return Base64Utils.encodeToString(IOUtils.toByteArray(new FileInputStream(path)));
     }
 
-    @PostMapping("/uploadProfilePic")
+    @PostMapping("/upload/profile")
     public String uploadProfileImage(@RequestParam("file") MultipartFile uploadfile, HttpSession session) throws UploadFileException, IOException, SQLException {
         if(!checkFileType(uploadfile)){
             throw new UploadFileException("file type not supported");
@@ -81,9 +81,10 @@ public class FileController {
         return Base64Utils.encodeToString(IOUtils.toByteArray(new FileInputStream(path)));
     }
 
-    @PostMapping("/deleteUploaded")
-    public void deleteUploadedPost(@RequestParam("postID") int postID)throws SQLException {
-        postManager.deletePost(postID);
+    @PostMapping("/delete")
+    public void deleteUploadedPost(@RequestParam("postID") int postID, HttpSession session) throws SQLException, PostManager.PostManagerException {
+        User user = (User) session.getAttribute("user");
+        postManager.deletePost(postID, user);
     }
 
     private String createUri(String username){

@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.controller.managers.exceptions.InfoException;
-import project.controller.servlets.SendMailSSL;
 import project.model.dao.UserDao;
 import project.model.pojo.User;
 
@@ -118,7 +117,7 @@ public class LoggingManager {
 
     //=========================LOGGING=======================================//
 
-    //Logging by username and password ----> //TODO: CHECK FOR RIGHT LOGIN IN THE SESSION
+    //Logging by username and password ----> //
     public User login(String username, String password) throws LoggingException, SQLException {
         User user = null;
         try {

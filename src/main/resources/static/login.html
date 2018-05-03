@@ -151,7 +151,7 @@
         var email = $('#forgotEmail').val();
         $.ajax({
             type: "POST",
-            url : "util/forgotPassword",
+            url : "util/recovery/password",
             data : {email: email},
             success: function (data) {
                 alert('You have changed your password. Check your email for details.');

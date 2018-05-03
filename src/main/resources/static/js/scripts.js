@@ -14,7 +14,7 @@ function imageMime(data) {
 
 function addImage(imageID, postUrl) {
     $.ajax({
-        url: "/img/get",
+        url: "/img",
         data: {url: postUrl},
         success: function (data) {
             $("#" + imageID).attr("src", getImageSrc(data));
@@ -92,8 +92,7 @@ function autoComplete() {
 
 function logout(){
     $.ajax({
-        url: "/user/logout",
-        type: "POST",
+        url: "/user/logout"
     }).then(function (data) {
         if(data==="success"){
             window.location.replace("login.html");

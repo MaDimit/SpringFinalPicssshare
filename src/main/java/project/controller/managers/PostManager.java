@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.controller.managers.exceptions.InfoException;
 import project.model.dao.PostDao;
+import project.model.pojo.DTO.TagFeedDTO;
 import project.model.pojo.Post;
 import project.model.pojo.User;
-import project.model.pojo.wrappers.TagFeedWrapper;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -45,9 +45,11 @@ public class PostManager {
         LOGGER.info("User {}, id:{} added post with id:{}",post.getPoster().getUsername(), post.getPoster().getId(), post.getId());
     }
 
-    public void deletePost(int postID) throws SQLException {
-        //TODO validate if current user is post owner
+    public void deletePost(int postID, User user) throws SQLException, PostManagerException {
         try {
+            if(!user.equals(postDao.getPost(postID).getPoster())){
+                throw new PostManagerException("You can't delete post you don't own");
+            }
             postDao.deletePost(postID);
         } catch (SQLException e) {
             LOGGER.error("Data base exception occurred in deletePost() for postID:{} . {}", postID, e.getMessage());
@@ -139,13 +141,13 @@ public class PostManager {
         }
     }
 
-    public TagFeedWrapper getTagFeed(int tagID) throws SQLException{
+    public TagFeedDTO getTagFeed(int tagID) throws SQLException{
         String tagname = null;
         try {
             tagname = postDao.getTagByID(tagID);
 
             List<Post> posts = postDao.getPostsByTags(tagname);
-            return new TagFeedWrapper(posts, tagname);
+            return new TagFeedDTO(posts, tagname);
         } catch (SQLException e) {
             LOGGER.error("Data base exception occurred in getTagFeed(). {}", e.getMessage());
             throw e;

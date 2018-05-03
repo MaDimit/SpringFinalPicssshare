@@ -1,8 +1,10 @@
-package project.controller.servlets;
+package project.controller.managers;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -22,21 +24,27 @@ public class SendMailSSL {
 
     private static Session session;
 
-    static {
+    @Value("${email.username}")
+    private String emailUsername;
+
+    @Value("${email.pass}")
+    private String emailPass;
+
+    @PostConstruct
+    public void setup() {
         Properties props = new Properties();
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.socketFactory.port", "587");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.port", "587");
-
+        System.out.println(emailUsername + "    " + emailPass);
         session = Session.getDefaultInstance(props,
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication("picssshareweb", "Picssshare1!");
+                        return new PasswordAuthentication(emailUsername, emailPass);
                     }
                 });
-
     }
 
     public static String sendMail(String username, String email) {

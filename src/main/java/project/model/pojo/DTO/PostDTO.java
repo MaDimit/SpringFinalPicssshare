@@ -1,4 +1,4 @@
-package project.model.pojo.wrappers;
+package project.model.pojo.DTO;
 
 import project.model.pojo.Post;
 

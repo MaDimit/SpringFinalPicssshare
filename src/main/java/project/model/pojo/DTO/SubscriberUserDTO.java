@@ -1,11 +1,11 @@
-package project.model.pojo;
+package project.model.pojo.DTO;
 
-public class SubscriberUserPojo {
+public class SubscriberUserDTO {
     private int id;
     private String username;
     private String profilePicUrl;
 
-    public SubscriberUserPojo(int id, String username, String profilePicUrl) {
+    public SubscriberUserDTO(int id, String username, String profilePicUrl) {
         this.id = id;
         this.username = username;
         this.profilePicUrl = profilePicUrl;

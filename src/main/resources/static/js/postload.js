@@ -89,7 +89,7 @@ function insertNewPost(post, postPoster, postComments, postUrl, postTags, postDa
 
 function deletePost(postID){
     $.ajax({
-        url: "feed/deletePost",
+        url: "feed/post/delete",
         type:"POST",
         data: {postID : postID},
         success: function (data) {

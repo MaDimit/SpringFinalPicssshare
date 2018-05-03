@@ -5,7 +5,7 @@ function addComment(lastCommentID, commentSectionID, postID){
     var commentContextValue = String(document.getElementById("commentContext"+postID+"").value);
 
     $.ajax({
-        url: "addComment",
+        url: "comment",
         type: "POST",
         data:{
             postID: postID,
@@ -32,7 +32,7 @@ function addComment(lastCommentID, commentSectionID, postID){
 //function for deleting comment
 function deleteComment(commentID){
     $.ajax({
-        url: "deleteComment",
+        url: "comment/delete",
         type: "POST",
         data: {
             commentID: commentID
@@ -80,8 +80,7 @@ function insertNewComment(comment) {
 
 function getCommentsLikesCount(commentID){
     $.ajax({
-        url: "getCommentLikes",
-        type: "POST",
+        url: "comment/likes",
         data:{
             commentID: commentID
         },
@@ -98,7 +97,7 @@ function getCommentsLikesCount(commentID){
 
 function likeComment(commentID){
     $.ajax({
-        url: "addCommentLike",
+        url: "comment/like",
         type: "POST",
         data:{
             commentID: commentID

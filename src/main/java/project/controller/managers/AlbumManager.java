@@ -55,11 +55,14 @@ public class AlbumManager {
         }
     }
 
-    public void createAlbum(User u, String name) throws SQLException {
+    public void createAlbum(User u, String name) throws SQLException, AlbumManagerException {
         Album album = new Album(u, name);
         try {
             albumDao.addAlbumInDB(album);
         } catch (SQLException e) {
+            if (e.getMessage().startsWith("Duplicate ")) {
+                throw new AlbumManagerException("You already have an album with name \"" + name + "\".");
+            }
             LOGGER.error("Database exception occurred in createAlbum() for user {}, id:{}. {}",u.getUsername(), u.getId(), e.getMessage());
             throw e;
         }

@@ -75,7 +75,7 @@ function cancelPostUpload(){
 
     $.ajax({
         type: "POST",
-        url:"img/deleteUploaded",
+        url:"img/delete",
         data:{postID : postID},
         success: function (data) {
             window.location.replace("index.html#my");

@@ -3708,7 +3708,7 @@ var Popper = function () {
       scrollParents: []
     };
 
-    // get reference and popper elements (allow jQuery wrappers)
+    // get reference and popper elements (allow jQuery DTO)
     this.reference = reference && reference.jquery ? reference[0] : reference;
     this.popper = popper && popper.jquery ? popper[0] : popper;
 
