@@ -81,6 +81,7 @@ public class UserController {
                            @RequestParam String email,
                            HttpSession session) throws LoggingManager.RegistrationException, SQLException {
         String message = "success";
+        System.out.println("User is in register");
         if (!password1.equals(password2)) {
             message = "passNotMatch";
             return message;
@@ -88,7 +89,7 @@ public class UserController {
             User user = loggingManager.register(username, password1, email);
             session.setAttribute("user", user);
         }
-
+        System.out.println("msg: " + message);
         return message;
     }
 

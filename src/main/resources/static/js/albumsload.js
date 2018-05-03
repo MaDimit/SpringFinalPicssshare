@@ -10,7 +10,7 @@ function askForAlbumName(){
 
 function addAlbum(albumName){
     $.ajax({
-        url: "feed/addAlbum",
+        url: "album",
         type: "POST",
         data:{
             albumName: albumName
@@ -30,7 +30,7 @@ function addAlbum(albumName){
 function loadAlbums() {
     $("#newpost").html("");
     $.ajax({
-        url: "feed/albums",
+        url: "album",
         success: function (data) {
             document.getElementById('subscribeButton').style.display="none";
             $(".page-header").html("");
@@ -68,7 +68,7 @@ function loadAlbums() {
 
 function addToAlbum(albumID, postID){
     $.ajax({
-        url: "feed/addToAlbum",
+        url: "album/add/post",
         type: "POST",
         data:{postID : postID, albumID : albumID},
         success: function (data) {
@@ -83,7 +83,7 @@ function addToAlbum(albumID, postID){
 function getAlbumsForPage(){
     var albums = [];
     $.ajax({
-        url : "feed/albumNames",
+        url : "album/names",
         success: function (data) {
             for(var key in data){
                 if(data.hasOwnProperty(key)){
@@ -108,7 +108,7 @@ var currentAlbumID;
 function loadPicturesFromAlbum(albumID, albumName) {
     $("#newpost").html("");
     $.ajax({
-        url: "feed/album",
+        url: "album/posts",
         type: "POST",
         data: {albumID: albumID},
         success: function (data) {
@@ -133,7 +133,7 @@ function replaceDropdowns(){
 
 function deleteAlbum(albumID){
     $.ajax({
-        url: "feed/deleteAlbum",
+        url: "album/delete",
         type: "POST",
         data:{
             albumID: albumID
@@ -154,7 +154,7 @@ function deleteAlbum(albumID){
 
 function deleteAlbumPost(postID){
     $.ajax({
-        url : "feed/deleteAlbumPost",
+        url : "album/delete/post",
         type : "POST",
         data:{postID : postID, albumID : currentAlbumID},
         success: function (data) {

@@ -243,12 +243,13 @@ public class UserDao {
 
         try (Connection conn = dataSource.getConnection()) {
             // Inserting into DB
-            String sql = "INSERT INTO users (username, password, email, activation_code) VALUES (?,?,?,?)";
+            String sql = "INSERT INTO users (username, password, email, profile_picture_url, activation_code) VALUES (?,?,?,?,?)";
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getPassword());
             stmt.setString(3, user.getEmail());
-            stmt.setString(4, codeGenerated);
+            stmt.setString(4, user.getProfilePicUrl());
+            stmt.setString(5, codeGenerated);
             stmt.executeUpdate();
 
             // Getting id for registered user

@@ -1,5 +1,7 @@
 package project.controller.servlets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,13 +16,7 @@ import java.sql.SQLException;
 @ControllerAdvice
 public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
 
-//    @ExceptionHandler(Exception.class)
-//    public final ResponseEntity<ErrorMessage> somethingWentWrong(Exception ex){
-//        System.out.println("HOORAY!");
-//        ex.printStackTrace();
-//        ErrorMessage exceptionResponse = new ErrorMessage(ex.getMessage(), "WHAT ELSE DO OU WANT TO ADD?");
-//        return new ResponseEntity<ErrorMessage>(exceptionResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExceptionHandler.class);
 
     @ExceptionHandler(SQLException.class)
     public final ResponseEntity<ErrorMessage> databaseException(SQLException ex){
@@ -37,6 +33,7 @@ public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(IOException.class)
     public final ResponseEntity<ErrorMessage> ioException(IOException ex){
         ErrorMessage exceptionResponse = new ErrorMessage("Sorry, we have problem during file writing to our servers", "Input output exception. Happened during file upload/download");
+        LOGGER.error(ex.getMessage());
         return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -44,6 +41,7 @@ public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
     public final ResponseEntity<ErrorMessage> exception(Exception ex){
         //TODO 500 page
         ErrorMessage exceptionResponse = new ErrorMessage("Sorry, we have problems with our servers.", "Unexpected internal server error");
+        LOGGER.error(ex.getMessage());
         return new ResponseEntity<>(exceptionResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

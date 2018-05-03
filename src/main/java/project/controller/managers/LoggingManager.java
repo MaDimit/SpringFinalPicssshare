@@ -20,7 +20,7 @@ public class LoggingManager {
         }
     }
 
-    public static class LoggingException extends Exception {
+    public static class LoggingException extends InfoException {
         public LoggingException(String msg) {
             super(msg);
         }
@@ -93,16 +93,6 @@ public class LoggingManager {
     public boolean validatePassword(String password) {
         return (password != null && !password.isEmpty()
                 && password.matches("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"));
-    }
-
-    // validate first name
-    public boolean validateFirstName(String firstName) {
-        return firstName.matches("[a-zA-z]+([ '-][a-zA-Z]+)*");
-    }
-
-    // validate last name
-    public boolean validateLastName(String lastName) {
-        return lastName.matches("[a-zA-z]+([ '-][a-zA-Z]+)*");
     }
 
     // validate email address
