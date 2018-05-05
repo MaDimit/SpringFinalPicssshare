@@ -19,7 +19,14 @@ public class UserManager {
 
     public void changeUserPassword(User user) throws UserManagerException {
         String newPassword = SendMailSSL.randomStringGenerator.generateString();
-        SendMailSSL.sendResetPasswordEmail(user.getUsername(), user.getEmail(), newPassword);
+        String finalNewPassword = newPassword;
+        //sending email is started in another thread for time-optimising purposes
+        new Thread(){
+            @Override
+            public void run() {
+                SendMailSSL.sendResetPasswordEmail(user.getUsername(), user.getEmail(), finalNewPassword);
+            }
+        }.start();
         newPassword = BCrypt.hashpw(newPassword,BCrypt.gensalt());
         try {
             userDao.changeUserPassword(newPassword, user.getId());

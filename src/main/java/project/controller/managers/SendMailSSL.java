@@ -46,10 +46,8 @@ public class SendMailSSL {
                 });
     }
 
-    public static String sendMail(String username, String email) {
-        String code = SendMailSSL.randomStringGenerator.generateString();
+    public static void sendMail(String username, String email, String code) {
         try {
-
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress("picssshareweb@gmail.com"));
             message.setRecipients(Message.RecipientType.TO,
@@ -70,7 +68,6 @@ public class SendMailSSL {
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
-        return code;
     }
 
     public static void sendResetPasswordEmail(String username, String email, String newPassword) {

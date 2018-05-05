@@ -51,16 +51,24 @@ public class LoggingManager {
         password = BCrypt.hashpw(password, BCrypt.gensalt());
         User user = new User(username, password, email);
         user.setProfilePicUrl("defaultAvatar.png");
-        //adding to DB and collections
+        //adding to DB
+        String code;
         try {
-
-            String codeGenerated = SendMailSSL.sendMail(user.getUsername(), user.getEmail());
-            userDao.registerUser(user, codeGenerated);
+            code = SendMailSSL.randomStringGenerator.generateString();
+            userDao.registerUser(user, code);
         } catch (SQLException e) {
            LOGGER.error("Data base exception occurred in register() for user {}, id:{} . {}", user.getUsername(), user.getId(), e.getMessage());
            throw e;
         }
 
+        //send register mail in another thread in order not to delay registration proccess
+        new Thread(){
+            @Override
+            public void run() {
+                SendMailSSL.sendMail(user.getUsername(), user.getEmail(), code);
+            }
+
+        }.start();
         LOGGER.info("User {}, id:{} registered", user.getUsername(), user.getId());
         return user;
     }
