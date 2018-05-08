@@ -154,6 +154,7 @@ public class PostManager {
         }
     }
 
+    //overloading post validation
     private void validate(Post post, User user) throws PostManagerException{
         if(post == null){
             throw new PostManagerException("Post does not exist");

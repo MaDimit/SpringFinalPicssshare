@@ -14,6 +14,7 @@ import java.util.UUID;
 @Component
 public class SendMailSSL {
 
+    //method used for generating a code used in registration proccess or forgot password one
     public static class randomStringGenerator {
         public static String generateString() {
             String uuid = UUID.randomUUID().toString();

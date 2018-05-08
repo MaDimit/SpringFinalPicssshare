@@ -53,6 +53,13 @@ public class UserController {
         return userManager.getUser(userID);
     }
 
+    @GetMapping("/deleteAccount")
+    public void deleteAccount(HttpSession session) throws SQLException {
+        User u = (User) session.getAttribute("user");
+        userManager.deleteUser(u);
+        session.invalidate();
+    }
+
     @PostMapping("/subscribe")
     public void subscribe(@RequestParam int subscribedToID, HttpSession session) throws UserManager.UserManagerException, SQLException {
         User subscriber = (User) session.getAttribute("user");

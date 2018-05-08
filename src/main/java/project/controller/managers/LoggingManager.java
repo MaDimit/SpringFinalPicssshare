@@ -41,10 +41,10 @@ public class LoggingManager {
         validateUsername(username);
 
         if (!validatePassword(password)) {
-            throw new RegistrationException("weakPass");
+            throw new RegistrationException("Weak password.");
         }
         if (!validateEmailAddress(email)) {
-            throw new RegistrationException("emailNotValid");
+            throw new RegistrationException("Email is not valid.");
         }
 
         //if data is valid user obj is created

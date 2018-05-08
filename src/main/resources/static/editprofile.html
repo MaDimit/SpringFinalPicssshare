@@ -34,8 +34,8 @@
                 </form>
             </div>
             <br><br><br><br><br>
-            <div class="text-center" id="facebook-div">
-                <button class="btn btn-primary" onclick="facebookConnect()">Connect facebook account</button>
+            <div class="text-center" id="deleteAccount">
+                <button class="btn btn-primary" onclick="deleteAccount()">Delete account</button>
             </div>
         </div>
 
@@ -107,6 +107,20 @@
 <hr>
 
 <script>
+
+    function deleteAccount(){
+        confirm("Are you sure?");
+        $.ajax({
+            url:"user/deleteAccount",
+            success: function (data) {
+                $(location).attr('href', "/login.html");
+            },
+            error: function (jqXHR, exception) {
+                alert(jqXHR.responseJSON.message);
+            }
+        });
+
+    }
 
     function loadUserData(){
         $.ajax({
