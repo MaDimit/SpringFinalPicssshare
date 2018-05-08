@@ -109,16 +109,18 @@
 <script>
 
     function deleteAccount(){
-        confirm("Are you sure?");
-        $.ajax({
-            url:"user/deleteAccount",
-            success: function (data) {
-                $(location).attr('href', "/login.html");
-            },
-            error: function (jqXHR, exception) {
-                alert(jqXHR.responseJSON.message);
-            }
-        });
+        var answer = confirm("Are you sure?");
+        if(answer) {
+            $.ajax({
+                url: "user/deleteAccount",
+                success: function (data) {
+                    $(location).attr('href', "/login.html");
+                },
+                error: function (jqXHR, exception) {
+                    alert(jqXHR.responseJSON.message);
+                }
+            });
+        }
 
     }
 

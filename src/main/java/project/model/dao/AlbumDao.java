@@ -7,7 +7,6 @@ import project.model.pojo.Album;
 import project.model.pojo.Post;
 
 import javax.sql.DataSource;
-import javax.xml.crypto.Data;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,16 +90,6 @@ public class AlbumDao {
                 int belongerID = rs.getInt("belonger_id");
                 //create album
                 Album a = new Album(userDao.getUserByID(belongerID), albumName, albumID);
-                //fill posts for this album
-
-                // UNCOMMENT HERE IF YOU WANT TO RECEIVE INFORMATION FOR THE POSTS IN ALBUM NOT JUST THE ALBUM INFO
-
-//                ArrayList<Integer> posts = getAllPostsForAlbum(albumID);
-//                for (int i = 0; i < posts.size(); i++) {
-//                    Post p = postDao.getPost(posts.get(i));
-//                    a.addPost(p);
-//                }
-                //add the ready album to the collections
                 albums.add(a);
             }
             return albums;
@@ -121,18 +110,6 @@ public class AlbumDao {
                 int belongerID = rs.getInt("belonger_id");
                 //create album
                 a = new Album(userDao.getUserByID(belongerID), albumName, albumID);
-                //fill posts for this album
-
-                // UNCOMMENT HERE IF YOU WANT TO RECEIVE INFORMATION FOR THE POSTS IN ALBUM NOT JUST THE ALBUM INFO
-
-
-//                ArrayList<Integer> posts = getAllPostsForAlbum(albumID);
-//                for (int i = 0; i < posts.size(); i++) {
-//                    Post p = postDao.getPost(posts.get(i));
-//                    a.addPost(p);
-//                }
-                //add the ready album to the collections
-
             }
         }
         return a;
