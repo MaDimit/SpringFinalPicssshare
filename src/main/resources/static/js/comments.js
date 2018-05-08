@@ -65,7 +65,7 @@ function insertNewComment(comment) {
         "                        </div>\n" +
         "                        <div class=\"col-sm-8\">\n" +
         "                            <h4><a href=\"#\" onclick='loadUserPosts("+commentPoster.id+")'>" + commentPoster.username + "</a>\n" +
-        "                                <small>" + commentDate + "</small><small>, Likers: </small><small id=\"comment"+commentID+"likes\"></small>\n" +
+        "                                <small>" + commentDate + "</small><small>, Likers: </small><small onclick='showCommentLikers("+commentID+")' id=\"comment"+commentID+"likes\"  data-toggle=\"modal\" data-target=\"#myModal\" style='cursor: pointer;'></small>\n" +
         "                            </h4><button class='btn btn-primary' onclick='likeComment("+commentID+")' style='float:right'>LIKE</button><button class='btn btn-primary deleteComment' style='float: right; display: none' onclick='deleteComment("+commentID+")'>DELETE</button>" +
 
         "                            <p>" + commentContent + "</p>\n" +
@@ -76,6 +76,35 @@ function insertNewComment(comment) {
     var imageID = "commentPic"+commentID;
     addImage(imageID, commentPoster.profilePicUrl);
     return newChild;
+
+}
+
+function showCommentLikers(commentID){
+    $.ajax({
+        url: "comment/likes",
+        data:{
+            commentID: commentID
+        },
+        success: function (data) {
+            var parent = document.getElementById("modalBody");
+            var likers="";
+            parent.innerHTML = "";
+            for(i=0;i<data.length;i++) {
+                likers += "<div class=\"row\" data-dismiss=\"modal\"><img id='liker"+data[i].username+"' onclick='loadUserPosts("+data[i].id+")' src=\"\" class=\"img-circle\" height=\"65\" width=\"65\" alt=\"Avatar\" style='margin-left: 9px;cursor: pointer;' ><h4 style='text-align: left; margin-left: 10px'><b onclick='loadUserPosts("+data[i].id+")' style='cursor: pointer;'>" + data[i].username + "</b></h4></div><hr>";
+                var likerImageID = "liker"+data[i].username;
+                console.log(likerImageID);
+                console.log(data[i].profilePicUrl);
+                addImage(likerImageID, data[i].profilePicUrl);
+            }
+            parent.insertAdjacentHTML('beforeend', likers);
+          //  document.getElementById("modalBody").innerHTML = likers.value;
+            console.log(data);
+            console.table(data);
+        },
+        error: function(jqXHR, exception) {
+            alert(jqXHR.responseJSON.message);
+        }
+    });
 }
 
 function getCommentsLikesCount(commentID){

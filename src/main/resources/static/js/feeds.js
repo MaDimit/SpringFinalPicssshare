@@ -27,6 +27,7 @@ function loadFriendsFeed() {
 //get feed with user's posts
 function loadUserPosts(id) {
 
+
     document.getElementById("container").style.display="none";
 
     $("#newpost").html("");

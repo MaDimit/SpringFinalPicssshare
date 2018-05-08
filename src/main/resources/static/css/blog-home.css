@@ -34,6 +34,15 @@
 }
 
 
+.footer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  text-align: center;
+}
+
 
 .fill {
   display: flex;
@@ -64,6 +73,9 @@
 
 body {
   padding-top: 0px;
+  height: 100%;
+  width: 100%;
+  min-height: 100%;
 }
 
 @media (min-width: 992px) {
