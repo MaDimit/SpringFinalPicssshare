@@ -63,6 +63,9 @@ public class CommentManager {
             throw new CommentManagerException("Probably post you trying to add comment to already deleted. Refresh page and try again.");
         }
         try {
+            //Prevent inserting script in the comment box
+            String filteredText = XSSPreventer.escapeHtml(c.getContent());
+            c.setContent(filteredText);
             commentDao.addComment(c);
         } catch (SQLException e) {
             LOGGER.error("Database exception occurred in addComment() for userID:{}, commentID:{}, postID:{} . {}", c.getUser().getId(), c.getId(), c.getPost().getId(), e.getMessage());

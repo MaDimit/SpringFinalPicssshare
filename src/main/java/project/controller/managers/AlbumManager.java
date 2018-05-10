@@ -56,7 +56,9 @@ public class AlbumManager {
     }
 
     public void createAlbum(User u, String name) throws SQLException, AlbumManagerException {
-        Album album = new Album(u, name);
+        //Prevent inserting script in the album name
+        String filteredText = XSSPreventer.escapeHtml(name);
+        Album album = new Album(u, filteredText);
         try {
             albumDao.addAlbumInDB(album);
         } catch (SQLException e) {

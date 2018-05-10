@@ -97,6 +97,23 @@ public class UserManager {
     }
 
     public void updateProfileInfo(User user, String oldPassword, String newPassword, String confirmPassword, String firstName, String lastName, String email, String confirmation) throws UserManagerException, SQLException {
+        //Prevent inserting script
+        String filteredOldPassword = XSSPreventer.escapeHtml(oldPassword);
+        oldPassword = filteredOldPassword;
+        String filteredNewPassword = XSSPreventer.escapeHtml(newPassword);
+        newPassword = filteredNewPassword;
+        String filteredConfirmPassword = XSSPreventer.escapeHtml(confirmPassword);
+        confirmPassword = filteredConfirmPassword;
+        String filteredFirstName = XSSPreventer.escapeHtml(firstName);
+        firstName = filteredFirstName;
+        String filteredLastName = XSSPreventer.escapeHtml(lastName);
+        lastName = filteredLastName;
+        String filteredEmail = XSSPreventer.escapeHtml(email);
+        email = filteredEmail;
+        String filteredConfirmation = XSSPreventer.escapeHtml(confirmation);
+        confirmation = filteredConfirmation;
+
+
         String editedPassword = user.getPassword();
         String editedEmail = user.getEmail();
         System.out.println(confirmation);
@@ -175,6 +192,7 @@ public class UserManager {
     public void changeProfilePic(User user, String url) throws SQLException {
         try {
             userDao.changeProfilePic(user.getId(), url);
+            user.setProfilePicUrl(url);
         } catch (SQLException e) {
             LOGGER.error("Database problem occurred in changeProfilePic() for user {}, id:{}, image url: {}. {}",user.getUsername(), user.getId(), url, e.getMessage());
             throw e;

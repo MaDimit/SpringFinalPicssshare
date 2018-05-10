@@ -40,12 +40,24 @@ public class LoggingManager {
         //Username validating
         validateUsername(username);
 
+        //Prevent inserting script for username
+        String filteredUsername = XSSPreventer.escapeHtml(username);
+        username = filteredUsername;
+
         if (!validatePassword(password)) {
             throw new RegistrationException("Weak password.");
         }
         if (!validateEmailAddress(email)) {
             throw new RegistrationException("Email is not valid.");
         }
+
+        //Prevent inserting script in the comment box
+        String filteredPassword = XSSPreventer.escapeHtml(password);
+        password = filteredPassword;
+
+        //Prevent inserting script in the comment box
+        String filteredEmail = XSSPreventer.escapeHtml(email);
+        email = filteredEmail;
 
         //if data is valid user obj is created
         password = BCrypt.hashpw(password, BCrypt.gensalt());
@@ -76,6 +88,7 @@ public class LoggingManager {
     //========================VALIDATIONS===================================//
     // validate username
     public boolean validateUsername(String username) throws RegistrationException, SQLException {
+
         if (username == null || username.isEmpty()) {
             throw new RegistrationException("Empty username.");
         }
@@ -131,6 +144,13 @@ public class LoggingManager {
     public User login(String username, String password) throws LoggingException, SQLException {
         User user = null;
         try {
+            //Prevent inserting script for username in login form
+            String filteredLoggerUsername = XSSPreventer.escapeHtml(username);
+            username = filteredLoggerUsername;
+            //Prevent inserting script for password in login form
+            String filteredLoggerPassword = XSSPreventer.escapeHtml(password);
+            password = filteredLoggerPassword;
+
             user = userDao.login(username);
             if (user == null) {
                 throw new LoggingException("Wrong username.");

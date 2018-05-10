@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import project.controller.managers.PostManager;
 import project.controller.managers.UserManager;
 import project.controller.managers.UtilManager;
+import project.controller.managers.XSSPreventer;
 import project.model.pojo.DTO.SearchDTO;
 import project.model.pojo.User;
 
@@ -30,12 +31,18 @@ public class UtilsController {
 
     @PostMapping("/recovery/password")
     public void forgotPassword(@RequestParam String email) throws SQLException, UserManager.UserManagerException {
+        //Prevent inserting script for password in login form
+        String filteredEmail = XSSPreventer.escapeHtml(email);
+        email = filteredEmail;
         User user = userManager.getUserByEmail(email);
         userManager.changeUserPassword(user);
     }
 
     @PostMapping("/addTag")
     public List<String> addTags(@RequestParam String input, @RequestParam int postID) throws PostManager.PostManagerException, SQLException {
+        //Prevent inserting script for password in login form
+        String filteredTag = XSSPreventer.escapeHtml(input);
+        input = filteredTag;
         return postManager.addTags(input, postID);
 
     }

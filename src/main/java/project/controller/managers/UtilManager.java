@@ -31,6 +31,9 @@ public class UtilManager {
     private final String USER_TEMPLATE = "%s%%";
 
     public SearchDTO search(String input) throws SQLException, UtilManagerException {
+        //Prevent inserting script for password in login form
+        String filteredSearch = XSSPreventer.escapeHtml(input);
+        input = filteredSearch;
         if(input == null || input.isEmpty()){
             throw new UtilManagerException("You can't search with empty input.");
         }
